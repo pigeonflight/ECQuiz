@@ -18,7 +18,7 @@
   </metal:import-css>
 
   <metal:fill fill-slot="main">
-   <metal:use use-macro="here/basequestion_view/macros/edit_view"/>
+   <metal:use use-macro="here/ecq_basequestion_view/macros/edit_view"/>
 
    <tal:condition condition="python:False">
     <!-- The following macros are not meant to actually be shown on this page.
