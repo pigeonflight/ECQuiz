@@ -120,10 +120,10 @@
     haveGrades    python: table[0][1:] and (not table[0][1][1]);
     contentOffset python: (haveGrades and 2) or 1;
     ">
-    <!-- Nobody has taken this test -->
+    <!-- Nobody has taken this quiz -->
     <p tal:condition="empty"
      i18n:translate="no_graded_results">
-     There are no graded results for this test.
+     There are no graded results for this quiz.
     </p>
 
     <tal:if_have_results condition="not: empty">

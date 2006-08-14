@@ -69,14 +69,13 @@
       Check if user is a MANAGER.  If he is, editView' is True.
 
       List all questions if 'editView' was requested.  Otherwise list only the
-      questions of the candidate's personal test.
+      questions of the candidate's personal quiz.
       
       If we're in one-question-per-page-mode ('showAll' == False) and
-      "questionContainer" is the MCTest, then "elemNoToShow" is the index of
-      the question in the MCTest that should be displayed.  If
-      "questionContainer" is not the MCTest but one of it's question groups,
-      then "elemNoToShow" has no meaning; question groups are always displayed
-      in full.
+      "questionContainer" is the Quiz, then "elemNoToShow" is the index of the
+      question in the Quiz that should be displayed.  If "questionContainer"
+      is not the Quiz but one of it's question groups, then "elemNoToShow"
+      has no meaning; question groups are always displayed in full.
 
       -->
      </tal:comment>

@@ -40,7 +40,7 @@
     
     <tal:define_heading_level define="headingLevel python:headingLevel+1;">
 
-     <!-- Show test form -->
+     <!-- Show quiz form -->
      <tal:if_submission_allowed condition="submissionAllowed">
       <tal:define
        define="
@@ -154,12 +154,12 @@
                class="context"
                type="submit"
                name="submit"
-               value="Submit Test"
+               value="Submit Quiz"
                i18n:attributes="value"
                onclick="#"
                tal:define="alert_msg python:here.translate(msgid='alert_really_submit',
                domain=here.i18n_domain,
-               default='Do you really want to submit this test?');"
+               default='Do you really want to submit this quiz?');"
                tal:attributes="
                onclick string: confirmSubmit = confirm('${alert_msg}');; event.returnValue = confirmSubmit;; return confirmSubmit;;"
                />
@@ -185,15 +185,15 @@
      
      <!-- Show results/repeat form -->
      <tal:if_submission_not_allowed condition="not: submissionAllowed">
-      <!-- Tell people whether they have already taken this test or not,
-      unless they have just submitted the test (hasJustSubmitted ==
+      <!-- Tell people whether they have already taken this quiz or not,
+      unless they have just submitted the quiz (hasJustSubmitted ==
       True), because in that case, our informative message would 
       only confuse them.
       -->
       <!--       FIXME! -->
       <p tal:condition="python: (not mayResubmit) and (not hasJustSubmitted)">
        <span i18n:translate="test_taken"
-        tal:omit-tag="">You have already taken this test.
+        tal:omit-tag="">You have already taken this quiz.
        </span>
        <span i18n:translate="no_repetition"
         tal:omit-tag="">
@@ -201,9 +201,9 @@
        </span>
       </p>
      
-      <!-- Empty test -->
+      <!-- Empty quiz -->
       <p tal:condition="isEmpty" i18n:translate="no_questions">
-       This test contains no questions.
+       This quiz contains no questions.
       </p>
      </tal:if_submission_not_allowed>
     </tal:define_heading_level>

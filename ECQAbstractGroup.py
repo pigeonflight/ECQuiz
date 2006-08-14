@@ -179,7 +179,7 @@ class ECQAbstractGroup(ECQFolder):
                     label='Number of Random Questions',
                     label_msgid='number_of_random_questions_label',
                     description='The number of questions which are randomly '
-                        'selected when a new test is '
+                        'selected when a new quiz is '
                         'generated for a candidate. (This only works if '
                         '&quot;Randomize Question Order&quot; '
                         'is checked.) A value &lt;= 0 means that all '
@@ -289,7 +289,7 @@ class ECQAbstractGroup(ECQFolder):
 
     security.declarePrivate('makeNewTest')
     def makeNewTest(self, candidateResult, suMode):
-        """Generates a new test for the candidate.
+        """Generates a new quiz for the candidate.
         """
         # Select the questions
         allQuestions = self.getAllQuestions()
@@ -313,9 +313,9 @@ class ECQAbstractGroup(ECQFolder):
     security.declareProtected(PERMISSION_STUDENT, 'getQuestions')
     def getQuestions(self, result):
         """Returns the actual question objects that the candidate saw
-        in his/her test and in the order they were presented
+        in his/her quiz and in the order they were presented
         """
-        # reconstruct the old test
+        # reconstruct the old quiz
         questionIds = result.getQuestionUIDs()
         # reconstruct the order of the questions
         retVal = filterByUID(questionIds, self.getAllQuestions())
@@ -363,7 +363,7 @@ class ECQAbstractGroup(ECQFolder):
 
 
     def getCandidatePoints(self, result):
-        """ Return how many points the candidate got for this test.
+        """ Return how many points the candidate got for this quiz.
             
             @param candidateId the user ID of the candidate whose
             points you want to know.

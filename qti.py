@@ -58,8 +58,8 @@ MANIFEST_SCHEMA_LOCATIONS = \
     u'\n' + NS_IMSMD_V1P2_URI  + u' http://www.imsglobal.org/xsd/imsmd_v1p2p2.xsd'\
     u'\n' + NS_IMSQTI_V2P0_URI + u' ' + NS_IMSQTI_V2P0_URL
 
-# The path where the assesment items will be located when a multiple choice
-# test is exported as a QTI package.
+# The path where the assesment items will be located when an ecquiz is
+# exported as a QTI package.
 EXPORT_ITEM_PATH = u'content'
 
 # Used to mark our own QTI package export format.
@@ -567,7 +567,7 @@ def importChoiceInteraction(abstractGroup,
         @param toolInfo The program that has produced the XML code. It only matters
             if it is this product or not.
 
-        @return A list of objects that have been added to the test.
+        @return A list of objects that have been added to the quiz.
 
         Side effects:
             If successful, the item will be imported in "abstractGroup".
@@ -728,7 +728,7 @@ def importExtendedTextInteraction(abstractGroup,
 
     @return
 
-        A list of objects that have been added to the test.
+        A list of objects that have been added to the quiz.
 
     Side effects:
 
@@ -820,7 +820,7 @@ def importAssessmentItem(abstractGroup, string, errors, id=None,
 
     @return
 
-        A list of objects that have been added to the test.
+        A list of objects that have been added to the quiz.
 
     Side effects:
 
@@ -997,7 +997,7 @@ def importAssessmentItem(abstractGroup, string, errors, id=None,
                                         toolInfo=toolInfo)
             else:
                 # One <???Interaction> element --> Import it directly
-                # into the test
+                # into the quiz
                 if choiceInteractionList:
                     newQuestionList = importChoiceInteraction(
                                           context, 
@@ -1059,7 +1059,7 @@ def importPackage(multipleChoiceTest, zipFileObject, errors):
 
     @param multipleChoiceTest
 
-        The mc test that the package is to be imported in.
+        The ECQuiz that the package is to be imported in.
 
     @param zipFileObject
 
@@ -1071,7 +1071,7 @@ def importPackage(multipleChoiceTest, zipFileObject, errors):
 
     @return
 
-        A list of objects that have been added to the test.
+        A list of objects that have been added to the quiz.
 
     Side effects:
 
@@ -1139,7 +1139,7 @@ def importPackage(multipleChoiceTest, zipFileObject, errors):
         manifest = manifestDo.documentElement
 
         ### Parse some information in the manifest ###
-        # Extract the title of the test
+        # Extract the title of the quiz
         testTile = getFirstElementByPath(manifest, METADATA + u'/' + LOM 
             + u'/' + GENERAL + u'/' + TITLE + u'/' + LANG_STRING)
         if (testTile):
@@ -1620,19 +1620,27 @@ def importFileResource(multipleChoiceTest, zipFileObject, fileName,
     """ Import referenced files from a QTI package that is contained in a
         Python ZipFile object into 'multipleChoiceTest'.
 
-        @param multipleChoiceTest The mc test that the file is to be imported in.
-        @param zipFileObject Python ZipFile object that contains a QTI package.
+        @param multipleChoiceTest The ecquiz that the file is to be
+        imported in.
+        
+        @param zipFileObject Python ZipFile object that contains a QTI
+        package.
+
         @param fileName The name of the file that you want to import.
-        @param assessmentItemFileName The file name of the assessmentItem
-                that references the file.
+
+        @param assessmentItemFileName The file name of the
+        assessmentItem that references the file.
+
         @param errors A string IO object where errors can be logged.
 
         @return A list of objects that have been added to the test.
 
         Side effects:
-            If successful, the file will be imported in 'multipleChoiceTest'.
-            New folders may be generated. The file itself will be added as an Image or
-            a File to 'multipleChoiceTest'.
+        
+            If successful, the file will be imported in
+            'multipleChoiceTest'.  New folders may be generated. The
+            file itself will be added as an Image or a File to
+            'multipleChoiceTest'.
     """
     addedObjects = []
     context = multipleChoiceTest
@@ -1675,7 +1683,7 @@ def importFileResource(multipleChoiceTest, zipFileObject, fileName,
             # The container where the file will be put
             container = context
             for path in filePath:
-                # Find out if we already have such a folder in the test
+                # Find out if we already have such a folder in the quiz
                 existingFolders = [folder for folder in container.listFolderContents() 
                     if folder.getId() == path]
                 if (existingFolders): # Yep, folder exists
@@ -1978,7 +1986,7 @@ def exportPackage(multipleChoiceTest, errors):
     # The <resources> element
     resources = manifest.appendChild(manifestDoc.createElement(RESOURCES))
 
-    ### Export the test, question groups and questions ###
+    ### Export the quiz, question groups and questions ###
     
     # This list will hold tuples of objects with a "isRandomOrder()" method 
     # and the <item> elements that have been generated for them.

@@ -53,7 +53,7 @@ class ECQCorrectAnswer(ECQSelectionAnswer):
                 widget=TextAreaWidget(
                     label='Comment',
                     label_msgid='answer_comment_label',
-                    description='A comment on the answer. If the test '
+                    description='A comment on the answer. If the quiz '
                     'is set to "instant feedback", '
                     'the candidate will see this text in case his/her '
                     'answer was wrong.',

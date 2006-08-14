@@ -225,7 +225,7 @@
       tal:attributes="tabindex tabindex/next;"
       i18n:attributes="value"
       />
-     <!-- Delete Button (Test Owner and Managers only) -->
+     <!-- Delete Button (Quiz Owner and Managers only) -->
      <tal:if_manager condition="python:here.userIsManager(member)">
       <input class="context"
        tabindex="#"
@@ -240,9 +240,9 @@
     </div>
    </form>
    
-   <!-- The individual tests -->
+   <!-- The individual quizzes -->
    <tal:suppress condition="python: submitters and False">
-    <h2 i18n:translate="all_tests">All Tests</h2>
+    <h2 i18n:translate="all_tests">All Quizzes</h2>
     <tal:repeat repeat="bodyRow python:bodyRows">
      <tal:define define="
       candidateId   python:bodyRow[0];
@@ -273,9 +273,9 @@
     </tal:repeat>
    </tal:suppress>
    
-   <!-- Nobody has taken this test -->
+   <!-- Nobody has taken this quiz -->
    <p tal:condition="not: bodyRows" i18n:translate="no_results">
-    There are no results for this test.
+    There are no results for this quiz.
    </p>
    <!-- Navigation -->
    <!--div metal:use-macro="here/batch_macros/macros/navigation" /-->

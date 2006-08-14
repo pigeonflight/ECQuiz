@@ -32,7 +32,7 @@ from tools import *
 
 
 class ECQFolder(ATFolder):
-    """An ATFolder that calls the MCTest method [syncResults] when
+    """An ATFolder that calls the ECQuiz method [syncResults] when
     something happens that might invalidate existing result objects."""
     schema = ATFolderSchema.copy()
     __implements__ = (ATFolder.__implements__)
@@ -54,7 +54,7 @@ class ECQFolder(ATFolder):
     """Declaring 'folderlistingFolderContents' as protected prevents
     the answers from being listed if someone without
     PERMISSION_INTERROGATOR tries to call the 'base_view' template for
-    a derived type (like test or question group).
+    a derived type (like quiz or question group).
     """
     #security.declareProtected(PERMISSION_INTERROGATOR,
     #                          'folderlistingFolderContents')

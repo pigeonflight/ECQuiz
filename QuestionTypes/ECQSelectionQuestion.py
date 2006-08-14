@@ -95,7 +95,7 @@ class ECQSelectionQuestion(ECQBaseQuestion):
                     label='Number of Random Answers',
                     label_msgid='number_of_random_answers_label',
                     description='The number of answers which are randomly '
-                    'selected when a new test is generated for a candidate. '
+                    'selected when a new quiz is generated for a candidate. '
                     '(This only works if &quot;Randomize Answer Order&quot; '
                     'is checked.)  A value &lt;= 0 means that all answers '
                     'will be used.',
@@ -124,7 +124,7 @@ class ECQSelectionQuestion(ECQBaseQuestion):
     
     security.declarePrivate('makeNewTest')
     def makeNewTest(self, candidateResult, suMode):
-        """ generate a new test """
+        """generate a new quiz"""
         allAnswers = self.contentValues()
         if self.isRandomOrder() and (not suMode):
             # use random order

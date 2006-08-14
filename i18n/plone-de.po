@@ -20,13 +20,13 @@ msgstr ""
 msgid "A multiple-choice question."
 msgstr "Eine Multiple-Choice-Frage."
 
-msgid "A multiple-choice test"
-msgstr "Ein Multiple-Choice-Test"
+msgid "An online quiz."
+msgstr "Ein Online-Test."
 
 msgid "A question that allows the candidate to write a text answer."
 msgstr "Eine Textfrage."
 
-msgid "A reference to a question or a question group from another test."
+msgid "A reference to a question or a question group from another quiz."
 msgstr "Eine Referenz auf eine Frage aus einem anderen Test."
 
 msgid "Base Answer"
@@ -64,18 +64,18 @@ msgstr "MC-Antwort"
 msgid "MC Question"
 msgstr "MC-Frage"
 
-msgid "MC Question Group"
-msgstr "MC-Fragegruppe"
+msgid "Question Group"
+msgstr "Fragegruppe"
 
-msgid "MC Reference"
-msgstr "MC-Referenz"
+msgid "Reference"
+msgstr "Referenz"
 
-msgid "MC Result"
-msgstr "Testergebnis"
+msgid "Result"
+msgstr "Ergebnis"
 
 # The type names and descriptions
-msgid "MC Test"
-msgstr "MC-Test"
+msgid "Quiz"
+msgstr "Quiz"
 
 msgid "Not Submitted"
 msgstr "Nicht eingereicht"
@@ -123,7 +123,7 @@ msgid "description_edit_mcreference"
 msgstr "Hier können Sie eine Referenz auf eine Frage oder eine Fragegruppe aus einem anderen  Test erstellen."
 
 msgid "description_edit_mctest"
-msgstr "Ein Multiple-Choice-Test"
+msgstr "Ein Online-Test."
 
 # Keep this comment at the end of the file
 

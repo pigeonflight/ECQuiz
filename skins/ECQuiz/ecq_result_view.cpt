@@ -39,8 +39,8 @@
    
    <tal:if_invalid condition="invalid">
     <p i18n:translate="invalid">
-     The test was modified after these answers had been submitted. These
-     test results are therefore invalid.
+     The quiz was modified after these answers had been submitted. These quiz
+     results are therefore invalid.
     </p>
    </tal:if_invalid>
 
@@ -126,7 +126,7 @@
      <tal:if_not_submitted condition="not: atLeastSubmitted">
       <!-- FIXME -->
       <p i18n:translate="test_not_submitted">
-       This test has not been submitted yet.
+       This quiz has not been submitted yet.
       </p>
      </tal:if_not_submitted>
     </tal:if_show_feedback>

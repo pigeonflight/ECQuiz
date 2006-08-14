@@ -117,7 +117,7 @@ class ECQBaseQuestion(ECQFolder):
     
     security.declarePrivate('makeNewTest')
     def makeNewTest(self, candidateResult, suMode):
-        """generate a new test"""
+        """generate a new quiz"""
         # This is just to register the question with result object
         candidateResult.setSuggestedAnswer(self, None)
     

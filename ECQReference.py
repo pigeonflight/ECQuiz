@@ -32,7 +32,7 @@ from tools import getParent, log, registerTypeLogged
 
 
 class ECQReference(BaseContent):
-    """A reference to a question or a question group from another test."""
+    """A reference to a question or a question group from another quiz."""
     schema = BaseSchema + Schema((
         ReferenceField('reference',
                        #allowed_types = (),
@@ -41,7 +41,7 @@ class ECQReference(BaseContent):
                        required = True,
                        relationship = 'alter_ego',
                        widget = ReferenceBrowserWidget(
-                           description='Select a question or a question group from another test.',
+                           description='Select a question or a question group from another quiz.',
                            description_msgid='reference_tool_tip',
                            i18n_domain=I18N_DOMAIN,
                            label='Reference',
@@ -55,7 +55,7 @@ class ECQReference(BaseContent):
     
     meta_type = 'ECQReference'       # zope type name
     portal_type = meta_type          # plone type name
-    archetype_name = 'ECQ Reference' # friendly type name
+    archetype_name = 'Reference'     # friendly type name
 
     # Use the portal_factory for this type.  The portal_factory tool
     # allows users to initiate the creation objects in a such a way
@@ -72,7 +72,8 @@ class ECQReference(BaseContent):
     
     security = ClassSecurityInfo()
 
-    typeDescription = "Using this form, you can create a reference to a question or a question group from another test."
+    typeDescription = "Using this form, you can create a reference " \
+                      "to a question or a question group from another quiz."
     typeDescMsgId = 'description_edit_mcreference'
 
     def getAllowedRefTypes(self, *args, **kwargs):

@@ -62,9 +62,9 @@ msgstr "Zurück"
 msgid "Repeat"
 msgstr "Wiederholen"
 
-#. Default: Submit Test
+#. Default: Submit Quiz
 #: skins/llsMultipleChoice/test_view.pt
-msgid "Submit Test"
+msgid "Submit Quiz"
 msgstr "Test einreichen"
 
 #. Default: Upload
@@ -572,7 +572,7 @@ msgid "instant_feedback_tool_tip"
 msgstr "Wenn die Kandidaten ihre Test-Ergebnisse sofort sehen sollen, wählen Sie diese Option aus."
 
 # Original:
-#. Default: The test was modified after these answers had been submitted. These test results are therefore invalid.
+#. Default: The quiz was modified after these answers had been submitted. These test results are therefore invalid.
 #: ./skins/llsMultipleChoice/result_view.pt, 41
 msgid "invalid"
 msgstr "Der Test wurde geändert, nachdem diese Lösungen eingereicht wurden. Diese Testergebnisse sind daher ungültig."
@@ -1211,7 +1211,7 @@ msgid "test_results_score"
 msgstr "Punktzahl"
 
 #. <span i18n:translate="test_taken"
-#. tal:omit-tag="">You have already taken this test.
+#. tal:omit-tag="">You have already taken this quiz.
 #. </span>
 msgid "test_taken"
 msgstr "Sie haben diesen Test bereits absolviert."

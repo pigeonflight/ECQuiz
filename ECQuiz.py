@@ -183,12 +183,11 @@ class EvaluationScriptsWidget(TypesWidget):
 
 
 class ECQuiz(ECQAbstractGroup):
-    """A multiple-choice test"""
+    """An online quiz."""
     
-    """This is the main class of the 'ECQuiz' Product.
-    A multiple choice test is basically a folder that contains 
-    questions and groups of questions, i.e. folders that
-    contain questions."""
+    """This is the main class of the 'ECQuiz' Product.  An ECQuiz is
+    basically a folder that contains questions and groups of
+    questions, i.e. folders that contain questions."""
     
     # format: [file extension, column delimiter, row delimiter, 
     # start of text delimiter, end of text delimiter, escape char]
@@ -203,7 +202,7 @@ class ECQuiz(ECQAbstractGroup):
             BooleanField('instantFeedback',
                          # Instant feedback means that the candidate will see
                          # their results immediately after submitting their
-                         # test.
+                         # quiz.
                          required=False,
                          default=0,
                          accessor='isInstantFeedback',
@@ -225,7 +224,7 @@ class ECQuiz(ECQAbstractGroup):
                              label='Allow Repetition',
                              label_msgid='allow_repetition_label',
                              description='If you want to allow repeated '
-                             'submission of the test check this box.',
+                             'submission of the quiz check this box.',
                              description_msgid='allow_repetition_tool_tip',
                              i18n_domain=I18N_DOMAIN),
                          read_permission=PERMISSION_STUDENT,
@@ -251,7 +250,7 @@ class ECQuiz(ECQAbstractGroup):
                              label='Allow Navigation',
                              label_msgid='one_per_page_nav_label',
                              description="Let's candidates answer questions "
-                             "in an arbitrary order when the test is in "
+                             "in an arbitrary order when the quiz is in "
                              "one-question-per-page-mode.",
                             description_msgid='one_per_page_nav_tool_tip',
                              i18n_domain=I18N_DOMAIN),
@@ -332,7 +331,7 @@ class ECQuiz(ECQAbstractGroup):
     suppl_views = None
     default_view = immediate_view = 'ecq_quiz_view'
 
-    typeDescription = "A multiple-choice test"
+    typeDescription = "An online quiz."
     typeDescMsgId = 'description_edit_mctest'
     
     aliases = updateAliases(ECQAbstractGroup, {
@@ -380,7 +379,7 @@ class ECQuiz(ECQAbstractGroup):
     # This attribute is evaluated by the Extensions/Install.py script.
     use_portal_factory = True
 
-    # Store the i18n domain in an attribute of the test so that we
+    # Store the i18n domain in an attribute of the quiz so that we
     # don't have to hardcode it in scripts (Python) but can acquire it
     # instead.
     i18n_domain = I18N_DOMAIN
@@ -442,7 +441,7 @@ class ECQuiz(ECQAbstractGroup):
     security.declarePrivate('getReferencedObjects')
     def getReferencedObjects(self):
         """Collect all objects referenced by a ECQReference
-        object within this test (and its ECQGroups).
+        object within this quiz (and its ECQGroups).
         """
         tmp = self.contentValues()
         all = list(tmp)
@@ -476,11 +475,11 @@ class ECQuiz(ECQAbstractGroup):
 
     def __bobo_traverse__(self, REQUEST, name):
         """Through this function, images, files, etc. that were
-        referenced by ECQReference objects in the test get
+        referenced by ECQReference objects in the quiz get
         found.
 
-        It works by searching for the files in this test ('self') and
-        in every test from which some question or question group was
+        It works by searching for the files in this quiz ('self') and
+        in every quiz from which some question or question group was
         referenced.
         """
         try:
@@ -531,7 +530,7 @@ class ECQuiz(ECQAbstractGroup):
     def manage_afterAdd(self, item, container):
         ECQAbstractGroup.manage_afterAdd(self, item, container)
         # Add local role 'Manager' for the creator so that users can
-        # create tests without having to be Manager
+        # create quizzes without having to be Manager
         creator = self.Creator()
         roles = list(self.get_local_roles_for_userid(creator))
         if 'Manager' not in roles:
@@ -548,7 +547,7 @@ class ECQuiz(ECQAbstractGroup):
         #     allowed to view the assignment.
         #
         # Create a user-defined role ROLE_RESULT_GRADER.  The owner of
-        # a test can use this role to delegate grading to other users.
+        # a quiz can use this role to delegate grading to other users.
         
         for role in [ROLE_RESULT_VIEWER, ROLE_RESULT_GRADER]:
             if role not in self.valid_roles():
@@ -587,7 +586,7 @@ class ECQuiz(ECQAbstractGroup):
 
 
     def hasParticipated(self, candidateId):
-        """ Find out if a test has been generated for candidate
+        """ Find out if a quiz has been generated for candidate
         candidateId.
         """
         return not (not self.getResults(candidateId))
@@ -595,7 +594,7 @@ class ECQuiz(ECQAbstractGroup):
         
     def hasSubmitted(self, candidateId):
         """ Find out if a candidate has actually submitted/taken this
-        test."""
+        quiz."""
         # log("ECQuiz.hasSubmitted():\n")
         for item in self.getResults(candidateId):
             if item.getWorkflowState() in ['pending', 'graded', 'superseded']:
@@ -606,7 +605,7 @@ class ECQuiz(ECQAbstractGroup):
     # security.declareProtected(PERMISSION_INTERROGATOR, 'getSubmitterIds')
     def getSubmitterIds(self):
         """Return the IDs of the candidates who have actually
-        submitted/taken this test.
+        submitted/taken this quiz.
         """
         d = {}
         for item in self.getResults():
@@ -617,7 +616,7 @@ class ECQuiz(ECQAbstractGroup):
     
     # security.declareProtected(PERMISSION_INTERROGATOR, 'getParticipantIds')
     def getParticipantIds(self):
-        """ Get the IDs of all the candidates for whom a test has been
+        """ Get the IDs of all the candidates for whom a quiz has been
         generated.
         """
         d = {}
@@ -678,7 +677,7 @@ class ECQuiz(ECQAbstractGroup):
 
     security.declareProtected(PERMISSION_INTERROGATOR, 'maybeMakeNewTest')
     def maybeMakeNewTest(self):
-        """If the candidate hasn't seen this test yet, generate a new
+        """If the candidate hasn't seen this quiz yet, generate a new
         one.  Otherwise, do nothing."""
         result = self.getCurrentResult()
         if result is None:
@@ -728,8 +727,8 @@ class ECQuiz(ECQAbstractGroup):
 #         """ Routine for uploading custom evaluation scripts.
         
 #             The scripts are stored in the ObjectField
-#             'evaluationScripts' of the test instance. (That implies
-#             every test instance can have its own evaluation script.)
+#             'evaluationScripts' of the quiz instance. (That implies
+#             every quiz instance can have its own evaluation script.)
             
 #             @param portal_type The portal type of the class you
 #                    want to customize, e.g. 'ECGroup' or 'ECQuiz'.
@@ -770,7 +769,7 @@ class ECQuiz(ECQAbstractGroup):
 #                 domain  = I18N_DOMAIN,
 #                 default = 'The script does not define a function called "%s"')\
 #                 % CUSTOM_EVALUATION_FUNCTION_NAME
-#         # Save the script in the test's 'evaluationScripts' dictionary
+#         # Save the script in the quiz's 'evaluationScripts' dictionary
 #         evaluationScripts = self.getEvaluationScripts()
 #         evaluationScripts[portal_type] = funString
 #         self.setEvaluationScripts(evaluationScripts)
@@ -781,7 +780,7 @@ class ECQuiz(ECQAbstractGroup):
         
     security.declareProtected(PERMISSION_INTERROGATOR, 'processQTIImport')
     def processQTIImport(self, file):
-        """ Routine for uploading tests. 
+        """ Routine for uploading quizzes.
         
             @param file A file containing a QTI assessmentItem or
                     a QTI package in a zip file.
@@ -838,7 +837,7 @@ class ECQuiz(ECQAbstractGroup):
         
     security.declareProtected(PERMISSION_INTERROGATOR, 'processQTIImport')
     def processQTIExport(self):
-        """ Routine for downloading tests.
+        """ Routine for downloading quizzes.
         """
         errors = MyStringIO()
         package = exportPackage(self, errors)
@@ -964,7 +963,7 @@ class ECQuiz(ECQAbstractGroup):
         # (i.e. in [participants])
         submitters = [c for c in self.getSubmitterIds()
                       if c in participants]
-        # Participants who have not submitted their tests
+        # Participants who have not submitted their quizzes
         nonSubmitters = [c for c in participants
                          if c not in submitters]
         #log("participants: %s\nsubmitters: %s\nnonSubmitters: %s\n\n"
@@ -995,7 +994,7 @@ class ECQuiz(ECQAbstractGroup):
                 possiblePoints = self.getPossiblePoints(result)
                 if state != 'unsubmitted':
                     timeFinished = formatTime( result.getTimeFinish() )
-                    # If [member] is the owner of the current test,
+                    # If [member] is the owner of the current quiz,
                     # return the points only if he explicitly has the
                     # permission to see them.
                     if ((participantId != memberId)
@@ -1043,7 +1042,7 @@ class ECQuiz(ECQAbstractGroup):
                 
                 [CandidateID, Candidate_Name] followed by either -, 0 or 1 for
                 each answer to each question in each question group in the
-                test.
+                quiz.
                 
                 "-" means the candidate did not have this answer presented to
                 him/her as a possibility, "0 "means he/she did see this answer
@@ -1229,7 +1228,8 @@ class ECQuiz(ECQAbstractGroup):
             result0 = None
 
         for group in [self] + self.getQuestionGroups():
-            header.append((group.title_or_id(), group.portal_type,
+            header.append((group.title_or_id(),
+                           group.archetype_name,
                            group.reference_url()))
             if result0:
                 maxScore = group.getPossiblePoints(result0)
@@ -1240,7 +1240,8 @@ class ECQuiz(ECQAbstractGroup):
             allQuestions = group.getAllQuestions()
             
             for question in allQuestions:
-                header.append((question.title_or_id(), question.portal_type,
+                header.append((question.title_or_id(),
+                               question.archetype_name,
                                question.reference_url()))
                 maxScores.append(question.getPoints())
         
@@ -1459,7 +1460,7 @@ class ECQuiz(ECQAbstractGroup):
             
     security.declarePrivate('computeCandidatePoints')
     def computeCandidatePoints(self, result):
-        """ Return how many points the candidate got for this test.
+        """ Return how many points the candidate got for this quiz.
             
             @param candidateId the user ID of the candidate whose
             points you want to know.
@@ -1616,7 +1617,7 @@ class ECQuiz(ECQAbstractGroup):
     # ECQAbstractGroup
     security.declarePublic('isPublic')
     def isPublic(self):
-        """ Determine whether this test has been published. """
+        """ Determine whether this quiz has been published. """
         # log('ECQuiz.isPublic():\n')
         try:
             user = getSecurityManager().getUser()

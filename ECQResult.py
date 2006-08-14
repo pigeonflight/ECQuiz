@@ -107,10 +107,10 @@ class QuestionResult(object):
 
 
 class ECQResult(ATCTContent, HistoryAwareMixin):
-    """A test result."""
+    """A quiz result."""
 
     """ This class contains all the candidate-specific information for
-        a multiple choice test.  They are:
+        an ECQuiz.  They are:
 
         questionResults:
 
@@ -128,16 +128,16 @@ class ECQResult(ATCTContent, HistoryAwareMixin):
         questionUIDs:
 
           A list of IDs of the questions that the candidate saw in
-          his/her test.  Unfortunately 'questionResults.keys()' cannot
+          their quiz.  Unfortunately 'questionResults.keys()' cannot
           be used since it does not preserve the order of the UIDs.
                                    
         timeStart:
 
-          The time when the candidate first saw the test.
+          The time when the candidate first saw the quiz.
         
         timeFinish:
 
-          The time when the candidate submitted his/her test.
+          The time when the candidate submitted their quiz.
     """    
     
     schema = ATContentTypeSchema.copy() + Schema((
@@ -275,7 +275,7 @@ class ECQResult(ATCTContent, HistoryAwareMixin):
     security.declareProtected(PERMISSION_RESULT_READ, 'getCandidateAnswer')
     def getCandidateAnswer(self, question):
         """ Returns the candidate's answer to the question.  If this
-        question was not part of his/her test, an exception will be
+        question was not part of their quiz, an exception will be
         raised.
         """
         qr =  self.getQR("getCandidateAnswer", question)
@@ -626,7 +626,7 @@ class ECQResult(ATCTContent, HistoryAwareMixin):
                 retVal.append({'src':'ec_shared.png', 
                                'alt':'Released',
                                'alt_msgid':'label_released',
-                               'title':'These test results have been released for viewing',
+                               'title':'These quiz results have been released for viewing',
                                'title_msgid':'tooltip_released_icon',
                                })
         

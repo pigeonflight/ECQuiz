@@ -439,7 +439,7 @@ def setupWorkflow(wf):
 
     tdef = wf.transitions['invalidate']
     tdef.setProperties(
-        title='Invalidate result because the test has changed.',
+        title='Invalidate a result because the quiz has changed.',
         new_state_id='invalid',
         trigger_type=1,
         script_name='',

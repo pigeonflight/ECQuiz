@@ -27,7 +27,7 @@
 # Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 """This script is called when a candidate submits his/her ECQuiz,
-i.e. presses the 'Submit' button of the test form in ecq_quiz_view.pt.
+i.e. presses the 'Submit' button of the quiz form in ecq_quiz_view.pt.
 """
 
 from AccessControl import getSecurityManager
@@ -136,7 +136,7 @@ else:
     # Submission not allowed.
     msg = context.translate(msgid   = 'not_submit_again',
                             domain  = I18N_DOMAIN,
-                            default = 'You may not submit the test again.')
+                            default = 'You may not submit the quiz again.')
 
 # Disable "undo" by the candidate
 ecq_tool.makeTransactionUnundoable()

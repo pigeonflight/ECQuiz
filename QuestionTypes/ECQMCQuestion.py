@@ -46,9 +46,9 @@ from Products.ECQuiz.AnswerTypes.ECQMCAnswer import ECQMCAnswer
 class ECQMCQuestion(ECQSelectionQuestion, ECQPointsQuestion):
     """A multiple-choice question."""
 
-    """ This class represents a question in a multiple-choice test.
-        The answers can be either right or wrong. The candidate has to select
-        which answer(s) he/she thinks is (are) correct.
+    """ This class represents a question in an ECQuiz.  The answers
+    can be either right or wrong.  The candidate has to select which
+    answer(s) he/she thinks is (are) correct.
     """
 
     schema = ECQSelectionQuestion.schema.copy() + ECQPointsQuestion.schema.copy()
@@ -127,7 +127,7 @@ class ECQMCQuestion(ECQSelectionQuestion, ECQPointsQuestion):
                                  [self, result, givenAnswerIds])
         else: # default
 
-            # The function selected in the edit tab of the test
+            # The function selected in the edit tab of the quiz
             evalFun = parent.getScoringFunction()
             
             if evalFun == 'cruel': # A.K.A. 'all or nothing'

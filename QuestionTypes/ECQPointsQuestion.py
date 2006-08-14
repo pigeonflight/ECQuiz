@@ -42,7 +42,7 @@ from Products.validation.interfaces import ivalidator
 
 class ClearPointsCache:
     """A dummy validator that clears cached points for a question (and
-    its question group and the test) from result objects."""
+    its question group and the quiz) from result objects."""
     __implements__ = (ivalidator,)
     
     def __init__(self, name):

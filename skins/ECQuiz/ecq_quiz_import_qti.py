@@ -35,7 +35,7 @@ RESPONSE = REQUEST.RESPONSE
 
 I18N_DOMAIN = context.i18n_domain
 
-# make sure the test is fully created before we import.  otherwise we
+# make sure the quiz is fully created before we import.  otherwise we
 # might get AttributeErrors after the import
 urlParts = context.absolute_url().split('/')
 if (len(urlParts) >= 3) and (urlParts[-3] == 'portal_factory'):
