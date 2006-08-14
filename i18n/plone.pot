@@ -38,6 +38,7 @@ msgstr ""
 msgid "MC Test"
 msgstr ""
 
+# Original: An online quiz.
 msgid "description_edit_mctest"
 msgstr ""
 
@@ -98,6 +99,8 @@ msgstr ""
 msgid "MC Reference"
 msgstr ""
 
+# Original: "Using this form, you can create a reference " \
+#           "to a question or a question group from another quiz."
 msgid "description_edit_mcreference"
 msgstr ""
 

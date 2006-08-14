@@ -18,7 +18,7 @@ msgstr ""
 "X-Is-Fallback-For: \n"
 
 #. <span i18n:translate="test_taken" 
-#.     tal:omit-tag="">You have already taken this test.
+#.     tal:omit-tag="">You have already taken this quiz.
 #. </span>
 msgid "test_taken"
 msgstr ""
@@ -41,7 +41,8 @@ msgid "Repeat"
 msgstr ""
 
 #. <p tal:condition="isEmpty" i18n:translate="no_questions">
-#.     This test contains no questions.</p>
+#.  This quiz contains no questions.
+#. </p>
 msgid "no_questions"
 msgstr ""
 
@@ -151,7 +152,7 @@ msgid "results_of"
 msgstr ""
 
 #. <p tal:condition="not: participants" i18n:translate="no_graded_results">
-#.     There are no graded results for this test.
+#.  There are no graded results for this quiz.
 #. </p>
 msgid "no_graded_results"
 msgstr ""
@@ -221,19 +222,11 @@ msgstr ""
 msgid "exam_mode_tool_tip"
 msgstr ""
 
-#. IntegerField("numberOfRandomQuestions",
-#.    required=False,
-#.    default=-1,
-#.    widget=IntegerWidget(
-#.        label='Number of Random Questions',
-#.        label_#msgid='number_of_random_questions_label',
-#.        description='The number of questions which are randomly selected when a new test is '#.        + 'generated for a candidate. (This only works if &quot;Randomize Question Order&quot; '#.        + 'is checked.) A value &lt;= 0 means that all questions will be used.',
-#.        description_#msgid='number_of_random_questions_tool_tip',
-#.        i18n_domain='llsMultipleChoice'),
-#. ),
+# Original: Number of Random Questions
 msgid "number_of_random_questions_label"
 msgstr ""
 
+# Original: The number of questions which are randomly selected when a new quiz is generated for a candidate. (This only works if &quot;Randomize Question Order&quot; is checked.) A value &lt;= 0 means that all questions will be used.
 msgid "number_of_random_questions_tool_tip"
 msgstr ""
 
@@ -298,19 +291,11 @@ msgstr ""
 msgid "points_tool_tip"
 msgstr ""
 
-#. IntegerField("numberOfRandomAnswers",
-#.    default=-1,
-#.    read_permission=PERMISSION_INTERROGATOR,
-#.    widget=IntegerWidget(
-#.        label='Number of Random Answers',
-#.        label_#msgid='number_of_random_answers_label',
-#.        description='The number of answers which are randomly selected when a new test is '#.        + 'generated for a candidate. (This only works if &quot;Randomize Answer Order&quot; '#.        + 'is checked.)  A value &lt;= 0 means that all answers will be used.',
-#.        description_#msgid='number_of_random_answers_tool_tip',
-#.        i18n_domain='llsMultipleChoice'),
-#. ),
+# Original: Number of Random Answers
 msgid "number_of_random_answers_label"
 msgstr ""
 
+# Original: The number of answers which are randomly selected when a new quiz is generated for a candidate. (This only works if &quot;Randomize Answer Order&quot; is checked.)  A value &lt;= 0 means that all answers will be used.
 msgid "number_of_random_answers_tool_tip"
 msgstr ""
 
@@ -350,18 +335,11 @@ msgstr ""
 msgid "score"
 msgstr ""
 
-#. TextField('comment',
-#.    searchable=True,
-#.    required=False,
-#.    widget=TextAreaWidget(
-#.        label='Comment',
-#.        label_#msgid='answer_comment_label',
-#.        description='A comment on the answer. If the test is set to "instant feedback", ' #.            + 'the candidate will see this text in case his/her answer was wrong.',
-#.        description_#msgid='answer_comment_tool_tip',
-#.        i18n_domain='llsMultipleChoice'),
+# Original: Comment
 msgid "answer_comment_label"
 msgstr ""
 
+# Original: A comment on the answer. If the quiz is set to "instant feedback", the candidate will see this text in case his/her answer was wrong.
 msgid "answer_comment_tool_tip"
 msgstr ""
 
@@ -412,7 +390,7 @@ msgstr ""
 msgid "Export"
 msgstr ""
 
-#. <h2 i18n:translate="all_tests">All Tests</h2>
+#. <h2 i18n:translate="all_tests">All Quizzes</h2>
 msgid "all_tests"
 msgstr ""
 
@@ -504,20 +482,11 @@ msgstr ""
 msgid "instant_feedback_tool_tip"
 msgstr ""
 
-#. BooleanField('allowRepetition',
-#.            required=False,
-#.            default=0,
-#.            accessor='isAllowRepetition',
-#.            widget=BooleanWidget(
-#.                label='Allow Repetition',
-#.                label_#msgid='allow_repetition_label',
-#.                description='If you want to allow repeated submission of the test'#.                + 'check this box.',
-#.                description_#msgid='allow_repetition_tool_tip',
-#.                i18n_domain='llsMultipleChoice'),
-#. ),
+# Original: Allow Repetition
 msgid "allow_repetition_label"
 msgstr ""
 
+# Original: If you want to allow repeated submission of the quiz check this box.
 msgid "allow_repetition_tool_tip"
 msgstr ""
 
@@ -641,7 +610,9 @@ msgstr ""
 msgid "answers_saved"
 msgstr ""
 
-#. msg = context.translate(#.     #msgid   = 'not_submit_again',#.     domain  = I18N_DOMAIN,#.     default = 'You may not submit the test again.')
+#. msg = context.translate(msgid   = 'not_submit_again',
+#.                         domain  = I18N_DOMAIN,
+#.                         default = 'You may not submit the quiz again.')
 #: Script (Python) "submitTest"
 msgid "not_submit_again"
 msgstr ""
@@ -879,7 +850,7 @@ msgstr ""
 msgid "reference_label"
 msgstr ""
 
-# Original: "Select a question or a question group from another test."
+# Original: "Select a question or a question group from another quiz."
 #: MultipleChoiceReference.py
 msgid "reference_tool_tip"
 msgstr ""
@@ -925,7 +896,7 @@ msgstr ""
 msgid "Previous"
 msgstr ""
 
-# Original: Do you really want to submit this test?
+# Original: Do you really want to submit this quiz?
 #: skins/llsMultipleChoice/test_view.pt
 msgid "alert_really_submit"
 msgstr ""
@@ -935,7 +906,7 @@ msgstr ""
 msgid "one_per_page_nav_label"
 msgstr ""
 
-# Original: Lets candidates answer questions in an arbitrary order when the test is in one-question-per-page-mode.
+# Original: Let's candidates answer questions in an arbitrary order when the quiz is in one-question-per-page-mode.
 #: MultipleChoiceTest.py
 msgid "one_per_page_nav_tool_tip"
 msgstr ""
@@ -970,7 +941,7 @@ msgstr ""
 msgid "label_released"
 msgstr ""
 
-# Original: "These test results have been released for viewing"
+# Original: "These quiz results have been released for viewing."
 #: Result.py
 msgid "tooltip_released_icon"
 msgstr ""
@@ -986,12 +957,12 @@ msgid "grade"
 msgstr ""
 
 #: ./skins/llsMultipleChoice/result_view.pt, 128
-# Original: This test has not been submitted yet.
+# Original: This quiz has not been submitted yet.
 msgid "test_not_submitted"
 msgstr ""
 
 #: ./skins/llsMultipleChoice/test_results.pt, 276
-# Original: There are no results for this test.
+# Original: There are no results for this quiz.
 msgid "no_results"
 msgstr ""
 
@@ -1016,7 +987,7 @@ msgid "minimum_score_not_empty_qti"
 msgstr ""
 
 #: ./skins/llsMultipleChoice/result_view.pt, 41
-# Original: The test was modified after these answers had been submitted. These test results are therefore invalid.
+# Original: The quiz was modified after these answers had been submitted. These quiz results are therefore invalid.
 msgid "invalid"
 msgstr ""
 
@@ -1111,7 +1082,7 @@ msgid "label_action_view"
 msgstr ""
 
 #: ./skins/llsMultipleChoice/exportTest.py, 59
-# Original: An an unexpected has occurred.  The test could not be exported.
+# Original: An an unexpected has occurred. The quiz could not be exported.
 msgid "unexpected_export_error"
 msgstr ""
 

@@ -58,7 +58,7 @@ if (msg and (not ignoreErrors)) or (package is None):
         msg = context.translate(
             msgid   = 'unexpected_export_error',
             domain  = I18N_DOMAIN,
-            default = 'An an unexpected has occurred.  '
+            default = 'An an unexpected has occurred. '
             'The quiz could not be exported.')
     target = context.getActionInfo('object/import_export')['url']
     RESPONSE.redirect('%s?portal_status_message=%s' % (target, msg))

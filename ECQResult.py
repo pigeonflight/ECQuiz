@@ -626,7 +626,7 @@ class ECQResult(ATCTContent, HistoryAwareMixin):
                 retVal.append({'src':'ec_shared.png', 
                                'alt':'Released',
                                'alt_msgid':'label_released',
-                               'title':'These quiz results have been released for viewing',
+                               'title':'These quiz results have been released for viewing.',
                                'title_msgid':'tooltip_released_icon',
                                })
         
