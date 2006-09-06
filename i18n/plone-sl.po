@@ -1,10 +1,12 @@
-# Gettext Message File for ECQuiz.
 # -*- coding: utf-8 -*-
+# translation of plone-sl.po to Slovenščina
+# Matjaž Jeran (matematik) <matjaz.jeran@amis.net>, 2006.
+# Gettext Message File for ECQuiz.
 msgid ""
 msgstr ""
-"Project-Id-Version: ECQuiz\n"
+"Project-Id-Version: plone-sl\n"
 "POT-Creation-Date: 2004-11-25 10:29 +0100\n"
-"PO-Revision-Date: 2006-06-30 18:37 +0200\n"
+"PO-Revision-Date: 2006-09-06 15:14 +0200\n"
 "Last-Translator: Matjaž Jeran (matematik) <matjaz.jeran@amis.net>\n"
 "Language-Team: Slovenščina <sl@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -13,21 +15,21 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "Language-Code: sl\n"
 "Language-Name: Slovenščina\n"
-"Preferred-Encodings: utf-8 latin2\n"
+"Preferred-Encodings: utf-8 latin-2\n"
 "Domain: plone\n"
 "X-Generator: KBabel 1.11.2\n"
 
 msgid "A multiple-choice question."
-msgstr ""
+msgstr "Vprašanje z več možnimi odgovori."
 
 msgid "A multiple-choice test"
-msgstr ""
+msgstr "Preizkus z več možnimi izbirami"
 
 msgid "A question that allows the candidate to write a text answer."
-msgstr ""
+msgstr "Vprašanje, ki dovoljuje kandidatu odgovor v besedilni obliki."
 
 msgid "A reference to a question or a question group from another test."
-msgstr ""
+msgstr "Sklicevanje na vprašanje ali skupino vprašanj iz drugega preizkusa."
 
 msgid "Base Answer"
 msgstr "Osnovni odgovor"
@@ -39,24 +41,24 @@ msgid "Correct Answer"
 msgstr "Pravilni odgovor"
 
 msgid "Extended Text Question"
-msgstr ""
+msgstr "Razširjeno besedilo vprašanja"
 
 msgid "Grade"
-msgstr ""
+msgstr "Ocena"
 
 # msgid "Pending"
 # msgstr ""
 msgid "Graded"
-msgstr ""
+msgstr "Ocenjeno"
 
 msgid "Groups several questions into a unit."
-msgstr ""
+msgstr "Združimo več vprašanj v enoto"
 
 msgid "Import/Export"
 msgstr "Uvoz/Izvoz"
 
 msgid "Invalid"
-msgstr ""
+msgstr "Neveljavno"
 
 msgid "MC Answer"
 msgstr "Možni odgovor"
@@ -65,13 +67,13 @@ msgid "MC Question"
 msgstr "Vprašanje z več možnimi odgovori"
 
 msgid "MC Question Group"
-msgstr "Skupine vprašanj"
+msgstr "Skupina vprašanj z več možnimi odgovori"
 
 msgid "MC Reference"
-msgstr ""
+msgstr "Sklic na vprašanje z več možnimi odgovori"
 
 msgid "MC Result"
-msgstr ""
+msgstr "Rezultat vprašanja z več odgovori"
 
 # The Type Name
 msgid "MC Test"
@@ -79,7 +81,7 @@ msgstr "Preizkus z več možnimi odgovori"
 
 # Workflow states and actions
 msgid "Not Submitted"
-msgstr ""
+msgstr "Ni oddano"
 
 msgid "Please use XHTML conformant markup."
 msgstr "Prosimo, uporabite značke v skladu z XHTML."
@@ -109,28 +111,27 @@ msgid "Statistics"
 msgstr "Statistika"
 
 msgid "Superseded"
-msgstr ""
+msgstr "Nadomeščen"
 
 msgid "description_edit_extextquestion"
-msgstr ""
+msgstr "Tu vstavite besedilo vprašanja"
 
 msgid "description_edit_mcquestion"
-msgstr ""
+msgstr "Tu vstavite vprašanje z več možnimi odgovori"
 
 msgid "description_edit_mcquestiongroup"
-msgstr ""
+msgstr "Tu vstavite skupino vprašanj"
 
 msgid "description_edit_mcreference"
-msgstr ""
+msgstr "Tu vstavite sklicevanje na druga vprašanja z več možnimi odgovori"
 
 msgid "description_edit_mctest"
-msgstr ""
+msgstr "Sprotni preizkus"
 
 # Keep this comment at the end of the file
-
 # Local variables:
 # mode: apache
-# time-stamp-start: "\"PO-Revision-Date: "
-# time-stamp-end: "\\\\n\""
-# time-stamp-format: "%y-%02m-%02d %02H:%02M"
 # End:
+msgid ""
+msgstr ""
+
