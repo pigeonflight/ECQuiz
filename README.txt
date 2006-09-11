@@ -25,11 +25,13 @@ Installation
  If you have a suitable Zope/Plone installation you can install ECQuiz
  as follows:
 
- 1. Extract the archive into the 'Products' directory of your Zope
-    instance. (You can find out where your Zope instance is installed
-    by opening the Zope Management Interface (ZMI) and going to the
-    Control Panel; the directory listed as 'INSTANCE_HOME' is what
-    you're looking for.)
+ 1. Extract the DataGridField package into the 'Products' directory of
+    your Zope instance.  You can find out where your Zope instance is
+    installed by opening the Zope Management Interface (ZMI) and going
+    to the Control Panel; the directory listed as 'INSTANCE_HOME' is
+    what you're looking for.
+
+ 1. Extract the ECQuiz package into the 'Products' directory.
 
  2. Restart Zope
 
@@ -37,13 +39,23 @@ Installation
     Products" tool under "Site Setup" to install ECQuiz in this Plone
     site.  Alternatively, in the ZMI, you can use the
     'portal_quickinstaller' of your Plone site in which you want to
-    use ECQuiz.
+    use ECQuiz.  In both cases, check the box next to ECQuiz and click
+    "Install".
+
+Migration from LlsMultipleChoice
+
+ ECQuiz is the successor to LlsMultipleChoice.  You can have both
+ products installed at the same time.  To migrate a test from
+ LlsMultipleChoice, export it and then import it into an ECQuiz.  To
+ do this, create a new ECQuiz object by selecting "quiz" from the "add
+ item" menu; select the "import/export" tab, select the exported
+ package file and click "import".
 
 Support
 
-  For questions and discussions about ECAssignmentBox, please join the
-  "eduComponents mailing
-  list":https://listserv.uni-magdeburg.de/mailman/listinfo/educomponents.
+ For questions and discussions about ECAssignmentBox, please join the
+ "eduComponents mailing
+ list":https://listserv.uni-magdeburg.de/mailman/listinfo/educomponents.
 
 Credits
 
@@ -59,6 +71,8 @@ Credits
   set":http://www.famfamfam.com/lab/icons/silk/ by Mark James.  They
   are licensed under a "Creative Commons Attribution 2.5
   License":http://creativecommons.org/licenses/by/2.5/.
+
+  The Slovenian translation was contributed by Matjaž Jeran.
 
 License
 
