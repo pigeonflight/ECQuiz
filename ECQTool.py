@@ -105,12 +105,14 @@ class ECQTool(UniqueObject, SimpleItem):
         return result
 
     def localizeTimeDelta(self, diff):
-        # FIXME: This is a stub
+        """
+        Return the difference between two times in a localizable format.
+        """
         try:
             fmt = self.translate(msgid   ='time_delta_fmt',
                                  domain  = I18N_DOMAIN,
                                  default = '%H:%M:%S')
-            return (datetime(2000, 1, 1) + diff).strftime(fmt)
+            return (datetime(2000, 1, 1) + diff).strftime(str(fmt))
         except:
             return 'error'
 
