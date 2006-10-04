@@ -152,12 +152,14 @@ class DataGridWidgetI18N(DataGridWidget):
         return names
 
 class ColumnI18N(Column):
-    def __init__(self, label, label_msgid=None):
+    def __init__(self, label, label_msgid=None, default=None):
         """ Create a column
         @param label User visible name
         @param label_msgid Message ID that is used to i18n the label
         """
         self.label = label
+        self.default = default
+        
         if label_msgid is None:
             label_msgid = label
         self.label_msgid = label_msgid
@@ -284,6 +286,8 @@ class ECQuiz(ECQAbstractGroup):
                              'scoring_fun_guessing_correction_label'),
                             ('cruel', 'All or Nothing',
                              'scoring_fun_cruel_label'),
+                            ('partial', 'Partial credit',
+                             'scoring_fun_partial_label'),
                             )),
                         widget=SelectionWidget(
                             label='Scoring Function',
@@ -299,10 +303,11 @@ class ECQuiz(ECQAbstractGroup):
             DataGridField('gradingScale',
                           mutator = 'setGradingScale',
                           edit_accessor = 'getGradingScaleForEdit',
-                          columns = ('grade', 'score',),
+                          columns = ('grade', 'gradeinfo', 'score', ),
                           widget = DataGridWidgetI18N(
                               columns = {
                                   'grade' : ColumnI18N('Grade', 'grade'),
+                                  'gradeinfo' : ColumnI18N('Grade info', 'gradeinfo'),
                                   'score' : ColumnI18N('Minimum Score',
                                                        'minscore'),
                                   },
@@ -1597,6 +1602,56 @@ class ECQuiz(ECQAbstractGroup):
                 minScore = pair['score']
                 if (minScore is None) or (points >= minScore):
                     grade = pair['grade']
+                    for conv in int, float:
+                        try:
+                            return conv(grade)
+                        except:
+                            pass
+                    return grade
+        
+        return None
+
+                
+    #security.declarePrivate('')
+    def getCandidateGradeinfo(self, result):
+        # (no doc-string to disable publishing)
+        #
+        # Return the candidate's grade according to the grading scale
+        # or None.
+        
+        points = self.getCandidatePoints(result)
+        if (points is not None) and self.haveGradingScale():
+            scale = []
+            for item in self.getGradingScale():
+                d = dict(item)
+
+                if d['score'].endswith('%'):
+                    num = float((d['score'].split('%'))[0])
+                    f = self.computePossiblePoints(result)/100.0 * num
+                else:
+                    try:
+                        f = float(d['score'])
+                    except ValueError:
+                        f = None
+                d['score'] = f
+                scale.append(d)
+
+            def comp(a, b):
+                as = a['score']
+                bs = b['score']
+                if as is None:
+                    return 1
+                elif bs is None:
+                    return -1
+                else:
+                    return as > bs
+            
+            scale.sort(comp)
+
+            for pair in scale:
+                minScore = pair['score']
+                if (minScore is None) or (points >= minScore):
+                    grade = pair['gradeinfo']
                     for conv in int, float:
                         try:
                             return conv(grade)
