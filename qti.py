@@ -36,6 +36,8 @@ from ECQGroup import ECQGroup
 from QuestionTypes.ECQMCQuestion import ECQMCQuestion
 from AnswerTypes.ECQMCAnswer import ECQMCAnswer
 from QuestionTypes.ECQExtendedTextQuestion import ECQExtendedTextQuestion
+from QuestionTypes.ECQScaleQuestion import ECQScaleQuestion
+from AnswerTypes.ECQScaleAnswer import ECQScaleAnswer
 from tools import createObject, log
 
 # A couple of namespaces used by QTI
@@ -100,6 +102,11 @@ TRUE = u'true'
 FALSE = u'false'
 RESPONSE_DECLARATION = u'responseDeclaration'
 CORRECT_RESPONSE = u'correctResponse'
+MAPPING = u'mapping'
+DEFAULT_VALUE = u'defaultValue'
+MAP_ENTRY = u'mapEntry'
+MAP_KEY = u'mapKey'
+MAPPED_VALUE = u'mappedValue'
 OUTCOME_DECLARATION = u'outcomeDeclaration'
 VALUE = u'value'
 SHUFFLE = u'shuffle'
@@ -133,6 +140,8 @@ GRADING_SCALE = u'gradingScale'
 GRADING_SCALE_ROW = u'gradingScaleRow'
 GRADE = u'grade'
 MIN_SCORE = u'minScore'
+LAYOUT = u'layout'
+TUTOR_GRADED = u'tutorGraded'
 
 # All the interaction types we can import
 SUPPORTED_INTERACTION_TYPES = [CHOICE_INTERACTION, EXTENDED_TEXT_INTERACTION]
@@ -182,7 +191,7 @@ def getElementsByTagNameFlat(node, tagName):
     """
     ret = []
     tagNameSplit = tagName.split(u':')
-    if (len(tagNameSplit) > 1):
+    if len(tagNameSplit) > 1:
         [nsPrefix, localName] = tagNameSplit
     else:
         nsPrefix = None
@@ -545,14 +554,14 @@ def getStrVal(parent, elemName):
     return retVal
 
 
-def importChoiceInteraction(abstractGroup,
-                            choiceInteractionElement,
-                            correctResponseValueList,
-                            errors,
-                            id=None, 
-                            toolInfo=None):
-    """ Creates a ECQMCQuestion from a QTI <choiceInteraction> and
-        imports it into "abstractGroup".
+def importMCQuestion(abstractGroup,
+                     choiceInteractionElement,
+                     correctResponseValueList,
+                     errors,
+                     id=None, 
+                     toolInfo=None):
+    """Creates an ECQMCQuestion from a QTI <choiceInteraction> and
+    imports it into `abstractGroup'.
 
         @param abstractGroup An instanc of
             ECQAbstractGroup, i.e. a ECQuiz or a
@@ -581,6 +590,7 @@ def importChoiceInteraction(abstractGroup,
             </xsd:sequence>
 
         processed:
+            prompt
             simpleChoice
 
         Expected attributes:
@@ -605,7 +615,7 @@ def importChoiceInteraction(abstractGroup,
     
     # Handle Attributes
 #     id = getAttribute(choiceInteractionElement, RESPONSE_IDENTIFIER, u'')
-    if ((not id) or (type(id) not in [str, unicode])):
+    if (not id) or (type(id) not in [str, unicode]):
         id = None
     if id and isIdUsed(context, id, errors):
         return addedObjects
@@ -615,10 +625,13 @@ def importChoiceInteraction(abstractGroup,
     id = stringToZopeId(context, typeName, id, errors)
     q = createObject(context, typeName, id=id)
     addedObjects += [q]
-    
+
+    # Import randomOrder
     choiceInteractionShuffle = getAttribute(choiceInteractionElement, 
         SHUFFLE, TRUE).strip()
     q.setRandomOrder(choiceInteractionShuffle.lower() == TRUE)
+
+    # Import allowMultipleSelection
     choiceInteractionMaxChoices = getAttribute(choiceInteractionElement, 
         MAX_CHOICES, u'0').strip()
     try:
@@ -626,6 +639,10 @@ def importChoiceInteraction(abstractGroup,
     except:
         choiceInteractionMaxChoices = 0
     q.setAllowMultipleSelection(choiceInteractionMaxChoices != 1)
+
+    # (numberOfRandomAnswers is imported from the manifest via
+    # `importFromOrganization')
+
     # Process 'prompt' elements
     promptList = choiceInteractionElement.getElementsByTagName(PROMPT)
     if len(promptList) > 1:
@@ -794,6 +811,211 @@ def importExtendedTextInteraction(abstractGroup,
     return addedObjects
 
 
+def importScaleQuestion(abstractGroup,
+                        choiceInteractionElement,
+                        mapping,
+                        errors,
+                        id=None, 
+                        toolInfo=None):
+    """Creates an ECQScaleQuestion from a QTI <choiceInteraction> and
+    imports it into `abstractGroup'.
+
+        @param abstractGroup An instanc of
+            ECQAbstractGroup, i.e. a ECQuiz or a
+            ECQGroup. The <choiceInteraction> element will be imported
+            into that container.
+        @param choiceInteractionElement An XML <choiceInteraction> node.
+        @param mapping A dictionary that maps an answer's identifier to a score.
+        @param errors A string IO object where errors can be logged.
+        @param toolInfo The program that has produced the XML code. It only matters
+            if it is this product or not.
+
+        @return A list of objects that have been added to the quiz.
+
+        Side effects:
+            If successful, the item will be imported in "abstractGroup".
+    """
+    addedObjects = []
+    context = abstractGroup
+    """ Expected children:
+            <xsd:sequence>
+                <xsd:group ref="prompt" minOccurs="0" maxOccurs="1"/>
+                <xsd:element ref="simpleChoice" minOccurs="1" maxOccurs="unbounded"/>
+            </xsd:sequence>
+
+        processed:
+            prompt
+            simpleChoice
+
+        Expected attributes:
+            <xsd:attributeGroup name="choiceInteraction.AttrGroup">
+                <xsd:attributeGroup ref="bodyElement.AttrGroup"/>
+                <xsd:attribute name="responseIdentifier" type="identifier.Type" use="required"/>
+                <xsd:attribute name="shuffle" type="boolean.Type" use="required"/>
+                <xsd:attribute name="maxChoices" type="integer.Type" use="required"/>
+            </xsd:attributeGroup>
+    """
+    if ((choiceInteractionElement.nodeType != choiceInteractionElement.ELEMENT_NODE) 
+        or (choiceInteractionElement.localName != CHOICE_INTERACTION)):
+        errors.write('\n' + context.translate(
+            msgid   = 'no_choiceInteraction',
+            domain  = I18N_DOMAIN,
+            default = 'Expected a <%s> element. Got "%s".') 
+            % (context.str(CHOICE_INTERACTION),
+               context.str(choiceInteractionElement.toxml())))
+        return addedObjects
+
+    ## Create a new question ##
+    
+    # Handle Attributes
+    if (not id) or (type(id) not in [str, unicode]):
+        id = None
+    if id and isIdUsed(context, id, errors):
+        return addedObjects
+
+    # Create the Question object
+    typeName = ECQScaleQuestion.portal_type
+    id = stringToZopeId(context, typeName, id, errors)
+    q = createObject(context, typeName, id=id)
+    addedObjects += [q]
+
+    # Import randomOrder
+    choiceInteractionShuffle = getAttribute(choiceInteractionElement, 
+        SHUFFLE, TRUE).strip()
+    q.setRandomOrder(choiceInteractionShuffle.lower() == TRUE)
+
+    # (numberOfRandomAnswers is imported from the manifest via
+    # `importFromOrganization')
+    
+    # Process 'prompt' elements
+    promptList = choiceInteractionElement.getElementsByTagName(PROMPT)
+    if len(promptList) > 1:
+        errors.write('\n' + context.translate(
+            msgid   = 'too_many_elements',
+            domain  = I18N_DOMAIN,
+            default = 'Expected at most one <%s> element. Skipping the following <%s> elements.') 
+                % (context.str(PROMPT), context.str(PROMPT)))
+
+    # Set the question text to the contents of <prompt> (if present).
+    if promptList:
+        q.setQuestion(xhtmlImport(context,
+                                  promptList[0],
+                                  INLINE_ELEMENTS,
+                                  errors, 
+                                  toolInfo=toolInfo).strip())
+
+    # Process 'simpleChoice' elements
+    simpleChoiceList = choiceInteractionElement.getElementsByTagName(
+                           SIMPLE_CHOICE)
+    for simpleChoice in simpleChoiceList:
+        """ Expected children:
+                Text, inline and 'feedbackInline' elements
+
+            Expected attributes:
+                <xsd:attributeGroup ref="bodyElement.AttrGroup"/>
+                <xsd:attribute name="identifier" type="identifier.Type" use="required"/>
+                <xsd:attribute name="fixed" type="boolean.Type" use="optional"/>
+        """
+        simpleChoiceIdentifier = simpleChoice.getAttribute(IDENTIFIER).strip()
+        if not isIdUsed(q, simpleChoiceIdentifier, errors):
+            # Create a new answer
+            typeName = ECQScaleAnswer.portal_type
+            id = stringToZopeId(q, typeName, simpleChoiceIdentifier, errors)
+            a = createObject(q, typeName, id=id)
+
+            # Set title and score
+            if simpleChoiceIdentifier:
+                setTitle(a, simpleChoiceIdentifier)
+                a.setScore(mapping[simpleChoiceIdentifier])
+            
+            # Set the answer text to the contents of the
+            # <simpleChoice> element.
+            a.setAnswer(xhtmlImport(context, simpleChoice, 
+                INLINE_ELEMENTS + BLOCK_ELEMENTS, errors, toolInfo=toolInfo).strip())
+            
+            # Set the comment (extracted from <feedbackInline> and
+            # <feedbackBlock> elements)
+            feedbackInlineList = \
+                simpleChoice.getElementsByTagName(FEEDBACK_INLINE)
+            comment = u''
+            for feedbackInline in feedbackInlineList:
+                if feedbackInline.getAttribute(SHOW_HIDE).lower() == SHOW:
+                    comment += xhtmlImport(context, feedbackInline, 
+                        INLINE_ELEMENTS, errors, toolInfo=toolInfo).strip() + u'\n'
+            # Process <feedbackBlock> elements (also --> comments)
+            feedbackBlockList = \
+                simpleChoice.getElementsByTagName(FEEDBACK_BLOCK)
+            for feedbackBlock in feedbackBlockList:
+                if (feedbackBlock.getAttribute(SHOW_HIDE).lower() == SHOW):
+                    comment += xhtmlImport(context,
+                                           feedbackBlock, 
+                                           BLOCK_ELEMENTS,
+                                           errors,
+                                           toolInfo=toolInfo).strip()
+                    comment += u'\n'
+            # Set the comment to the contents of the <feedbackInline>
+            # + <feedbackBlock> elements
+            comment =comment.strip()
+            if comment:
+                a.setComment(comment)
+    return addedObjects
+
+
+def importChoiceInteraction(context, 
+                            choiceInteraction,
+                            errors,
+                            id=None,
+                            toolInfo=None):
+    itemBody = choiceInteraction.parentNode
+    asmtItem = itemBody.parentNode
+    
+    correctResponses = []
+    mapping = {}
+    
+    respDecls = asmtItem.getElementsByTagName(RESPONSE_DECLARATION)
+    for respDecl in respDecls:
+        """ Expected children of <responseDeclaration>:
+        <xsd:group ref="variableDeclaration.ContentGroup"/>
+        <xsd:element ref="correctResponse" minOccurs="0" maxOccurs="1"/>
+        <xsd:element ref="mapping" minOccurs="0" maxOccurs="1"/>
+        <xsd:element ref="areaMapping" minOccurs="0" maxOccurs="1"/>
+        
+        processed:
+        correctResponse
+        mapping
+        """
+        valueList = getElementsByPath(respDecl, u'correctResponse/value')
+        for value in valueList:
+            """Expecting Text"""
+            correctResponses.append(getText(value, u'').strip())
+        
+        mapEntries = getElementsByPath(respDecl, u'mapping/mapEntry')
+        for m in mapEntries:
+            try:
+                k = m.getAttribute(MAP_KEY)
+                v = m.getAttribute(MAPPED_VALUE)
+                mapping[k.strip()] = float(v)
+            except:
+                pass
+
+    if correctResponses:
+        return importMCQuestion(
+            context, 
+            choiceInteraction,
+            correctResponses, 
+            errors,
+            id=id,
+            toolInfo=toolInfo)
+    else:
+        return importScaleQuestion(
+            context,
+            choiceInteraction,
+            mapping,
+            errors,
+            id=id,
+            toolInfo=toolInfo)
+
+
 def importAssessmentItem(abstractGroup, string, errors, id=None, 
     importMode=DEFAULT, toolInfo=None):
     """Import a QTI <assessmentItem> into [abstractGroup].
@@ -925,28 +1147,10 @@ def importAssessmentItem(abstractGroup, string, errors, id=None,
             if (assessmentItemTitle):
                 setTitle(containerObj, assessmentItemTitle)
             containerObj.setDirections(directions)
-        else:# (importMode in [DEFAULT, FORCE_QUESTION])
-            # Find the correct answers
-            correctResponseValueList = []
-            responseDeclarationList = assessmentItem.getElementsByTagName(
-                                          RESPONSE_DECLARATION)
-            for responseDeclaration in responseDeclarationList:
-                """ Expected children of <responseDeclaration>:
-                        <xsd:group ref="variableDeclaration.ContentGroup"/>
-                        <xsd:element ref="correctResponse" minOccurs="0" maxOccurs="1"/>
-                        <xsd:element ref="mapping" minOccurs="0" maxOccurs="1"/>
-                        <xsd:element ref="areaMapping" minOccurs="0" maxOccurs="1"/>
+        else: # (importMode in [DEFAULT, FORCE_QUESTION])
 
-                    processed:
-                        correctResponse
-                """
-                valueList = getElementsByPath(responseDeclaration,
-                                              u'correctResponse/value')
-                for value in valueList:
-                    """ Expecting Text """
-                    correctResponseValueList += [getText(value, u'').strip()]
-
-            # Each choiceInteraction element will become an 'MC Question'
+            # Each choiceInteraction element will become an `MC
+            # Question' or a `Scale Question'
             choiceInteractionList = \
                 itemBody.getElementsByTagName(CHOICE_INTERACTION)
             extendedTextInteractionList = \
@@ -980,7 +1184,7 @@ def importAssessmentItem(abstractGroup, string, errors, id=None,
                     setTitle(qGroup, assessmentItemTitle)
                 qGroup.setDirections(directions)
                 for choiceInteraction in choiceInteractionList:
-                    addedObjects += importChoiceInteraction(
+                    addedObjects += importMCQuestion(
                                         qGroup, 
                                         choiceInteraction,
                                         correctResponseValueList,
@@ -1000,9 +1204,8 @@ def importAssessmentItem(abstractGroup, string, errors, id=None,
                 # into the quiz
                 if choiceInteractionList:
                     newQuestionList = importChoiceInteraction(
-                                          context, 
+                                          context,
                                           choiceInteractionList[0],
-                                          correctResponseValueList, 
                                           errors,
                                           id=id,
                                           toolInfo=toolInfo)
@@ -1267,6 +1470,7 @@ def importSelectCount(obj, organizationItem, errors):
                 if shasattr(obj, name):
                     setter = getattr(obj, name)
                     setter(selCnt)
+                    break
 
 def importReorderChildren(obj, organizationItem, errors):
     randomizationControls = getFirstElementByPath(
@@ -1376,22 +1580,33 @@ def importFromOrganization(multipleChoiceTest, zipFileObject, organization,
                                 # import [numberOfRandomAnswers]
                                 importSelectCount(qObject, qItem, errors)
 
-                                # Import the points (if present)
-                                weight = getFirstElementByTagNameFlat(
-                                    qItem, NS_LLSMC + u':' + WEIGHT)
-                                points = None
-                                if weight:
-                                    weight = getText(weight).strip()
-                                    try:
-                                        points = int(weight)
-                                    except:
-                                        errors.write('\n' + context.translate(
-                                            msgid   = 'invalid_weight',
-                                            domain  = I18N_DOMAIN,
-                                            default = 'The weight "%s" is invalid.'
-                                            ) % context.str(weight))
-                                if points is not None:
-                                    qObject.setPoints(points)
+                                # import the points (if present)
+                                if shasattr(qObject, 'points'):
+                                    weight = getFirstElementByTagNameFlat(
+                                        qItem, NS_LLSMC + u':' + WEIGHT)
+                                    points = None
+                                    if weight:
+                                        weight = getText(weight).strip()
+                                        try:
+                                            points = int(weight)
+                                        except:
+                                            errors.write('\n' + context.translate(
+                                                msgid   = 'invalid_weight',
+                                                domain  = I18N_DOMAIN,
+                                                default = 'The weight "%s" is invalid.'
+                                                ) % context.str(weight))
+                                    if points is not None:
+                                        qObject.setPoints(points)
+
+                                # import [tutorGraded]
+                                if shasattr(qObject, 'tutorGraded'):
+                                    importBool(TUTOR_GRADED, qObject.setTutorGraded,
+                                              qItem)
+
+                                # import [choiceLayout]
+                                if shasattr(qObject, 'choiceLayout'):
+                                    importStr(LAYOUT, qObject.setChoiceLayout,
+                                              qItem)
                             
                             # append the new objects to 'addedObjects'
                             addedObjects += importedObjects
@@ -1983,6 +2198,24 @@ def exportPackage(multipleChoiceTest, errors):
     title.appendChild(manifestDoc.createTextNode(
         context.unicodeDecode(titleText)))
 
+    def exportBool(elemName, value, parent):
+        elem = parent.appendChild(
+            manifestDoc.createElementNS(
+                NS_LLSMC_URI, NS_LLSMC + u':' + elemName))
+        if value:
+            text = TRUE
+        else:
+            text = FALSE
+        elem.appendChild(manifestDoc.createTextNode(text))
+
+    def exportStr(elemName, value, parent):
+        elem = parent.appendChild(
+            manifestDoc.createElementNS(
+                NS_LLSMC_URI, NS_LLSMC + u':' + elemName))
+        text = multipleChoiceTest.unicodeDecode(value)
+        if text:
+            elem.appendChild(manifestDoc.createTextNode(text))
+
     # The <resources> element
     resources = manifest.appendChild(manifestDoc.createElement(RESOURCES))
 
@@ -2031,7 +2264,7 @@ def exportPackage(multipleChoiceTest, errors):
                         containerFile.setAttribute(HREF,
                                                    context.unicodeDecode(path))
             else:
-                # A ECQGroup
+                # An ECQGroup
                 testItem.appendChild(containerItem)
                 containerItemIdentifier = u'CONTAINER-' \
                                           + unicode(containerCounter)
@@ -2086,6 +2319,12 @@ def exportPackage(multipleChoiceTest, errors):
                     # export [isRandomOrder] etc.
                     exportRandomizationControls(question, questionItem,
                                                 errors)
+                if shasattr(question, 'choiceLayout'):
+                    exportStr(LAYOUT, question.getChoiceLayout(),
+                              questionItem)
+                if shasattr(question, 'tutorGraded'):
+                    exportBool(TUTOR_GRADED, question.isTutorGraded(),
+                               questionItem)
                 questionResource.ownerDocument.unlink()
 
     ### export the sequencing information ###
@@ -2101,24 +2340,6 @@ def exportPackage(multipleChoiceTest, errors):
         multipleChoiceTest.isAllowRepetition()]
     organizationLimitConditions.setAttribute(ATTEMPT_LIMIT,
                                              organizationAttemptLimit)
-
-    def exportBool(elemName, value, parent):
-        elem = parent.appendChild(
-            manifestDoc.createElementNS(
-                NS_LLSMC_URI, NS_LLSMC + u':' + elemName))
-        if value:
-            text = TRUE
-        else:
-            text = FALSE
-        elem.appendChild(manifestDoc.createTextNode(text))
-
-    def exportStr(elemName, value, parent):
-        elem = parent.appendChild(
-            manifestDoc.createElementNS(
-                NS_LLSMC_URI, NS_LLSMC + u':' + elemName))
-        text = multipleChoiceTest.unicodeDecode(value)
-        if text:
-            elem.appendChild(manifestDoc.createTextNode(text))
     
     # <llsmc:instantFeedback>
     exportBool(INSTANT_FEEDBACK, multipleChoiceTest.isInstantFeedback(),
@@ -2344,6 +2565,87 @@ def exportAssessmentItem(obj, exportFileName, errors):
                 NS_IMSQTI + u':' + INTERACTION_TYPE))
         man_interactionType.appendChild(
             man_resourceDoc.createTextNode(EXTENDED_TEXT_INTERACTION))
+    elif obj.portal_type == ECQScaleQuestion.portal_type:
+        responseDeclaration = aiDoc.createElement(RESPONSE_DECLARATION)
+        ai.insertBefore(responseDeclaration, itemBody)
+        
+        responseDeclaration.setAttribute(IDENTIFIER, u'RESPONSE')
+        responseDeclaration.setAttribute(u'cardinality', u'single')
+
+        # This mapping will hold the scores of the answers:
+        #
+        # * The keys are the IDENTIFIER-attributes of the
+        #   corresponding <simpleChoice> element.
+        #
+        # * The values are the scores.
+        mapping = responseDeclaration.appendChild(
+            aiDoc.createElement(MAPPING))
+        mapping.setAttribute(DEFAULT_VALUE, unicode(0))
+
+        # Create a (dummy) outcomeDeclaration to declare an outcome
+        # identifier, which is required for feedback blocks.
+        outcomeDeclaration = aiDoc.createElement(OUTCOME_DECLARATION)
+        ai.insertBefore(outcomeDeclaration, itemBody)
+        
+        outcomeDeclaration.setAttribute(IDENTIFIER, u'OUTCOME')
+        outcomeDeclaration.setAttribute(u'cardinality', u'single')
+
+        # Write the question text
+        # Attention: <itemBody> allows only block elements as content.
+        questionText = obj.unicodeDecode(obj.getQuestion().strip())
+        xhtmlExport(itemBody, questionText)
+
+        choiceInteraction = itemBody.appendChild(aiDoc.createElement(
+            CHOICE_INTERACTION))
+        choiceInteraction.setAttribute(RESPONSE_IDENTIFIER, 
+            responseDeclaration.getAttribute(IDENTIFIER))
+        choiceInteraction.setAttribute(SHUFFLE, [FALSE, TRUE][
+            obj.isRandomOrder()])
+        choiceInteraction.setAttribute(MAX_CHOICES, u'1')
+
+        # Export the answers
+        answerList = obj.listFolderContents()
+        for answerCounter in range(len(answerList)):
+            answer = answerList[answerCounter]
+            simpleChoice = choiceInteraction.appendChild(aiDoc.createElement(
+                SIMPLE_CHOICE))
+            # The answer text
+            answerText = obj.unicodeDecode(answer.getAnswer().strip())
+            # <simpleChoice> can have block and inline elements as content
+            xhtmlExport(simpleChoice, answerText)
+            # The identifier
+            answerIdentifier = u'Choice' + unicode(answerCounter)
+            simpleChoice.setAttribute(IDENTIFIER, answerIdentifier)
+            # The comment
+            commentText = answer.getComment().strip()
+            if commentText:
+                commentText = obj.unicodeDecode(commentText)
+                # Attention: <feedbackInline> allows only inline elements and
+                # text as content.
+                # Attention: <feedbackBlock> allows only block elements as
+                # content.
+                feedbackBlock = simpleChoice.appendChild(
+                    aiDoc.createElement(FEEDBACK_BLOCK))
+                xhtmlExport(feedbackBlock, commentText)
+                feedbackBlock.setAttribute(
+                    IDENTIFIER, u'Feedback_' + answerIdentifier)
+                feedbackBlock.setAttribute(OUTCOME_IDENTIFIER, u'OUTCOME')
+                feedbackBlock.setAttribute(SHOW_HIDE, SHOW)
+            # The score
+            kv = mapping.appendChild(aiDoc.createElement(MAP_ENTRY))
+            kv.setAttribute(MAP_KEY, answerIdentifier)
+            kv.setAttribute(MAPPED_VALUE, unicode(answer.getScore()))
+
+        ### Expand the <resource> element ###
+        # imsqti metadata
+        man_qtiMetadata = man_metadata.appendChild(
+            man_resourceDoc.createElementNS(NS_IMSQTI_V2P0_URI,
+                                            NS_IMSQTI + u':' + QTI_METADATA))
+        man_interactionType = man_qtiMetadata.appendChild(
+            man_resourceDoc.createElementNS(NS_IMSQTI_V2P0_URI, NS_IMSQTI
+                                            + u':' + INTERACTION_TYPE))
+        man_interactionType.appendChild(
+            man_resourceDoc.createTextNode(CHOICE_INTERACTION))
     else:
         errors.write('\n' + obj.translate(
                 msgid   = 'export_assessment_item_type_error',
