@@ -13,7 +13,7 @@
 
   <metal:fill fill-slot="main"
    tal:define="
-   ecq_tool       nocall:portal/ecq_tool;
+   ecq_tool         nocall:portal/ecq_tool;
    result           python:here;
    resultsView      python:True;
    candidateId      here/Creator;
@@ -100,7 +100,8 @@
             </tr>
             
             <tal:define_grade
-             define="grade python: mctest.getCandidateGrade(result);">
+             define="grade     python: mctest.getCandidateGrade(result);
+                     gradeinfo python: mctest.getCandidateGradeinfo(result);">
              <tr tal:condition="python: grade is not None">
               <td style="text-align:right;">
                <span tal:omit-tag="" i18n:translate="grade">Grade</span>:
@@ -112,6 +113,9 @@
                 or [grade])[0]">
                 1
                </strong>
+               <tal:when_grade_info condition="python:gradeinfo is not None">
+                (<span tal:replace="gradeinfo">very good</span>)
+               </tal:when_grade_info>
               </td>
              </tr>
             </tal:define_grade>
