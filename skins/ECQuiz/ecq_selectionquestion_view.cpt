@@ -82,6 +82,11 @@
         </metal:defslot-main>
        </tal:define>
       </metal:fill-main-slot>
+
+      <metal:fill fill-slot="grade_input">
+       <metal:define-slot define-slot="grade_input"/>
+      </metal:fill>
+
      </metal:use>
     </metal:defmacro-view>
 
