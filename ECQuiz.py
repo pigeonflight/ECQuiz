@@ -151,6 +151,9 @@ class DataGridWidgetI18N(DataGridWidget):
 
         return names
 
+# Register this validator in Zope
+registerValidatorLogged(GradingScaleValidator, 'gradingScale')
+
 class ColumnI18N(Column):
     def __init__(self, label, label_msgid=None, default=None):
         """ Create a column
@@ -170,9 +173,6 @@ class ColumnI18N(Column):
                     msgid   = self.label_msgid,
                     domain  = widget.i18n_domain,
                     default = self.label)
-
-# Register this validator in Zope
-registerValidatorLogged(GradingScaleValidator, 'gradingScale')
 
 class EvaluationScriptsWidget(TypesWidget):
     """ A custom widget for handling the 'evaluationScripts' 
@@ -286,8 +286,6 @@ class ECQuiz(ECQAbstractGroup):
                              'scoring_fun_guessing_correction_label'),
                             ('cruel', 'All or Nothing',
                              'scoring_fun_cruel_label'),
-                            ('partial', 'Partial credit',
-                             'scoring_fun_partial_label'),
                             )),
                         widget=SelectionWidget(
                             label='Scoring Function',
@@ -1651,13 +1649,10 @@ class ECQuiz(ECQAbstractGroup):
             for pair in scale:
                 minScore = pair['score']
                 if (minScore is None) or (points >= minScore):
-                    grade = pair['gradeinfo']
-                    for conv in int, float:
-                        try:
-                            return conv(grade)
-                        except:
-                            pass
-                    return grade
+                    val = pair['gradeinfo'].strip()
+                    if val == "":
+                        return None
+                    return val
         
         return None
 
