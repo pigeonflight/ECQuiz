@@ -167,13 +167,15 @@
         </ol>
        </tal:cond>
        <tal:cond condition="python:len(questions) == 1">
-	<tal:define define="
-	 question python:questions[0];
-	 object   python:question;
-         ">
-	 <!-- Get the question's 'view' macro and use it. -->
-         <metal:use use-macro="here/ecq_tools/macros/use_default_view"/>
-	</tal:define>
+        <div>
+         <tal:define define="
+          question python:questions[0];
+          object   python:question;
+          ">
+          <!-- Get the question's 'view' macro and use it. -->
+          <metal:use use-macro="here/ecq_tools/macros/use_default_view"/>
+         </tal:define>
+        </div>
        </tal:cond>
       </tal:block> <!-- headingLevel -->
      </tal:block>
