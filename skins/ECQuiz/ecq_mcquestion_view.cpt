@@ -46,7 +46,7 @@
 	<tal:loop repeat="answer answers">
 	 <tr>
 	  <tal:block define="
-	   checked     python:(candidateAnswer != None) and (answer.getId() in candidateAnswer);
+	   checked     python:haveCandidateAnswer and (answer.getId() in candidateAnswer);
 	   correct     answer/isCorrect;
 	   showComment python:resultsView and ((checked and (not correct)) or ((not checked) and correct));
 	   ">
@@ -82,7 +82,7 @@
 	 anything for a multiple choice question. -->
 	 <tr tal:condition="python: repeat['answer'].end and not question.isAllowMultipleSelection()"
 	  tal:define="
-	  checked python:candidateAnswer == None;
+	  checked python:not haveCandidateAnswer;
 	  correct python:False;
 	  ">
 	  <metal:use use-macro="question/ecq_mcquestion_view/macros/mark_wrong_answer_pre"/>

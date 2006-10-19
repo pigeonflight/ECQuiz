@@ -73,10 +73,11 @@
       gradeView        gradeView|python:False;
       
       candidateAnswer  python:((candidateId and [result.getCandidateAnswer(question)]) or [None])[0];
+      haveCandidateAnswer python:(candidateId and result.haveCandidateAnswer(question));
       inputDisabled    inputDisabled|python:['', 'yes'][resultsView];
       
       startWatchDummy  python:candidateId and (not resultsView) and result.startWatch(question);
-      ecq_tool       nocall:portal/ecq_tool;
+      ecq_tool         nocall:portal/ecq_tool;
       ">
       <!-- Output question text -->
       <metal:defslot-pre-question define-slot="pre_question"/>
