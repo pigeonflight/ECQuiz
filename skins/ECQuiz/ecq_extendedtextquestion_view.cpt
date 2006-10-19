@@ -30,7 +30,7 @@
     candidateId
     -->
     <metal:defmacro-view define-macro="view">
-     <metal:use-basequestion-view use-macro="question/ecq_pointsquestion_view/macros/view">
+     <metal:use use-macro="question/ecq_pointsquestion_view/macros/view">
       <metal:fill-main-slot fill-slot="main_slot">
        <!-- List the answers -->
        <table
@@ -52,7 +52,7 @@
         </tr>
        </table>
       </metal:fill-main-slot>
-     </metal:use-basequestion-view>
+     </metal:use>
     </metal:defmacro-view>
    </tal:hide-macro-definitions>
   </metal:fill-main-slot>
