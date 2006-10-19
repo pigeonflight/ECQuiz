@@ -460,7 +460,7 @@ class ECQResult(ATCTContent, HistoryAwareMixin):
     ## Points caching: end
 
     
-    security.declareProtected(PERMISSION_RESULT_WRITE, 'haveCandidateAnswer')
+    security.declareProtected(PERMISSION_RESULT_READ, 'haveCandidateAnswer')
     def haveCandidateAnswer(self, question):
         qr = self.getQR("haveCandidateAnswer", question)
         return qr.haveCandidateAnswer()
