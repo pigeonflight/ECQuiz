@@ -221,6 +221,7 @@ class ECQAbstractGroup(ECQFolder):
     
     allowed_content_types = ('ECQMCQuestion',
                              'ECQExtendedTextQuestion',
+                             'ECQScaleQuestion',
                              ECQReference.portal_type)
         
     # Get a ClassSecurityInfo-instance in order to declare some class
