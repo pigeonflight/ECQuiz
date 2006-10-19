@@ -39,11 +39,13 @@ from Products.ECQuiz.tools import log
 from Products.ECQuiz.ECQResult import ECQResult
 from Products.ECQuiz.ECQGroup import ECQGroup
 from Products.ECQuiz.QuestionTypes.ECQMCQuestion import ECQMCQuestion
+from Products.ECQuiz.QuestionTypes.ECQScaleQuestion import ECQScaleQuestion
 from Products.ECQuiz.QuestionTypes.ECQExtendedTextQuestion \
      import ECQExtendedTextQuestion
 from Products.ECQuiz.ECQAbstractGroup   import ECQAbstractGroup
 from Products.ECQuiz.ECQuiz import ECQuiz
 from Products.ECQuiz.AnswerTypes.ECQMCAnswer import ECQMCAnswer
+from Products.ECQuiz.AnswerTypes.ECQScaleAnswer import ECQScaleAnswer
 
 
 def install_dependencies(self, out):
@@ -85,6 +87,8 @@ def install_workflows(self, out):
                                          ECQGroup,
                                          ECQMCQuestion,
                                          ECQMCAnswer,
+                                         ECQScaleQuestion,
+                                         ECQScaleAnswer,
                                          ECQExtendedTextQuestion,
                                          )]
     wf_tool.setChainForPortalTypes(ecmce_types, ECMCE_WORKFLOW_ID)

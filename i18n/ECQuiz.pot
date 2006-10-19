@@ -320,6 +320,15 @@ msgstr ""
 msgid "correct_label"
 msgstr ""
 
+#. widget=DecimalWidget(
+#.     label='Correct',
+#.     label_#msgid='partial_correct_label',
+#.     description='How many marks do you get for giving this answer?  A higher value than the total for this question will be reduced.',
+#.     description_#msgid='partial_correct_tool_tip',
+#.     i18n_domain='plone'),
+msgid "correct_label"
+msgstr ""
+
 msgid "correct_tool_tip"
 msgstr ""
 
@@ -1099,6 +1108,9 @@ msgstr ""
 # Default: Minimum Score
 #: MultipleChoiceTest.py
 msgid "minscore"
+msgstr ""
+
+msgid "gradeinfo"
 msgstr ""
 
 # Keep this comment at the end of the file
