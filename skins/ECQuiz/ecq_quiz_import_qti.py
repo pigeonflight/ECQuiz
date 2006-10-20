@@ -86,6 +86,7 @@ else:
             default = 'Nothing has been added.')
     msg = msg.replace('\n', ' - ')
     msg = msg.strip()
+    msg = context.str(msg)
         
 target = context.getActionInfo('object/import_export')['url']
 RESPONSE.redirect('%s?portal_status_message=%s' % (target, msg))
