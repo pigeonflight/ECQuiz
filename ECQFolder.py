@@ -24,7 +24,7 @@ from Products.Archetypes.public import OrderedBaseFolder
 from Products.ATContentTypes.content.folder import ATFolder
 from Products.ATContentTypes.content.folder import ATFolderSchema
 from AccessControl import ClassSecurityInfo
-from Products.CMFCore import CMFCorePermissions
+from Products.CMFCore import permissions as CMFCorePermissions
 
 from config import *
 from permissions import *
