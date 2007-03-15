@@ -647,7 +647,7 @@ class ECQuiz(ECQAbstractGroup):
     security.declarePublic('isTutorGraded')
     def isTutorGraded(self, result):
         for grp in [self] + self.getQuestionGroups():
-            if ECQAbstractGroup.isTutorGraded(self, result):
+            if ECQAbstractGroup.isTutorGraded(grp, result):
                 return True
         return False
             
