@@ -620,7 +620,7 @@ msgstr "Non hai ancora inviato il test."
 #. errors.write( '\n' + multipleChoiceTestInstance.translate(#.     #msgid   = 'no_choiceInteraction',#.     domain  = 'llsMultipleChoice',#.     default = 'Expected a <%s> element. Got "%s".') % (CHOICE_INTERACTION, choiceInteractionElement.toxml() ))
 #: qti.py
 msgid "no_choiceInteraction"
-msgstr 'Mi aspetto l'elemento <%s> invece ho "%s".'
+msgstr "Mi aspetto l'elemento <%s> invece ho '%s'."
 
 #. errors.write( '\n' + multipleChoiceTestInstance.translate(#.     #msgid   = 'too_many_elements',#.     domain  = 'llsMultipleChoice',#.     default = 'Expected at most one <%s> element. Skipping the following <%s> elements.') #.         % (PROMPT, PROMPT) )
 #: qti.py
