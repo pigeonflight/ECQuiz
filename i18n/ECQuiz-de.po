@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ECQuiz\n"
 "POT-Creation-Date: 2004-11-25 10:29 +0100\n"
-"PO-Revision-Date: 2006-08-02 18:31\n"
+"PO-Revision-Date: 2007-04-27 16:15\n"
 "Last-Translator: Michael Piotrowski <mxp@iws.cs.uni-magdeburg.de>\n"
 "Language-Team: eduComponents <educomponents@uni-magdeburg.de>\n"
 "MIME-Version: 1.0\n"
@@ -1387,6 +1387,64 @@ msgstr "Ihre Ergebnisse:"
 #: MultipleChoiceTest.py
 msgid "minscore"
 msgstr "Mindestpunktzahl"
+
+# BEGIN OF I18N FOR WIKI EDIT
+
+msgid "heading_wiki_edit"
+msgstr "Anpassen mit Lisp-Syntax"
+
+msgid "description_wiki_edit"
+msgstr "Hier kann das gesamte Layout des Quiz geändert werden. Veränderungen werden mit einer Lisp-ähnlichen Syntax gemacht. Eine Beschreibung der Syntax befindet sich in der Dokumentation zu diesem Produkt." 
+
+msgid "legend_wiki_edit"
+msgstr "bearbeiten"
+
+msgid "label_wiki_textarea"
+msgstr "Bearbeiten sie hier das Layout."
+msgid "import_wiki_file_label"
+msgstr "Quick-Edit-Datei"
+
+msgid "import_wiki_test_tooltip"
+msgstr "Der Name der Datei, die Sie importieren möchten."
+
+msgid "update_wiki_success"
+msgstr " wurde erfolgreich auf den neusten Stand gebracht!"
+
+msgid "update_wiki_error"
+msgstr " konnte nicht bearbeitet werden, eventuell sind Syntax-Fehler vorhanden!"
+
+msgid "export_wiki_error"
+msgstr "Ein Fehler ist aufgetreten, dass Quiz konnte nicht exportiert werden!"
+
+msgid "import_wiki_error"
+msgstr "Ein Fehler ist aufgetreten, dass Quiz konnte nicht importiert werden!"
+
+msgid "import_wiki_success"
+msgstr "Das quiz wurde erfolgreich importiert."
+
+msgid "update_wiki_params"
+msgstr "Ein Quiz muss mindenstens einen Titel haben."
+
+msgid "update_wiki_quiz_begin"
+msgstr "Die Syntax muss mit '(quiz ...' beginnen."
+
+msgid "update_wiki_args"
+msgstr "Fehler bei den Parametern: "
+
+msgid "update_wiki_answer_unknown"
+msgstr "Unbekannter Fragetyp: "
+
+msgid "update_wiki_element_unknown"
+msgstr "Unbekannter Elementtyp: "
+
+msgid "update_wiki_element_nested"
+msgstr "Nur eingebettete Elemente sind erlaubt, nicht: "
+
+msgid "update_wiki_element_group"
+msgstr "Eine Gruppe innerhalb einer Gruppe ist nicht erlaubt: "
+
+# END OF I18N FOR WIKI EDIT
+
 
 # Keep this comment at the end of the file
 

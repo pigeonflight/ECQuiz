@@ -63,6 +63,8 @@ from Products.validation import validation
 from Products.validation import ValidationChain
 from Products.validation.exceptions import ValidatorError
 
+import wikitool
+#from wikitool import importQuiz,exportQuiz,convertQuiz,updateQuiz
 
 class ClearWholePointsCache:
     """A dummy validator that clears any cached points from result objects."""
@@ -136,7 +138,7 @@ class GradingScaleValidator:
             return True
 
 class DataGridWidgetI18N(DataGridWidget):
-    def getColumnLabels(self, field):
+    def getColumnLabels(self, field, whatever=None):
         """ Get user friendly names of all columns """
 
         names = []
@@ -352,6 +354,12 @@ class ECQuiz(ECQAbstractGroup):
             'id'           : 'import_export',
             'name'         : 'Import/Export',
             'action'       : 'string:${object_url}/ecq_quiz_import_export',
+            'permissions'  : (PERMISSION_INTERROGATOR,),
+        },
+        {
+            'id'           : 'wiki_edit',
+            'name'         : 'Quick edit',
+            'action'       : 'string:${object_url}/ecq_quiz_wiki_edit',
             'permissions'  : (PERMISSION_INTERROGATOR,),
         },
         {
@@ -1758,6 +1766,22 @@ class ECQuiz(ECQAbstractGroup):
                 # errors['sourceFile'] = errorMsg + ' File=' + string
             # self.setSourceFile(None)
             
+
+    security.declareProtected(PERMISSION_INTERROGATOR, 'convertQuiz')
+    def convertQuiz(self, quiz):
+        return wikitool.convertQuiz(quiz)
+
+    security.declareProtected(PERMISSION_INTERROGATOR, 'updateQuiz')
+    def updateQuiz(self, quiz, wikistyle):
+        return wikitool.updateQuiz(quiz, wikistyle)
+
+    security.declareProtected(PERMISSION_INTERROGATOR, 'importQuiz')
+    def importQuiz(self, quiz, filename):
+        return wikitool.importQuiz(quiz, filename)
+
+    security.declareProtected(PERMISSION_INTERROGATOR, 'exportQuiz')
+    def exportQuiz(self, quiz, filename):
+        return wikitool.exportQuiz(quiz, filename)
             
 # Register this type in Zope
 registerATCTLogged(ECQuiz)
