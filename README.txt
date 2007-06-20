@@ -8,7 +8,7 @@ Overview
 
 Download
 
- "ECQuiz 1.0":http://wwwai.cs.uni-magdeburg.de/software/ecquiz/
+ "ECQuiz 1.1":http://plone.org/products/ecquiz/
 
 Prerequisites
 
@@ -63,7 +63,8 @@ Support
 Credits
 
  ECQuiz was written by Wolfram Fenske and "Michael
- Piotrowski":http://wwwai.cs.uni-magdeburg.de/Members/mxp.
+ Piotrowski":http://wwwai.cs.uni-magdeburg.de/Members/mxp.  Sascha
+ Peilicke implemented the Quick Edit functionality.
 
   The Statistics class was written by "Chad
   J. Schroeder":http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/409413.
@@ -76,13 +77,14 @@ Credits
   License":http://creativecommons.org/licenses/by/2.5/.
 
   The Slovenian translation was contributed by Matjaž Jeran.
+  The Italian translation was contributed by Elena Momi.
 
 License
 
  ECQuiz is licensed under the
  "GPL":http://opensource.org/licenses/gpl-license.
 
- Copyright © 2006 Otto-von-Guericke-Universität Magdeburg
+ Copyright © 2007 Otto-von-Guericke-Universität Magdeburg
 
  ECQuiz is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
