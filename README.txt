@@ -1,4 +1,4 @@
--*- coding: utf-8 -*-
+<!-- -*- coding: utf-8 -*- -->
 
 Overview
 
@@ -66,18 +66,20 @@ Credits
  Piotrowski":http://wwwai.cs.uni-magdeburg.de/Members/mxp.  Sascha
  Peilicke implemented the Quick Edit functionality.
 
-  The Statistics class was written by "Chad
-  J. Schroeder":http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/409413.
-  It is licensed under the "Python
-  license":http://www.python.org/license.
+ The Statistics class was written by "Chad
+ J. Schroeder":http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/409413.
+ It is licensed under the "Python
+ license":http://www.python.org/license.
 
-  Several icons used in ECAssignmentBox are from the "Silk icon
-  set":http://www.famfamfam.com/lab/icons/silk/ by Mark James.  They
-  are licensed under a "Creative Commons Attribution 2.5
-  License":http://creativecommons.org/licenses/by/2.5/.
+ The L2 Lisp parser was written by Wolfram Fenske.
 
-  The Slovenian translation was contributed by Matjaž Jeran.
-  The Italian translation was contributed by Elena Momi.
+ Several icons used in ECAssignmentBox are from the "Silk icon
+ set":http://www.famfamfam.com/lab/icons/silk/ by Mark James.  They
+ are licensed under a "Creative Commons Attribution 2.5
+ License":http://creativecommons.org/licenses/by/2.5/.
+
+ The Slovenian translation was contributed by Matjaž Jeran.
+ The Italian translation was contributed by Elena Momi.
 
 License
 
