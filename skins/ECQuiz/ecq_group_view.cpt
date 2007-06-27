@@ -149,32 +149,37 @@
        </tal:block>
 
        <!-- Display the questions in a list -->
-       <tal:cond condition="python:len(questions) != 1">
+       <tal:if_more_than_one_question condition="python:len(questions) != 1">
         <ol>
          <tal:repeat repeat="question questions">
-          <metal:block define-macro="show_question">
-           <tal:define define="
-            isTutorGraded question/isTutorGraded|python:False;
-            object        python:question;
-            ">
-            <tal:unless_hide_in_grade_view condition="python: (not gradeView) or isTutorGraded">
-             <li>
-              <!-- Get the question's 'view' macro and use it. -->
-              <metal:use use-macro="here/ecq_tools/macros/use_default_view"/>
-             </li>
-            </tal:unless_hide_in_grade_view>
-           </tal:define>
-          </metal:block> <!-- define-macro="show_question" -->
+          <tal:define define="
+           isTutorGraded question/isTutorGraded|python:False;
+           object        python:question;
+           ">
+           <tal:unless_hide_in_grade_view condition="python: (not gradeView) or isTutorGraded">
+            <li>
+             <!-- Get the question's 'view' macro and use it. -->
+             <metal:use use-macro="here/ecq_tools/macros/use_default_view"/>
+            </li>
+           </tal:unless_hide_in_grade_view>
+          </tal:define>
          </tal:repeat>
         </ol>
-       </tal:cond>
-       <tal:cond condition="python:len(questions) == 1">
+       </tal:if_more_than_one_question>
+       <tal:if_only_one_question condition="python:len(questions) == 1">
         <div>
-         <tal:define define="question python:questions[0];">
-          <metal:use use-macro="here/ecq_group_view/macros/show_question"/>
+         <tal:define define="
+          question	python:questions[0];
+          isTutorGraded	question/isTutorGraded|python:False;
+          object        python:question;
+          ">
+          <tal:unless_hide_in_grade_view condition="python: (not gradeView) or isTutorGraded">
+           <!-- Get the question's 'view' macro and use it. -->
+           <metal:use use-macro="here/ecq_tools/macros/use_default_view"/>
+          </tal:unless_hide_in_grade_view>
          </tal:define>
         </div>
-       </tal:cond>
+       </tal:if_only_one_question>
       </tal:block> <!-- headingLevel -->
      </tal:block>
     </metal:block>
