@@ -97,7 +97,11 @@ class ECQScaleQuestion(ECQSelectionQuestion, ECQPointsQuestion):
 
     # This attribute is evaluated by the Extensions/Install.py script.
     use_portal_factory = True
-    
+
+    typeDescription = "A question which requires a selection of a point " \
+                      "on a scale, e.g. for rating."
+    typeDescMsgId = 'description_edit_scalequestion'
+
     security = ClassSecurityInfo()
 
     # Multiple selections don't make sense (at least for now)

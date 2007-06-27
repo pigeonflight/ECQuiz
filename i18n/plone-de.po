@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ECQuiz\n"
 "POT-Creation-Date: 2004-11-25 10:29 +0100\n"
-"PO-Revision-Date: 2006-08-02 16:58\n"
+"PO-Revision-Date: 2007-06-27 19:28\n"
 "Last-Translator: Michael Piotrowski <mxp@iws.cs.uni-magdeburg.de>\n"
 "Language-Team: eduComponents <educomponents@uni-magdeburg.de>\n"
 "MIME-Version: 1.0\n"
@@ -56,16 +56,19 @@ msgid "Import/Export"
 msgstr "Import/Export"
 
 msgid "Invalid"
-msgstr "Ungültig"
+msgstr "UngÃ¼ltig"
 
-msgid "MC Answer"
-msgstr "MC-Antwort"
+msgid "Answer"
+msgstr "Antwort"
 
-msgid "MC Question"
-msgstr "MC-Frage"
+msgid "Question"
+msgstr "Frage"
 
 msgid "Question Group"
 msgstr "Fragegruppe"
+
+msgid "Scale Question"
+msgstr "Skalenfrage"
 
 msgid "Reference"
 msgstr "Referenz"
@@ -111,16 +114,19 @@ msgid "Superseded"
 msgstr "Ersetzt"
 
 msgid "description_edit_extextquestion"
-msgstr "Hier können sie eine Text-Frage erstellen."
+msgstr "Hier kÃ¶nnen sie eine Text-Frage erstellen."
+
+msgid "description_edit_scalequestion"
+msgstr "Ein Skalenfrage erfordert die Auswahl eines Punktes auf einer Skala, etwa einer Bewertung."
 
 msgid "description_edit_mcquestion"
-msgstr "Hier können sie eine Multiple-Choice-Frage erstellen."
+msgstr "Hier kÃ¶nnen sie eine Multiple-Choice-Frage erstellen."
 
 msgid "description_edit_mcquestiongroup"
-msgstr "Hier können Sie eine Fragegruppe erstellen."
+msgstr "Hier kÃ¶nnen Sie eine Fragegruppe erstellen."
 
 msgid "description_edit_mcreference"
-msgstr "Hier können Sie eine Referenz auf eine Frage oder eine Fragegruppe aus einem anderen  Test erstellen."
+msgstr "Hier kÃ¶nnen Sie eine Referenz auf eine Frage oder eine Fragegruppe aus einem anderen  Test erstellen."
 
 msgid "description_edit_mctest"
 msgstr "Ein Online-Test."

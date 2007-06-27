@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ECQuiz\n"
 "POT-Creation-Date: 2004-11-25 10:29 +0100\n"
-"PO-Revision-Date: 2006-08-02 16:59\n"
+"PO-Revision-Date: 2007-06-27 19:39\n"
 "Last-Translator: Michael Piotrowski <mxp@iws.cs.uni-magdeburg.de>\n"
 "Language-Team: eduComponents <educomponents@uni-magdeburg.de>\n"
 "MIME-Version: 1.0\n"
@@ -58,22 +58,25 @@ msgstr "Import/Export"
 msgid "Invalid"
 msgstr "Nul"
 
-msgid "MC Answer"
-msgstr "Réponse à choix multiple"
+msgid "Answer"
+msgstr "Réponse"
 
-msgid "MC Question"
-msgstr "Question à choix multiple"
+msgid "Question"
+msgstr "Question"
 
-msgid "MC Question Group"
+msgid "Scale Question"
+msgstr "Question à échelle"
+
+msgid "Question Group"
 msgstr "Groupe de questions"
 
-msgid "MC Reference"
+msgid "Reference"
 msgstr "Réferénce à une question"
 
-msgid "MC Result"
+msgid "Result"
 msgstr "Résultats test"
 
-msgid "MC Test"
+msgid "Quiz"
 msgstr "Test à choix multiple"
 
 msgid "Not Submitted"
@@ -109,6 +112,9 @@ msgstr "Statistiques"
 
 msgid "Superseded"
 msgstr "Remplacé"
+
+msgid "description_edit_scalequestion"
+msgstr "Une question à échelle."
 
 msgid "description_edit_extextquestion"
 msgstr "Une question à développement court."

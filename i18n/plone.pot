@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ECQuiz\n"
 "POT-Creation-Date: 2004-11-25 10:29 +0100\n"
-"PO-Revision-Date: 2006-08-03 17:16\n"
+"PO-Revision-Date: 2007-06-27 19:35\n"
 "Last-Translator: Michael Piotrowski <mxp@iws.cs.uni-magdeburg.de>\n"
 "Language-Team: eduComponents <educomponents@uni-magdeburg.de>\n"
 "MIME-Version: 1.0\n"
@@ -35,7 +35,7 @@ msgstr ""
 
 # The type names and descriptions
 
-msgid "MC Test"
+msgid "Quiz"
 msgstr ""
 
 # Original: An online quiz.
@@ -45,7 +45,7 @@ msgstr ""
 msgid "A multiple-choice test"
 msgstr ""
 
-msgid "MC Question Group"
+msgid "Question Group"
 msgstr ""
 
 msgid "description_edit_mcquestiongroup"
@@ -60,7 +60,7 @@ msgstr ""
 msgid "Correct Answer"
 msgstr ""
 
-msgid "MC Answer"
+msgid "Answer"
 msgstr ""
 
 msgid "Selection Answer"
@@ -69,7 +69,7 @@ msgstr ""
 msgid "Base Question"
 msgstr ""
 
-msgid "MC Question"
+msgid "Question"
 msgstr ""
 
 msgid "description_edit_mcquestion"
@@ -81,10 +81,13 @@ msgstr ""
 msgid "Points Question"
 msgstr ""
 
-msgid "Rating Question"
+msgid "Scale Question"
 msgstr ""
 
 msgid "Selection Question"
+msgstr ""
+
+msgid "description_edit_scalequestion"
 msgstr ""
 
 msgid "Extended Text Question"
@@ -96,7 +99,7 @@ msgstr ""
 msgid "A question that allows the candidate to write a text answer."
 msgstr ""
 
-msgid "MC Reference"
+msgid "Reference"
 msgstr ""
 
 # Original: "Using this form, you can create a reference " \
@@ -107,7 +110,7 @@ msgstr ""
 msgid "A reference to a question or a question group from another test."
 msgstr ""
 
-msgid "MC Result"
+msgid "Result"
 msgstr ""
 
 msgid "Please use XHTML conformant markup."

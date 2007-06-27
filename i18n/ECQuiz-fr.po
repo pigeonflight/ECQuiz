@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ECQuiz\n"
 "POT-Creation-Date: 2004-11-25 10:29 +0100\n"
-"PO-Revision-Date: 2006-08-02 17:32\n"
+"PO-Revision-Date: 2007-06-27 19:32\n"
 "Last-Translator: Michael Piotrowski <mxp@iws.cs.uni-magdeburg.de>\n"
 "Language-Team: eduComponents <educomponents@uni-magdeburg.de>\n"
 "MIME-Version: 1.0\n"
@@ -1240,6 +1240,31 @@ msgstr "Évaluation manuelle"
 #: QuestionTypes/PointsQuestion.py
 msgid "tutor_graded_tool_tip"
 msgstr "Selectionnez ce bouton si les réponses à cette question seront évaluées manuellement."
+
+# Original: Layout
+#: QuestionTypes/ECQScaleQuestion.py
+msgid "layout_label"
+msgstr "Affichage des choix"
+
+# Original: Select &quot;vertical&quot; if you want the choices to be listed from to top to bottom. Select &quot;horizontal&quot; if you want them to appear in a single row.
+#: QuestionTypes/ECQScaleQuestion.py
+msgid "layout_tool_tip"
+msgstr "Choisissez « vertical » pour afficher les choix de haut en bas.  Choisissez « horizontal » pour les afficher sur une seule ligne."
+
+# Original: Vertical
+#: QuestionTypes/ECQScaleQuestion.py
+msgid "layout_vertical_label"
+msgstr "Vertical"
+
+# Original: Horizontal
+#: QuestionTypes/ECQScaleQuestion.py
+msgid "layout_horizontal_label"
+msgstr "Horizontal"
+
+# Original: No selection.
+#: skins/ECQuiz/ecq_scalequestion_view.cpt
+msgid "no_selection"
+msgstr "Pas de sélection"
 
 #. errors.write( '\n' + multipleChoiceTestInstance.translate(\
 #. msgid   = 'unexpected_error',\

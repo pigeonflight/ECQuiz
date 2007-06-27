@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ECQuiz\n"
 "POT-Creation-Date: 2004-11-25 10:29 +0100\n"
-"PO-Revision-Date: 2007-04-27 16:15\n"
+"PO-Revision-Date: 2007-06-27 19:32\n"
 "Last-Translator: Michael Piotrowski <mxp@iws.cs.uni-magdeburg.de>\n"
 "Language-Team: eduComponents <educomponents@uni-magdeburg.de>\n"
 "MIME-Version: 1.0\n"
@@ -1256,6 +1256,31 @@ msgstr "Manuell bewertet"
 #: QuestionTypes/PointsQuestion.py
 msgid "tutor_graded_tool_tip"
 msgstr "Wählen Sie die Option aus, wenn die Antworten zu dieser Frage manuell bewertet werden."
+
+# Original: Layout
+#: QuestionTypes/ECQScaleQuestion.py
+msgid "layout_label"
+msgstr "Anordnung der Antwortmöglichkeiten"
+
+# Original: Select &quot;vertical&quot; if you want the choices to be listed from to top to bottom. Select &quot;horizontal&quot; if you want them to appear in a single row.
+#: QuestionTypes/ECQScaleQuestion.py
+msgid "layout_tool_tip"
+msgstr "Senkrecht: Von oben nach unten. Waagerecht: Auf einer Zeile von links nach rechts."
+
+# Original: No selection.
+#: skins/ECQuiz/ecq_scalequestion_view.cpt
+msgid "no_selection"
+msgstr "Keine Auswahl"
+
+# Original: Vertical
+#: QuestionTypes/ECQScaleQuestion.py
+msgid "layout_vertical_label"
+msgstr "Senkrecht"
+
+# Original: Horizontal
+#: QuestionTypes/ECQScaleQuestion.py
+msgid "layout_horizontal_label"
+msgstr "Waagerecht"
 
 #. errors.write( '\n' + multipleChoiceTestInstance.translate(\
 #. msgid   = 'unexpected_error',\
