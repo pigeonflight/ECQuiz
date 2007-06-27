@@ -152,28 +152,26 @@
        <tal:cond condition="python:len(questions) != 1">
         <ol>
          <tal:repeat repeat="question questions">
-          <tal:define define="
-           isTutorGraded question/isTutorGraded|python:False;
-           object        python:question;
-           ">
-           <tal:unless_hide_in_grade_view condition="python: (not gradeView) or isTutorGraded">
-            <li>
-             <!-- Get the question's 'view' macro and use it. -->
-             <metal:use use-macro="here/ecq_tools/macros/use_default_view"/>
-            </li>
-           </tal:unless_hide_in_grade_view>
-          </tal:define>
+          <metal:block define-macro="show_question">
+           <tal:define define="
+            isTutorGraded question/isTutorGraded|python:False;
+            object        python:question;
+            ">
+            <tal:unless_hide_in_grade_view condition="python: (not gradeView) or isTutorGraded">
+             <li>
+              <!-- Get the question's 'view' macro and use it. -->
+              <metal:use use-macro="here/ecq_tools/macros/use_default_view"/>
+             </li>
+            </tal:unless_hide_in_grade_view>
+           </tal:define>
+          </metal:block> <!-- define-macro="show_question" -->
          </tal:repeat>
         </ol>
        </tal:cond>
        <tal:cond condition="python:len(questions) == 1">
         <div>
-         <tal:define define="
-          question python:questions[0];
-          object   python:question;
-          ">
-          <!-- Get the question's 'view' macro and use it. -->
-          <metal:use use-macro="here/ecq_tools/macros/use_default_view"/>
+         <tal:define define="question python:questions[0];">
+          <metal:use use-macro="here/ecq_group_view/macros/show_question"/>
          </tal:define>
         </div>
        </tal:cond>
