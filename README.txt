@@ -56,7 +56,7 @@ Migration from LlsMultipleChoice
 
 Support
 
- For questions and discussions about ECAssignmentBox, please join the
+ For questions and discussions about ECQuiz, please join the
  "eduComponents mailing
  list":https://listserv.uni-magdeburg.de/mailman/listinfo/educomponents.
 
@@ -73,7 +73,7 @@ Credits
 
  The L2 Lisp parser was written by Wolfram Fenske.
 
- Several icons used in ECAssignmentBox are from the "Silk icon
+ Several icons used in ECQuiz are from the "Silk icon
  set":http://www.famfamfam.com/lab/icons/silk/ by Mark James.  They
  are licensed under a "Creative Commons Attribution 2.5
  License":http://creativecommons.org/licenses/by/2.5/.
