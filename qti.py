@@ -2230,6 +2230,8 @@ def exportPackage(multipleChoiceTest, errors):
     #          randomizationTiming="onEachNewAttempt"
     #          reorderChildren="true"/>
     # </imsss:sequencing>
+    quizItem = None
+    
     questionContainerList = [multipleChoiceTest] \
         + multipleChoiceTest.getQuestionGroups()
     for containerCounter in range(len(questionContainerList)):
@@ -2246,7 +2248,7 @@ def exportPackage(multipleChoiceTest, errors):
             containerItem = manifestDoc.createElement(ITEM)
             if questionContainer is multipleChoiceTest:
                 # The Quiz
-                testItem = containerItem
+                quizItem = containerItem
                 organization.appendChild(containerItem)
                 containerItemIdentifier = u'TEST-' \
                                           + unicode(containerCounter+1)
@@ -2263,9 +2265,9 @@ def exportPackage(multipleChoiceTest, errors):
                             manifestDoc.createElement(FILE))
                         containerFile.setAttribute(HREF,
                                                    context.unicodeDecode(path))
-            else:
+            elif quizItem:
                 # An ECQGroup
-                testItem.appendChild(containerItem)
+                quizItem.appendChild(containerItem)
                 containerItemIdentifier = u'CONTAINER-' \
                                           + unicode(containerCounter)
             containerItem.setAttribute(IDENTIFIER, containerItemIdentifier)
@@ -2275,9 +2277,7 @@ def exportPackage(multipleChoiceTest, errors):
                 containerItem.setAttribute(IDENTIFIER_REF,
                                            containerResourceIdentifier)
             containerResource.ownerDocument.unlink()
-            # export [isRandomOrder] etc.
-            exportRandomizationControls(questionContainer, containerItem,
-                                        errors)
+        
         # Export the contained questions
         questionList = questionContainer.getAllQuestions()
         for questionCounter in range(len(questionList)):
@@ -2326,6 +2326,20 @@ def exportPackage(multipleChoiceTest, errors):
                     exportBool(TUTOR_GRADED, question.isTutorGraded(),
                                questionItem)
                 questionResource.ownerDocument.unlink()
+                
+        # export [isRandomOrder] etc. if it's a group (we can't export
+        # [isRandomOrder] etc. for the quiz itself here because
+        # sequencing information must come after all the other
+        # elements)
+        if (containerAI is not None) and \
+               (questionContainer is not multipleChoiceTest):
+            exportRandomizationControls(questionContainer, containerItem,
+                                        errors)
+
+    # export [isRandomOrder] etc. if it's the quiz
+    if quizItem:
+        exportRandomizationControls(multipleChoiceTest, quizItem,
+                                    errors)
 
     ### export the sequencing information ###
 
