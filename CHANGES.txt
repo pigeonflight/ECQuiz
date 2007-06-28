@@ -11,7 +11,10 @@
 
 - Initial check-in of some unit tests for ECQuiz
 
-- Several bug fixes
+- Fixed bug #126: imsmanifest.xml files are now valid wrt the XML
+  Schema.
+
+- Several other bug fixes
 
 - Compatibility with DataGridField 1.5
 
