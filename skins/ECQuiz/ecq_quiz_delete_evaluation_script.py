@@ -32,7 +32,6 @@
 """ Handle deletion of custom scoring scripts. """
 
 REQUEST  = container.REQUEST
-RESPONSE = REQUEST.RESPONSE
 
 I18N_DOMAIN = context.i18n_domain
 
@@ -66,4 +65,4 @@ else:
     msg += ", ".join(deleted)
         
 target = context.getActionInfo('object/import_export')['url']
-RESPONSE.redirect('%s?portal_status_message=%s' % (target, msg))
+context.redirect('%s?portal_status_message=%s' % (target, msg))

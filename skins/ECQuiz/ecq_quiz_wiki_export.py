@@ -32,7 +32,7 @@ if package is None:
     target = context.getActionInfo('object/wiki_edit')['url']
     msg = context.translate(msgid='export_wiki_error',domain=I18NDOMAIN,\
                             default='An error occured, the quiz could not be exported!')
-    RESPONSE.redirect('%s?portal_status_message=%s' % (target,msg))
+    context.redirect('%s?portal_status_message=%s' % (target,msg))
 else:
     RESPONSE.setHeader('Content-Disposition','attachment; filename=' + filename)
     RESPONSE.setHeader('Content-Type','text/plain')

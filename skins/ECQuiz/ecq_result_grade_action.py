@@ -26,7 +26,6 @@
 # Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 REQUEST  = context.REQUEST
-RESPONSE = REQUEST.RESPONSE
 
 I18N_DOMAIN = context.i18n_domain
 
@@ -54,4 +53,4 @@ msg = context.translate(
     default = msgid)
 
 target = result.getActionInfo('object/grade')['url']
-RESPONSE.redirect('%s?portal_status_message=%s' % (target, msg))
+context.redirect('%s?portal_status_message=%s' % (target, msg))

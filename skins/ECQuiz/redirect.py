@@ -1,6 +1,10 @@
-## Script (Python) "deleteResults"
-##title=
-##
+## Script (Python) "redirect"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=url
 
 #!/usr/local/bin/python
 # -*- coding: iso-8859-1 -*-
@@ -25,28 +29,9 @@
 # along with ECQuiz; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+""" Redirects to the given URL, avoiding encoding issues """
+
 REQUEST  = context.REQUEST
+RESPONSE = REQUEST.RESPONSE
 
-I18N_DOMAIN = context.i18n_domain
-
-if not REQUEST.has_key('ids'):
-    msg = context.translate(
-        msgid   = 'select_item_delete',
-        domain  = I18N_DOMAIN,
-        default = 'Please select one or more items to delete first.')
-else:
-    ids = REQUEST['ids']
-    context.deleteResultsById(ids)
-    if len(ids) == 1:
-        msg = context.translate(
-            msgid   = 'item_deleted',
-            domain  = I18N_DOMAIN,
-            default = 'Item deleted.')
-    else:
-        msg = context.translate(
-            msgid   = 'items_deleted',
-            domain  = I18N_DOMAIN,
-            default = 'Items deleted.')
-
-target = context.getActionInfo('object/results')['url']
-context.redirect('%s?portal_status_message=%s' % (target, msg))
+return RESPONSE.redirect(context.str(url))

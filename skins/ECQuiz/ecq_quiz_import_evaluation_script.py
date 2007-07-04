@@ -34,9 +34,6 @@
     upload_evaluation_scripts.pt form.
 """
 
-REQUEST  = container.REQUEST
-RESPONSE = REQUEST.RESPONSE
-
 I18N_DOMAIN = context.i18n_domain
 
 if (same_type(file, '') or same_type(file, u'')):
@@ -75,4 +72,4 @@ else:
                 default = 'The script is invalid. The following error occurred:') + ' ' + uploadErrorMessage
         
 target = context.getActionInfo('object/import_export')['url']
-RESPONSE.redirect('%s?portal_status_message=%s' % (target, msg))
+context.redirect('%s?portal_status_message=%s' % (target, msg))

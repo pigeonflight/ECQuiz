@@ -26,8 +26,6 @@
 
 """This script is called when the wiki_edit tab is loaded"""
 
-REQUEST  = context.REQUEST
-RESPONSE = REQUEST.RESPONSE
 I18NDOMAIN = context.i18n_domain
 
 if(same_type(file,'') or same_type(file,u'')):
@@ -44,4 +42,4 @@ else:
                             default='An error occured, could not import quiz!')
 
 target = context.getActionInfo('object/wiki_edit')['url']
-RESPONSE.redirect('%s?portal_status_message=%s' % (target,msg))
+context.redirect('%s?portal_status_message=%s' % (target,msg))

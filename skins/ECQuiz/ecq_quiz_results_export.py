@@ -41,7 +41,7 @@ if not REQUEST.has_key('ids'):
         msgid   = 'select_item_export',
         domain  = I18N_DOMAIN,
         default = 'Please select one or more items to export first.')
-    return RESPONSE.redirect(REDIRECT_URL + msg)
+    return context.redirect(REDIRECT_URL + msg)
 
 ERROR_FORMAT_MSG = context.translate(
     msgid   = 'unknown_format_export',
@@ -49,12 +49,12 @@ ERROR_FORMAT_MSG = context.translate(
     default = 'Unknown format. Cannot export.')
 
 if not format:
-    return RESPONSE.redirect(REDIRECT_URL + ERROR_FORMAT_MSG)
+    return context.redirect(REDIRECT_URL + ERROR_FORMAT_MSG)
 format = format.lower()
 exportFormatList = [o for o in context.RESULTS_EXPORT_FORMATS
                     if o[0].lower() == format]
 if not exportFormatList:
-    return RESPONSE.redirect(REDIRECT_URL + ERROR_FORMAT_MSG)
+    return context.redirect(REDIRECT_URL + ERROR_FORMAT_MSG)
 
 exportFormat = exportFormatList[0]
 #~ fileExt      = exportFormat[0]

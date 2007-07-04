@@ -35,7 +35,7 @@ RESPONSE = REQUEST.RESPONSE
 
 I18N_DOMAIN = context.i18n_domain
 
-# an arbitrary marker than can be identified using 'is'/'is not
+# an arbitrary marker than can be identified using 'is'/'is not'
 nullVal = ['foo'] 
 ignoreErrors = REQUEST.get('ignore_export_errors', nullVal) is not nullVal
 
@@ -61,8 +61,8 @@ if (msg and (not ignoreErrors)) or (package is None):
             default = 'An an unexpected has occurred. '
             'The quiz could not be exported.')
     target = context.getActionInfo('object/import_export')['url']
-    RESPONSE.redirect('%s?portal_status_message=%s' % (target, msg))
-    # Seems like for some reason I have to put these nonsense here.
+    context.redirect('%s?portal_status_message=%s' % (target, msg))
+    # Seems like for some reason I have to put this nonsense here.
     RESPONSE.setHeader('Content-Disposition', 'attachment; filename=error.txt')
     RESPONSE.setHeader('Content-Type', 'text/plain')
     RESPONSE.setHeader('Content-Length', 0)

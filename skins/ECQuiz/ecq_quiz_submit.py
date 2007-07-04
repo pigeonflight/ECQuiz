@@ -33,8 +33,7 @@ i.e. presses the 'Submit' button of the quiz form in ecq_quiz_view.pt.
 from AccessControl import getSecurityManager
 from DateTime import DateTime
 
-request     = container.REQUEST
-RESPONSE    = request.RESPONSE
+REQUEST     = container.REQUEST
 
 I18N_DOMAIN = context.i18n_domain
 
@@ -42,7 +41,7 @@ user = getSecurityManager().getUser()
 candidateId = user.getId()
 suMode = context.userIsGrader(user)
 # Check if "submit was pressed
-gotSubmit = request.get('submit', False)
+gotSubmit = REQUEST.get('submit', False)
 finished = gotSubmit
 result = context.getCurrentResult()
 ecq_tool = context.ecq_tool
@@ -77,7 +76,7 @@ if context.mayResubmit():
                 check = (groupNum < numGroups) and (group == groups[groupNum])
             if check:
                 name = candidateId + '_' + question.UID()
-                candidateAnswer = request.get(name, nullVal)
+                candidateAnswer = REQUEST.get(name, nullVal)
                 """The answer `nullVal' is a special case. An answer
                 with that ID is generated for every multiple choice
                 answer to allow the candidate to select nothing if
@@ -99,7 +98,7 @@ if context.mayResubmit():
             haveNewPageNum = False
             # Check if one of the numbers was pressed
             for i in range(0, numPages):
-                value = request.get('page_%d' % i, None)
+                value = REQUEST.get('page_%d' % i, None)
                 if value is not None:
                     pageNum = i
                     haveNewPageNum = True
@@ -107,8 +106,8 @@ if context.mayResubmit():
 
             if not haveNewPageNum:
                 # Else, see if "Next" or "Previous" was pressed.
-                showPrevious = request.get('previous', False)
-                showNext     = request.get('next',     False)
+                showPrevious = REQUEST.get('previous', False)
+                showNext     = REQUEST.get('next',     False)
                 if showPrevious:
                     pageNum -= 1
                 elif showNext:
@@ -117,7 +116,7 @@ if context.mayResubmit():
         else:
             # If navigation is not allowed, only check if 'next' was
             # pressed.
-            if request.get('next', False):
+            if REQUEST.get('next', False):
                 pageNum += 1
         
         # Save the new page number
@@ -148,8 +147,8 @@ if finished:
     # 'has_just_submitted' to 'True'.  This prevents the 'You have
     # already taken this test.' message from being shown immediately
     # after submission.
-    RESPONSE.redirect('%s?portal_status_message=%s&has_just_submitted=True'
-                      % (target, msg))
+    context.redirect('%s?portal_status_message=%s&has_just_submitted=True'
+                     % (target, msg))
 else:
     target = context.getActionInfo('object/view')['url']
-    RESPONSE.redirect(target)
+    context.redirect(target)

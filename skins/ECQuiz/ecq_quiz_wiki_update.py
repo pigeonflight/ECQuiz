@@ -27,9 +27,6 @@
 """This script is called when the user pressed the update button 
 in the wiki_edit tab"""
 
-REQUEST  = context.REQUEST
-RESPONSE = REQUEST.RESPONSE
-
 I18N_DOMAIN = context.i18n_domain
 
 target = context.getActionInfo('object/wiki_edit')['url']
@@ -45,4 +42,4 @@ else:
 #  msg += context.translate( msgid='update_wiki_error',domain = I18N_DOMAIN,\
 #                            default = ' could not be updated, you may have syntax errors!')
 
-RESPONSE.redirect('%s?portal_status_message=%s' % (target,msg))
+context.redirect('%s?portal_status_message=%s' % (target,msg))

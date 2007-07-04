@@ -42,12 +42,12 @@ ERROR_FORMAT_MSG = context.translate(
     default = 'Unknown format. Cannot export.')
 
 if not format:
-    return RESPONSE.redirect(REDIRECT_URL + ERROR_FORMAT_MSG)
+    return context.redirect(REDIRECT_URL + ERROR_FORMAT_MSG)
 format = format.lower()
 exportFormatList = [o for o in context.RESULTS_EXPORT_FORMATS
                     if o[0].lower() == format]
 if not exportFormatList:
-    return RESPONSE.redirect(REDIRECT_URL + ERROR_FORMAT_MSG)
+    return context.redirect(REDIRECT_URL + ERROR_FORMAT_MSG)
 
 exportFormat = exportFormatList[0]
 colDelim     = exportFormat[1]
