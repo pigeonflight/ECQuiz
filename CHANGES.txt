@@ -1,4 +1,4 @@
-# Changes in release 1.1 (2007-XX-XX)
+# Changes in release 1.1 (2007-07-16)
 
 - New question type: Scale questions can be used for Likert scales and
   similar response types.  Each answer is assigned a certain
