@@ -714,7 +714,13 @@ class ECQuiz(ECQAbstractGroup):
             # it.  Otherwise, possiby mark it as invalid.
             ownerId = result.Creator()
             member = mtool.getMemberById(ownerId)
-            ownerIsRoot = self.userIsManager(member)
+            # If the user could not be found, [member] will be [None]
+            # at this point.  This may happen if the quiz is exported
+            # via the ZMI and imported into another system.
+            if member:
+                ownerIsRoot = self.userIsManager(member)
+            else:
+                ownerIsRoot = False
             if ownerIsRoot and (result.hasState('unsubmitted')):
                 self.manage_delObjects([result.getId()])
             elif action != 'move':
