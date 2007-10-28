@@ -171,14 +171,16 @@ class ECQTool(UniqueObject, SimpleItem):
     
     security.declarePublic('userHasOneOfRoles')
     def userHasOneOfRoles(self, user, roles, obj):
-        userId = user.getId()
-        localRoles = obj.get_local_roles_for_userid(userId)
-        contextRoles = user.getRolesInContext(obj)
-        for role in roles:
-            if (user.has_role(role) or
-                (role in localRoles) or
-                (role in contextRoles)):
-                return True
+        if user and roles and obj:
+            userId = user.getId()
+            localRoles = obj.get_local_roles_for_userid(userId)
+            contextRoles = user.getRolesInContext(obj)
+            for role in roles:
+                if (user.has_role(role) or
+                    (role in localRoles) or
+                    (role in contextRoles)):
+                    return True
+        # default return value
         return False
 
                        
