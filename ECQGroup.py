@@ -28,7 +28,6 @@ from Products.Archetypes.utils import shasattr
 
 from Products.Archetypes.public import Schema, BooleanField, StringField, \
      StringWidget, TextField, TextAreaWidget
-from Products.ATContentTypes.content.base import updateActions, updateAliases
 
 from config import *
 from permissions import *
@@ -52,20 +51,6 @@ class ECQGroup(ECQAbstractGroup):
                     i18n_domain='plone'),
             ),
         ),)
-
-    meta_type = 'ECQGroup'            # zope type name
-    portal_type = meta_type           # plone type name
-    archetype_name = 'Question Group' # friendly type name
-
-    # Use the portal_factory for this type.  The portal_factory tool
-    # allows users to initiate the creation objects in a such a way
-    # that if they do not complete an edit form, no object is created
-    # in the ZODB.
-    #
-    # This attribute is evaluated by the Extensions/Install.py script.
-    use_portal_factory = True
-
-    content_icon = 'ecq_group.png'
 
     typeDescription = "Using this form, you can create a question group."
     typeDescMsgId = 'description_edit_mcquestiongroup'

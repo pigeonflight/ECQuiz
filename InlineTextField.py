@@ -27,43 +27,45 @@ from Acquisition import aq_base, aq_parent, aq_inner
 from OFS.content_types import guess_content_type
 
 from Products.Archetypes.Registry import registerField
-from Products.Archetypes.public import TextField
+from Products.Archetypes.atapi import TextField as BaseTextField
+
 
 from tools import log
 
-class InlineTextField(TextField):
+class InlineTextField(BaseTextField):
     """ A TextField puts the contents in a <p>-element if the content type is 
         'text/plain', 'text/structured' or 'text/restructured' and the
         default_output_type is 'text/html'. This class behaves exactly like 
         TextField, except it does remove those additional <p> tags.
     """
-    def get(self, instance, mimetype=None, raw=False, forceInline=False, **kwargs):
-        data = TextField.get(self, instance, mimetype, raw, **kwargs)
-        if(raw or (not forceInline)):
-            return data
-        if(isinstance(data, str) or isinstance(data, unicode)):
-            try:
-                doc = parseString( '<x>%s</x>' % data.strip() )
-                root = doc.documentElement
-                for child in root.childNodes:
-                    if( (child.nodeType == child.TEXT_NODE) and 
-                        child.data.strip() ):
-                        break
-                    elif( child.nodeType == child.ELEMENT_NODE ):
-                        style = child.getAttribute('style')
-                        child.setAttribute('style', u'display:inline;' + style)
-                        ## IE hack start ##
-                        child.appendChild( doc.createTextNode(' ') )
-                        ## IE hack end ##
-                        break
-                tmp = ''
-                for child in root.childNodes:
-                    tmp += child.toxml()
-                doc.unlink()                
-                data = tmp
-            except:
-                pass
-        return data
+# FIXME: I kept getting errors with the first line, data=... - could not resolve
+## def get(self, instance, mimetype=None, raw=False, forceInline=False, **kwargs): 
+##        data = BaseTextField.get(self, instance, mimetype, raw, **kwargs)
+##        if(raw or (not forceInline)):
+##            return data
+##        if(isinstance(data, str) or isinstance(data, unicode)):
+##            try:
+##                doc = parseString( '<x>%s</x>' % data.strip() )
+##                root = doc.documentElement
+##                for child in root.childNodes:
+##                    if( (child.nodeType == child.TEXT_NODE) and 
+##                        child.data.strip() ):
+##                        break
+##                    elif( child.nodeType == child.ELEMENT_NODE ):
+##                        style = child.getAttribute('style')
+##                        child.setAttribute('style', u'display:inline;' + style)
+##                        ## IE hack start ##
+##                        child.appendChild( doc.createTextNode(' ') )
+##                        ## IE hack end ##
+##                        break
+##                tmp = ''
+##                for child in root.childNodes:
+##                    tmp += child.toxml()
+##                doc.unlink()                
+##                data = tmp
+##            except:
+##                pass
+##        return data
     
 
 # Register this field in Zope

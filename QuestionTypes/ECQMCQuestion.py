@@ -30,7 +30,6 @@ from Products.Archetypes.public import BaseFolder, BaseFolderSchema, \
      BaseContent, BaseSchema, Schema, BooleanField, BooleanWidget, \
      IntegerField, IntegerWidget, StringField, TextField, SelectionWidget, \
      TextAreaWidget, StringWidget, RichWidget
-from Products.ATContentTypes.content.base import updateActions, updateAliases
 
 from Products.ECQuiz.config import *
 from Products.ECQuiz.permissions import *
@@ -52,32 +51,6 @@ class ECQMCQuestion(ECQSelectionQuestion, ECQPointsQuestion):
     """
 
     schema = ECQSelectionQuestion.schema.copy() + ECQPointsQuestion.schema.copy()
-
-    # Use a custom page template for viewing.
-    suppl_views = None
-    default_view = immediate_view = 'ecq_mcquestion_view'
-
-    for baseClass in (ECQSelectionQuestion,
-                      #ECQPointsQuestion,
-                      ):
-        aliases = updateAliases(baseClass, {
-            'view': default_view,
-            })
-
-    # Only Answer objects may be put into this folder.
-    allowed_content_types = (ECQMCAnswer.portal_type,)
-    
-    meta_type = 'ECQMCQuestion'    # zope type name
-    portal_type = meta_type        # plone type name
-    archetype_name = 'MC Question' # friendly type name
-
-    # Use the portal_factory for this type.  The portal_factory tool
-    # allows users to initiate the creation objects in a such a way
-    # that if they do not complete an edit form, no object is created
-    # in the ZODB.
-    #
-    # This attribute is evaluated by the Extensions/Install.py script.
-    use_portal_factory = True
 
     security = ClassSecurityInfo()
 

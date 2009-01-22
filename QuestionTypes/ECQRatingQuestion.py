@@ -30,7 +30,6 @@ from Products.Archetypes.public import BaseFolder, BaseFolderSchema, \
 BaseContent, BaseSchema, Schema, BooleanField, BooleanWidget, IntegerField, \
 IntegerWidget, StringField, TextField, SelectionWidget, TextAreaWidget, \
 StringWidget, RichWidget
-from Products.ATContentTypes.content.base import updateActions, updateAliases
 
 from Products.ECQuiz.config import *
 from Products.ECQuiz.permissions import *
@@ -52,25 +51,6 @@ class ECQRatingQuestion(ECQSelectionQuestion, ECQPointsQuestion):
 
     schema = ECQSelectionQuestion.schema.copy() + \
              ECQPointsQuestion.schema.copy()
-
-    # Use a custom page template for viewing.
-    suppl_views = None
-    default_view = immediate_view = 'ecq_ratingquestion_view'
-
-    for baseClass in (ECQSelectionQuestion,
-                      #ECQPointsQuestion,
-                      ):
-        aliases = updateAliases(baseClass, {
-            'view': default_view,
-            })
-
-    # Only Answer objects may be put into this folder.
-    allowed_content_types = (ECQSelectionAnswer.portal_type,)
-    
-    meta_type = 'ECQRatingQuestion'    # zope type name
-    portal_type = meta_type            # plone type name
-    archetype_name = 'Rating Question' # friendly type name
-
 
     def getCandidatePoints(self, candidateId):
         """ Return how many points the user got for this question.

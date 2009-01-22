@@ -51,24 +51,24 @@ class ECQTool(UniqueObject, SimpleItem):
     security = ClassSecurityInfo()
 
     def getContentLang(self, object, domain=I18N_DOMAIN):
-        if HAS_FIVE_TS:
-            # Returns a PTSWrapper
-            service = PlacelessTranslationService.getTranslationService()
-        else:
-            # Returns a PTSWrapper
-            service = getGlobalTranslationService()
-
-        # Get the actual PlacelessTranslationService
-        service = service.load(object)
-
-        availableTranslations = service.getLanguages(domain)
-        
-        if object.Language() in availableTranslations:
-            return object.Language()
-
-        requestLang = self.getAcceptLanguages(object, availableTranslations)
-        if requestLang:
-            return requestLang
+##        if HAS_FIVE_TS:
+##            # Returns a PTSWrapper
+##            service = PlacelessTranslationService.getTranslationService()
+##        else:
+##            # Returns a PTSWrapper
+##            service = getGlobalTranslationService()
+##
+##        # Get the actual PlacelessTranslationService
+##        service = service.load(object)
+##
+##        availableTranslations = service.getLanguages(domain)
+##        
+##        if object.Language() in availableTranslations:
+##            return object.Language()
+##
+##        requestLang = self.getAcceptLanguages(object, availableTranslations)
+##        if requestLang:
+##            return requestLang
         
         props = getToolByName(object,'portal_properties').site_properties
         return props.default_language

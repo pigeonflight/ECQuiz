@@ -27,7 +27,6 @@ from Products.Archetypes.public import Schema, BaseSchema, BaseContent, \
      ObjectField, IntegerField, StringField, DateTimeField, BooleanField
 from Products.Archetypes.Widget import TypesWidget, StringWidget, \
      BooleanWidget
-from Products.ATContentTypes.content.base import updateActions, updateAliases
 from Products.ATContentTypes.content.base import ATCTContent
 from Products.ATContentTypes.content.schemata import ATContentTypeSchema
 from Products.ATContentTypes.content.schemata import finalizeATCTSchema
@@ -167,43 +166,10 @@ class ECQResult(ATCTContent, HistoryAwareMixin):
                      default=0,),
         ),)
 
-    default_view = immediate_view = 'ecq_result_view'
-
-    aliases = updateAliases(ATCTContent, {
-        'view': default_view,
-        })
-
-    actions = updateActions(ATCTContent, (
-        {
-        'action':      'string:$object_url/ecq_result_grade',
-        'category':    'object',
-        'id':          'grade',
-        'name':        'Grade',
-        'permissions': (PERMISSION_GRADE,),
-        'condition':   'here/isGradable',
-        },
-        {
-        # Hack to remove the "Edit" tab
-        'action':      'string:$object_url/edit',
-        'category':    'object',
-        'id':          'edit',
-        'condition':   'python:0',
-        },
-        ))
-    
-    meta_type = 'ECQResult'   # zope type name
-    portal_type = meta_type   # plone type name
-    archetype_name = 'Result' # friendly type name
-
-    # This type isn't directly allowed anywhere.
-    global_allow = False
     # Don't list this type in the portal navigation.
     navigation_exclude = True
 
-    content_icon = 'ecq_result.png'
-    
     security = ClassSecurityInfo()
-
     
     security.declarePrivate('getQR')
     def getQR(self, caller, question, dontThrow=False):

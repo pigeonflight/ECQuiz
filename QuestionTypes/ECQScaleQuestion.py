@@ -29,7 +29,6 @@ from Acquisition import aq_base, aq_acquire, aq_inner, aq_parent
 from Products.Archetypes.public import Schema, StringField
 from Products.Archetypes.Widget import SelectionWidget
 from Products.Archetypes.utils import DisplayList
-from Products.ATContentTypes.content.base import updateActions, updateAliases
 
 from Products.ECQuiz.config import *
 from Products.ECQuiz.permissions import *
@@ -77,26 +76,6 @@ class ECQScaleQuestion(ECQSelectionQuestion, ECQPointsQuestion):
 
     for i in range(4):
         schema.moveField('choiceLayout', -1)
-
-    # Use a custom page template for viewing.
-    suppl_views = None
-    default_view = immediate_view = 'ecq_scalequestion_view'
-
-    for baseClass in (ECQSelectionQuestion,
-                      #ECQPointsQuestion,
-                      ):
-        aliases = updateAliases(baseClass, {
-            'view': default_view,
-            })
-
-    allowed_content_types = (ECQScaleAnswer.portal_type,)
-    
-    meta_type = 'ECQScaleQuestion'	# zope type name
-    portal_type = meta_type		# plone type name
-    archetype_name = 'Scale Question'	# friendly type name
-
-    # This attribute is evaluated by the Extensions/Install.py script.
-    use_portal_factory = True
 
     typeDescription = "A question which requires a selection of a point " \
                       "on a scale, e.g. for rating."

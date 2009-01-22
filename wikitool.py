@@ -1,4 +1,4 @@
-# Copyright 2006 Otto-von-Guericke-Universit�t Magdeburg
+# Copyright 2006 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #

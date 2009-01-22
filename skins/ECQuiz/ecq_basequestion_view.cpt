@@ -41,7 +41,7 @@
       </tal:call-view-macro>
      </fieldset>
     </form>
-
+    
     <div metal:use-macro="here/document_byline/macros/byline">
      Get the byline - contains details about author and modification date.
     </div>

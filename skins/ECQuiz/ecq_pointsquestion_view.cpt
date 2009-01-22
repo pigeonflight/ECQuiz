@@ -12,6 +12,11 @@
  question
  -->
  <body>
+  <metal:import-css fill-slot="css_slot">
+   <style type="text/css" media="screen" tal:content="string: @import url($portal_url/ecqstyles.css);">
+   </style>
+  </metal:import-css>
+  
   <metal:fill fill-slot="main">
    <metal:use use-macro="here/ecq_basequestion_view/macros/edit_view"/>
    

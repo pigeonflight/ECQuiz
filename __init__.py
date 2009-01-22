@@ -33,21 +33,18 @@ log('------------------------------------------------------------------\n')
 import os, os.path
 
 from Products.Archetypes.public import process_types, listTypes
-from Products.CMFCore import utils
+from Products.CMFCore import utils as cmfutils
 from Products.CMFCore.DirectoryView import registerDirectory
-from Products.validation.validators.validator import RegexValidator
 
-from Products.ECQuiz.XMLValidator import XMLValidator
+from Products.ECQuiz.validators import *
 
 # some global constants (in ALL_CAPS) and functions
 from Products.ECQuiz.config import *
 from Products.ECQuiz.tools import *
 from Products.ECQuiz.permissions import *
+from Products.ECQuiz.ECQTool import ECQTool
 
 module = ''
-
-# register the validator 'isPositiveInt' in the Zope environment and log whether the registration worked
-registerValidatorLogged(RegexValidator, 'isPositiveInt', r'^[1-9]\d*$')
 
 # import self defined types and register them in Zope
 # (the registration of the classes contained in each file
@@ -74,19 +71,17 @@ try:
         log('Worked: importing module "%s"\n' % module)
     # import 'ECQAbstractGroup', 'ECQuiz', 'ECQGroup'
     for m in ['ECQResult',
-              'ECQResultWorkflow',
               'ECQFolder',
               'ECQAbstractGroup',
               'ECQuiz',
-              'ECQuizWorkflow',
               'ECQGroup',
               'ECQReference']:
         module = m
         exec('import ' + module)
         log('Worked: importing module "' + module + '"\n')
 except Exception, e:
-    # log any errors that occurred
-    log('Failed: importing module "' + module + '": ' + unicode(e) + '\n')
+     # log any errors that occurred
+      log('Failed: importing module "' + module + '": ' + unicode(e) + '\n')
 
 """ Register the skins directory (where all the page templates, the
     '.pt' files, live) (defined in Products.ECQuiz.config)
@@ -100,44 +95,32 @@ def initialize(context):
         at all. Best leave it alone.)
     """
     log('Start: "initialize()"\n')
-    try:
-        content_types, constructors, ftis = process_types(
-            listTypes(PROJECTNAME),
-            PROJECTNAME)
-        
-        utils.ContentInit(
-            PROJECTNAME + ' Content',
-            content_types      = content_types,
-            permission         = PERMISSION_ADD_MCTEST,
-            extra_constructors = constructors,
-            fti                = ftis,
-        ).initialize(context)
-        
-        log('\tWorked: "ContentInit()"\n')
 
-        # Add permissions to allow control on a per-class basis
-        for i in range(0, len(content_types)):
-            content_type = content_types[i].__name__
-            if ADD_CONTENT_PERMISSIONS.has_key(content_type):
-                context.registerClass(meta_type    = ftis[i]['meta_type'],
-                                      constructors = (constructors[i],),
-                                      permission   = ADD_CONTENT_PERMISSIONS[content_type])
+    content_types, constructors, ftis = process_types(
+        listTypes(PROJECTNAME),
+        PROJECTNAME)
+    
+    cmfutils.ContentInit(
+        PROJECTNAME + ' Content',
+        content_types      = content_types,
+        permission         = PERMISSION_ADD_MCTEST,
+        extra_constructors = constructors,
+        fti                = ftis,
+    ).initialize(context)
+    
+    log('\tWorked: "ContentInit()"\n')
 
-        from ECQTool import ECQTool
+    # Add permissions to allow control on a per-class basis
+    for i in range(0, len(content_types)):
+        content_type = content_types[i].__name__
+        if ADD_CONTENT_PERMISSIONS.has_key(content_type):
+            context.registerClass(meta_type    = ftis[i]['meta_type'],
+                                  constructors = (constructors[i],),
+                                  permission   = ADD_CONTENT_PERMISSIONS[content_type])
 
-        utils.ToolInit(
-            ECQTool.meta_type,
-            tools = (ECQTool,),
-            product_name = PROJECTNAME,
-            icon = 'ECQTool.png',
-            ).initialize(context)
+    #~ parsers.initialize(context)
+    #~ renderers.initialize(context)
+    log('Worked: "initialize()"\n')
 
-        log('\tWorked: "ToolInit"\n')
-        #~ parsers.initialize(context)
-        #~ renderers.initialize(context)
-        log('Worked: "initialize()"\n')
-    except Exception, e:
-        # Log any errors that occurred in 'initialize()'
-        log('Failed: "initialize()": ' + str(e) + '\n')
     # Mark end of Product initialization in log file.
     log('------------------------------------------------------------------\n')

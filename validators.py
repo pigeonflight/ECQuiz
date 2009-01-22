@@ -20,17 +20,20 @@
 # along with ECQuiz; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-""" A validator for XML fragments, i.e. stuff like
-
-    <p>Paragraph</p>
-    This is <strong>very</strong> important.
-"""
-
 from Products.validation.interfaces import ivalidator
 from xml.dom.minidom import parseString
 
 from tools import log
 from tools import registerValidatorLogged
+
+import re
+
+
+""" A validator for XML fragments, i.e. stuff like
+
+    <p>Paragraph</p>
+    This is <strong>very</strong> important.
+"""
 
 class XMLValidator:
     """A validator for XML fragments."""
@@ -66,3 +69,20 @@ class XMLValidator:
 
 # Register this validator in Zope
 registerValidatorLogged(XMLValidator, 'isXML')
+
+
+class PositiveIntegerValidator:
+    """A validator for positive integers."""
+    
+    __implements__ = (ivalidator,)
+    
+    def __init__(self, name):
+        self.name = name
+    
+    def __call__(self, value, *args, **kwargs):
+        if (not re.compile(r'^[1-9]\d*$').match(value)):
+            return """Please enter a positive integer."""
+        return True
+
+# Register this validator in Zope
+registerValidatorLogged(PositiveIntegerValidator, 'isPositiveInt')

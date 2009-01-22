@@ -32,7 +32,6 @@ from Products.Archetypes.utils import shasattr
 from Products.Archetypes.public import BaseFolderSchema, Schema, \
      BooleanField, IntegerField, StringField, TextField, \
      TextAreaWidget
-from Products.ATContentTypes.content.base import updateActions, updateAliases
 from Products.Archetypes.Widget import TypesWidget, BooleanWidget, \
      IntegerWidget, RichWidget
 
@@ -173,6 +172,7 @@ class ECQAbstractGroup(ECQFolder):
             ),
             IntegerField("numberOfRandomQuestions",
                 required=False,
+                validators=('isInt',),
                 default=-1,
                 read_permission=PERMISSION_INTERROGATOR,
                 widget=IntegerWidget(
@@ -188,23 +188,7 @@ class ECQAbstractGroup(ECQFolder):
                     i18n_domain=I18N_DOMAIN),
             ),
         ),)
-
-    """Register custom Page Templates for specific actions, e.g.
-    'view', 'edit' or self defined actions."""
-    suppl_views = None
-    default_view = immediate_view = 'ecq_group_view'
-    
-    aliases = updateAliases(ECQFolder, {
-        'view': default_view,
-        })
-    
-
-    # The Zope name of this type
-    meta_type = 'ECQAbstractGroup'    # zope type name
-    portal_type = meta_type           # plone type name
-    archetype_name = 'Abstract Group' # friendly type name
-
-    
+   
     """'Standalone' documents of this type are not allowed. Documents
     of this type are allowed only as part of certain other types of
     documents, i.e. those, whose 'allowed_content_types' property (see
@@ -212,18 +196,17 @@ class ECQAbstractGroup(ECQFolder):
     'tuple(['ECQAbstractGroup'])'.  That means you cannot
     create an 'ECQAbstractGroup' instance directly on the
     start page but only as content in other (folder-like) documents.
-    """
-    global_allow = False
-    """ 'ECQAbstractGroup' documents can only contain other
+
+ 'ECQAbstractGroup' documents can only contain other
     documents of the types specified in the list QUESTION_TYPES (see
     config).
     """
-    
+  
     allowed_content_types = ('ECQMCQuestion',
-                             'ECQExtendedTextQuestion',
-                             'ECQScaleQuestion',
-                             ECQReference.portal_type)
-        
+            'ECQExtendedTextQuestion',
+            'ECQScaleQuestion',
+            ECQReference.portal_type)
+
     # Get a ClassSecurityInfo-instance in order to declare some class
     # methods protected or private
     security = ClassSecurityInfo()

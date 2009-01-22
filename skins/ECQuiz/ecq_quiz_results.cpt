@@ -82,8 +82,7 @@
        <th tal:content="python:headerRow['full_name']  ">Candidate</th>
        <th tal:content="python:headerRow['state']      ">State</th>
        <th tal:content="python:headerRow['grade']"
-           tal:condition="haveGrades"
-           i18n:translate="label_grade"                 >Grade</th>
+           tal:condition="haveGrades">Grade</th>
        <th tal:content="python:headerRow['score']      ">Score</th>
        <th tal:content="python:headerRow['max_score']  ">Possible Score</th>
        <th tal:content="python:headerRow['time_start'] ">Started</th>

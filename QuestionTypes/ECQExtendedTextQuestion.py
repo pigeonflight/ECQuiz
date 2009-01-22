@@ -79,10 +79,6 @@ class ECQExtendedTextQuestion(ECQPointsQuestion):
     schema.moveField('points', 1)
     schema.moveField('points', 1)
         
-    # Use a custom page template for viewing.
-    suppl_views = None
-    default_view = immediate_view = 'ecq_extendedtextquestion_view'
-    
     allowed_content_types = ()
     filter_content_types = True # Otherwise allowed_content_types == ()
                                 # means 'allow everything'

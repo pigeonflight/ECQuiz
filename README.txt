@@ -8,20 +8,19 @@ Overview
 
 Download
 
- "ECQuiz 1.1":http://plone.org/products/ecquiz/
+ "ECQuiz 1.2":http://plone.org/products/ecquiz/
 
 Prerequisites
 
  To use ECQuiz you need:
 
- 1. A current Plone installation, specifically Plone 2.1.x or Plone
-    2.5; check "plone.org":http://plone.org/products/plone/releases/
-    for details.
+ 1. A current Plone installation, specifically Plone 3.x; check
+    "plone.org":http://plone.org/products/plone/releases/ for details.
 
  2. The "DataGridField":http://plone.org/products/datagridfield
-    product.  If you're still running Zope 2.7, read this "bug
-    report":http://plone.org/products/datagridfield/issues/1 and apply
-    the fix described in the report.
+    product.  This version of ECQuiz has been tested extensively with
+    DataGridField version 1.6rc1.  Newer versions might or might not
+    work as well.
 
 Installation
 

@@ -34,10 +34,11 @@ ROLE_RESULT_VIEWER = 'ECQuizResultViewer'
 PERMISSION_INTERROGATOR        = ModifyPortalContent
 PERMISSION_STUDENT             = 'ECQuiz Access Contents'
 PERMISSION_RESULT_READ         = 'ECQuiz Read Result'
+setDefaultRoles(PERMISSION_RESULT_READ,  (ROLE_RESULT_VIEWER,))
 PERMISSION_RESULT_WRITE        = 'ECQuiz Write Result'
 
-PERMISSION_GRADE = 'ECQuiz: Grade Assignments'
-setDefaultRoles(PERMISSION_GRADE,  ('Manager',))
+PERMISSION_GRADE = '%s: Grade Assignments' % PROJECTNAME
+setDefaultRoles(PERMISSION_GRADE,  ('Manager', ROLE_RESULT_GRADER,))
 
 PERMISSION_ADD_MCTEST = '%s: Add Quiz' % PROJECTNAME
 setDefaultRoles(PERMISSION_ADD_MCTEST, ('Manager', 'Owner',))

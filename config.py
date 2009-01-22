@@ -42,6 +42,9 @@ GLOBALS = globals()
 # define dependencies
 DEPENDENCIES = ['DataGridField']
 
+# GS profile name
+EXTENSION_PROFILES = ('Products.ECQuiz:default',)
+
 # The name of the Product
 PROJECTNAME = 'ECQuiz'
 ECMCR_WORKFLOW_ID    = 'ecq_result_workflow'

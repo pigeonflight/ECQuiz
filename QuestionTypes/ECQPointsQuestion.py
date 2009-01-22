@@ -29,7 +29,6 @@ from Products.Archetypes.public import BaseFolder, BaseFolderSchema, \
      BaseContent, BaseSchema, Schema, BooleanField, BooleanWidget, \
      IntegerField, IntegerWidget, StringField, TextField, SelectionWidget, \
      TextAreaWidget, StringWidget, RichWidget
-from Products.ATContentTypes.content.base import updateActions, updateAliases
 
 from Products.ECQuiz.config import *
 from Products.ECQuiz.permissions import *
@@ -95,21 +94,6 @@ class ECQPointsQuestion(ECQBaseQuestion):
         ),
     )
     
-    # Use a custom page template for viewing.
-    suppl_views = None
-    default_view = immediate_view = 'ecq_pointsquestion_view'
-    
-    aliases = updateAliases(ECQBaseQuestion, {
-        'view': default_view,
-        })
-    
-    allowed_content_types = ECQBaseQuestion.allowed_content_types + \
-                            (ECQCorrectAnswer.portal_type,)
-    
-    meta_type = 'ECQPointsQuestion'    # zope type name
-    portal_type = meta_type            # plone type name
-    archetype_name = 'Points Question' # friendly type name
-
     security = ClassSecurityInfo()
 
     security.declareProtected(PERMISSION_STUDENT, 'getPoints')

@@ -26,16 +26,14 @@
       <h6 tal:condition="python:headingLevel >= 6" tal:content="headingText"/>
      </tal:block>
     </metal:block>
-    
+
     <tal:comment condition="python:0">
      Bindings for this macro:
      object
-     
-     FIXME: getActionById is deprecated
     </tal:comment>
     <metal:block define-macro="use_default_view">
      <tal:block define="
-      url      python:object.getTypeInfo().getActionById('view');
+      url      python:object.getTypeInfo().getActionInfo(['object/view'])['url'];
       template python:(url and url.split('/')[-1]) or object.default_view;
       macro    python:path('object/%s/macros/view|nothing' % template);
       ">

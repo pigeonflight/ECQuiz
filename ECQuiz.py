@@ -54,8 +54,6 @@ from qti import importAssessmentItem, \
      importPackage, exportPackage
 from ECQResult import ECQResult, createResult
 
-from Products.ATContentTypes.content.base import updateActions, updateAliases
-
 from Statistics import Statistics
 
 from Products.validation.interfaces import ivalidator
@@ -149,7 +147,7 @@ class DataGridWidgetI18N(DataGridWidget):
                 raise AttributeError, "DataGridWidget missing column definition for " + id + " in field " + field.getName()
 
             col = self.columns[id]
-            names.append(col.getLabel(self))
+            names.append(col.getLabel(None,self))
 
         return names
 
@@ -157,19 +155,20 @@ class DataGridWidgetI18N(DataGridWidget):
 registerValidatorLogged(GradingScaleValidator, 'gradingScale')
 
 class ColumnI18N(Column):
-    def __init__(self, label, label_msgid=None, default=None):
+    def __init__(self, label, default=None, default_method=None, label_msgid=None):
         """ Create a column
         @param label User visible name
         @param label_msgid Message ID that is used to i18n the label
         """
         self.label = label
         self.default = default
+        self.default_method = default_method
         
         if label_msgid is None:
             label_msgid = label
         self.label_msgid = label_msgid
 
-    def getLabel(self, widget):
+    def getLabel(self, context, widget):
         """ User friendly name for the column """
         return widget.translate(
                     msgid   = self.label_msgid,
@@ -306,10 +305,15 @@ class ECQuiz(ECQAbstractGroup):
                           columns = ('grade', 'gradeinfo', 'score', ),
                           widget = DataGridWidgetI18N(
                               columns = {
-                                  'grade' : ColumnI18N('Grade', 'grade'),
-                                  'gradeinfo' : ColumnI18N('Grade info', 'gradeinfo'),
-                                  'score' : ColumnI18N('Minimum Score',
-                                                       'minscore'),
+                                  'grade' :
+                                  ColumnI18N(label='Grade',
+                                             label_msgid='grade'),
+                                  'gradeinfo' :
+                                  ColumnI18N(label='Grade info',
+                                             label_msgid='gradeinfo'),
+                                  'score' :
+                                  ColumnI18N(label='Minimum Score',
+                                             label_msgid='minscore'),
                                   },
                               label = "Grading Scale",
                               label_msgid = 'grading_scale_label',
@@ -333,85 +337,16 @@ class ECQuiz(ECQAbstractGroup):
         them and/or define some new ones. 
     """
     
-    suppl_views = None
-    default_view = immediate_view = 'ecq_quiz_view'
-
     typeDescription = "An online quiz."
     typeDescMsgId = 'description_edit_mctest'
     
-    aliases = updateAliases(ECQAbstractGroup, {
-        'view': default_view,
-        })
-
-    actions = updateActions(ECQAbstractGroup, (
-        {
-            'id'           : 'edit',
-            'action'       : 'string:$object_url/edit',
-            'category'     : 'object',
-            'permissions'  : (PERMISSION_GRADE,),
-        },
-        {
-            'id'           : 'import_export',
-            'name'         : 'Import/Export',
-            'action'       : 'string:${object_url}/ecq_quiz_import_export',
-            'permissions'  : (PERMISSION_INTERROGATOR,),
-        },
-        {
-            'id'           : 'wiki_edit',
-            'name'         : 'Quick edit',
-            'action'       : 'string:${object_url}/ecq_quiz_wiki_edit',
-            'permissions'  : (PERMISSION_INTERROGATOR,),
-        },
-        {
-            'id'           : 'results',
-            'name'         : 'Results',
-            'action'       : 'string:${object_url}/ecq_quiz_results',
-            'condition'    : 'python:not (not here.getResultsDict())',
-        },
-        {
-            'id'           : 'statistics',
-            'name'         : 'Statistics',
-            'action'       : 'string:${object_url}/ecq_quiz_statistics',
-            'permissions'  : (PERMISSION_GRADE,),
-            'condition'    : 'python:here.haveDetailedScores()',
-        },
-        ))
-    
-    
-    meta_type = 'ECQuiz'       # zope type name
-    portal_type = meta_type    # plone type name
-    archetype_name = 'Quiz'    # friendly type name
-
-    # Use the portal_factory for this type.  The portal_factory tool
-    # allows users to initiate the creation objects in a such a way
-    # that if they do not complete an edit form, no object is created
-    # in the ZODB.
-    #
-    # This attribute is evaluated by the Extensions/Install.py script.
-    use_portal_factory = True
-
     # Store the i18n domain in an attribute of the quiz so that we
     # don't have to hardcode it in scripts (Python) but can acquire it
     # instead.
     i18n_domain = I18N_DOMAIN
     
-    # This type is directly allowed anywhere.
-    global_allow = True
-    # ECQuizs may only contain questions and groups of question.
-    allowed_content_types = (ECQResult.portal_type,
-                             ECQGroup.portal_type,
-                             'Folder', 'File', 'Image') \
-                             + ECQAbstractGroup.allowed_content_types
-    
-    """ A custom icon for ECQuizs. The icon is located in 
-        the skins directory ('skins/ECQuiz') (It is possible to put
-        it in another folder but the path must be known to Zope.). 
-    """
-    content_icon = 'ecq_quiz.png'
-    
     security = ClassSecurityInfo()
-    
-    
+        
     def __getattr__(self, key):
         """ This workaround method maps  read requests for the standard 
             Plone properties 'effective_date'  and 'expiration_date' to
@@ -655,7 +590,10 @@ class ECQuiz(ECQAbstractGroup):
     security.declarePublic('isTutorGraded')
     def isTutorGraded(self, result):
         for grp in [self] + self.getQuestionGroups():
-            if ECQAbstractGroup.isTutorGraded(grp, result):
+            if grp is self:
+                if ECQAbstractGroup.isTutorGraded(grp, result):
+                    return True
+            elif grp.isTutorGraded(result):
                 return True
         return False
             

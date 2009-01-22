@@ -29,7 +29,6 @@ from Acquisition import *
 from Products.Archetypes.public import Schema, BooleanField, BooleanWidget, \
      IntegerField, IntegerWidget, StringField, \
      TextAreaWidget, StringWidget
-from Products.ATContentTypes.content.base import updateActions, updateAliases
 
 from Products.ECQuiz.config import *
 from Products.ECQuiz.permissions import *
@@ -82,25 +81,6 @@ class ECQBaseQuestion(ECQFolder):
             ),
         ),
     )
-
-    # Use a custom page template for viewing.
-    suppl_views = None
-    default_view = immediate_view = 'ecq_basequestion_view'
-    
-    aliases = updateAliases(ECQFolder, {
-        'view': default_view,
-        })
-
-    # This prevents the Questions from showing up as a portal content type
-    global_allow = False
-    # Only Answer objects may be put into this folder.
-    allowed_content_types = (ECQBaseAnswer.portal_type,)
-    
-    meta_type = 'ECQBaseQuestion'    # zope type name
-    portal_type = meta_type          # plone type name
-    archetype_name = 'Base Question' # friendly type name
-    
-    content_icon = 'ecq_question.png'
 
     security = ClassSecurityInfo()
 
