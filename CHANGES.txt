@@ -1,11 +1,8 @@
-# CHANGES for Plone 3 - Feb. 2008
- - Now requires DataGridField 1.6 beta2
- - Issues: Problem with InlineTextField - get() commented out
-               Problem with translation in ECQTool - commented out - I am sure this is easy
-               Not sure how to specify the icon for the ECQTool in the new toolset.xml GS profile
-               
-               
+# Changes in release 1.2 (2009-01-23)
 
+- Added support for Plone 3 (thanks to Jim Baack and the ITC of the ILO)
+
+- Now requires DataGridField 1.6rc1
 
 
 # Changes in release 1.1 (2007-07-16)

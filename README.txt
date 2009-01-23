@@ -24,8 +24,8 @@ Prerequisites
 
 Installation
 
- If you have a suitable Zope/Plone installation you can install ECQuiz
- as follows:
+ If you have a suitable Zope/Plone installation (not using build-outs)
+ you can install ECQuiz as follows:
 
  1. Extract the DataGridField package into the 'Products' directory of
     your Zope instance.  You can find out where your Zope instance is
@@ -33,25 +33,16 @@ Installation
     to the Control Panel; the directory listed as 'INSTANCE_HOME' is
     what you're looking for.
 
- 1. Extract the ECQuiz package into the 'Products' directory.
+ 2. Extract the ECQuiz package into the 'Products' directory.
 
- 2. Restart Zope
+ 3. Restart Zope
 
- 3. Log in to your Plone site as a manager and use the "Add/Remove
+ 4. Log in to your Plone site as a manager and use the "Add/Remove
     Products" tool under "Site Setup" to install ECQuiz in this Plone
     site.  Alternatively, in the ZMI, you can use the
     'portal_quickinstaller' of your Plone site in which you want to
     use ECQuiz.  In both cases, check the box next to ECQuiz and click
     "Install".
-
-Migration from LlsMultipleChoice
-
- ECQuiz is the successor to LlsMultipleChoice.  You can have both
- products installed at the same time.  To migrate a test from
- LlsMultipleChoice, export it and then import it into an ECQuiz.  To
- do this, create a new ECQuiz object by selecting "quiz" from the "add
- item" menu; select the "import/export" tab, select the exported
- package file and click "import".
 
 Support
 
@@ -62,7 +53,7 @@ Support
 Credits
 
  ECQuiz was written by Wolfram Fenske and "Michael
- Piotrowski":http://wwwai.cs.uni-magdeburg.de/Members/mxp.  Sascha
+ Piotrowski":http://www.dynalabs.de/mxp/.  Sascha
  Peilicke implemented the Quick Edit functionality.
 
  The Statistics class was written by "Chad
@@ -79,6 +70,11 @@ Credits
 
  The Slovenian translation was contributed by Matjaž Jeran.
  The Italian translation was contributed by Elena Momi.
+
+ Jim Baack contributed a rough version of the Plone 3 port.
+
+ The Plone 3 port was finished by Eudemonia Solutions AG, with funding
+ from the "ITC of the ILO":http://www.itcilo.org/.
 
 License
 
