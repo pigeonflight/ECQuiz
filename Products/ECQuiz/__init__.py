@@ -104,7 +104,7 @@ def initialize(context):
     tools = [ECQTool]
     ToolInit(PROJECTNAME +' Tools',
              tools = tools,
-             icon  = 'ECQTool.png'
+             icon  = 'ec_tool.png'
              ).initialize(context)
 
     # Init contetn types

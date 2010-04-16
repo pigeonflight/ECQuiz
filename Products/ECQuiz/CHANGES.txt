@@ -1,3 +1,9 @@
+# Changes in release 1.2.1 (2010-04-16)
+
+- ECQuiz is now eggified and uploaded to PyPI.  An old-style 
+  tarball distribution is still available at plone.org.
+
+
 # Changes in release 1.2 (2009-01-23)
 
 - Added support for Plone 3 (thanks to Jim Baack and the ITC of the ILO)
