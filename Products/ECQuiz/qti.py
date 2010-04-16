@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 #
-# $Id$
+# $Id:qti.py 1255 2009-09-24 08:47:42Z amelung $
 #
 # Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
@@ -30,7 +30,7 @@ from zipfile import ZipFile
 
 from Products.Archetypes.utils import shasattr
 
-from config import I18N_DOMAIN, PROJECTNAME
+from Products.ECQuiz.config import I18N_DOMAIN, PROJECTNAME
 FIXME_PROJECTNAME = 'LlsMultipleChoice'
 from ECQGroup import ECQGroup
 from QuestionTypes.ECQMCQuestion import ECQMCQuestion

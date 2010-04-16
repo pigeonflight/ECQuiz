@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 #
-# $Id$
+# $Id:tools.py 1255 2009-09-24 08:47:42Z amelung $
 #
 # Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
@@ -20,18 +20,21 @@
 # along with ECQuiz; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-from Acquisition import *
-from config import PROJECTNAME
 import os
-import re
+#import re
+
+from Acquisition import aq_parent
+
 try:
     from ZODB.Transaction import get_transaction
 except:
     from transaction import get as get_transaction
+
 from Products.Archetypes.public import registerType
 from Products.ATContentTypes.content.base import registerATCT
 from Products.validation import validation
 
+from Products.ECQuiz.config import PROJECTNAME
 
 def log(msg):
     """ Logs the message 'msg' to a logfile named something like

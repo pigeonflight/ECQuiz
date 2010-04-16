@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 #
-# $Id$
+# $Id:permissions.py 1255 2009-09-24 08:47:42Z amelung $
 #
 # Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
@@ -25,8 +25,8 @@ Permissions used by ECQuiz
 """
 
 from config import PROJECTNAME
-from Products.CMFCore.permissions import setDefaultRoles, AddPortalContent, \
-     ModifyPortalContent, View
+from Products.CMFCore.permissions import setDefaultRoles, \
+     ModifyPortalContent#, AddPortalContent, View
 
 ROLE_RESULT_GRADER = 'ECQuizResultGrader'
 ROLE_RESULT_VIEWER = 'ECQuizResultViewer'

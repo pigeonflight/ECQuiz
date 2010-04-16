@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 #
-# $Id$
+# $Id:validators.py 1255 2009-09-24 08:47:42Z amelung $
 #
 # Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
@@ -23,7 +23,7 @@
 from Products.validation.interfaces import ivalidator
 from xml.dom.minidom import parseString
 
-from tools import log
+#from tools import log
 from tools import registerValidatorLogged
 
 import re

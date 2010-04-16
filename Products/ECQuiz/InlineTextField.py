@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 #
-# $Id$
+# $Id:InlineTextField.py 1255 2009-09-24 08:47:42Z amelung $
 #
 # Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
@@ -20,11 +20,11 @@
 # along with ECQuiz; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-from xml.dom.minidom import parseString
+#from xml.dom.minidom import parseString
 
-from AccessControl import ClassSecurityInfo
-from Acquisition import aq_base, aq_parent, aq_inner
-from OFS.content_types import guess_content_type
+#from AccessControl import ClassSecurityInfo
+#from Acquisition import aq_base, aq_parent, aq_inner
+#from OFS.content_types import guess_content_type
 
 from Products.Archetypes.Registry import registerField
 from Products.Archetypes.atapi import TextField as BaseTextField

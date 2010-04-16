@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 #
-# $Id$
+# $Id:ECQFolder.py 1255 2009-09-24 08:47:42Z amelung $
 #
 # Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
@@ -26,9 +26,9 @@ from Products.ATContentTypes.content.folder import ATFolderSchema
 from AccessControl import ClassSecurityInfo
 from Products.CMFCore import permissions as CMFCorePermissions
 
-from config import *
-from permissions import *
-from tools import *
+from Products.ECQuiz.config import *
+from Products.ECQuiz.permissions import *
+from Products.ECQuiz.tools import *
 
 
 class ECQFolder(ATFolder):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 #
-# $Id$
+# $Id:l2.py 1255 2009-09-24 08:47:42Z amelung $
 #
 # L2 - A simple Lisp parser
 #
@@ -21,7 +21,7 @@
 # along with L2; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-import re, sys, os, pickle
+import re, sys, os#, pickle
 #import l_bootstrap
 #from l_bootstrap import *
 
@@ -246,7 +246,7 @@ def mk_str(o_img):
             esc = False
             try:
                 r += STR_ESCAPES[c]
-            except KeyError, ke:
+            except KeyError:
                 raise ParserError("Invalid escape sequence in string: `\\%s'"
                                   % c)
         elif c == '\\':

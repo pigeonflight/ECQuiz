@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 #
-# $Id$
+# $Id:ECQAbstractGroup.py 1255 2009-09-24 08:47:42Z amelung $
 #
 # Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
@@ -22,26 +22,27 @@
 
 import random
 
-from DateTime import DateTime
+#from DateTime import DateTime
 
 from AccessControl import ClassSecurityInfo
 import Acquisition
-from Acquisition import *
+#from Acquisition import *
 
 from Products.Archetypes.utils import shasattr
-from Products.Archetypes.public import BaseFolderSchema, Schema, \
-     BooleanField, IntegerField, StringField, TextField, \
-     TextAreaWidget
-from Products.Archetypes.Widget import TypesWidget, BooleanWidget, \
-     IntegerWidget, RichWidget
+from Products.Archetypes.public import Schema#, BaseFolderSchema
+from Products.Archetypes.public import TextAreaWidget, BooleanField, \
+    IntegerField, TextField
+from Products.Archetypes.Widget import  BooleanWidget, IntegerWidget
+    #, TypesWidget, RichWidget
 
-from Products.CMFCore.utils import getToolByName
+#from Products.CMFCore.utils import getToolByName
 
-from config import *
-from permissions import *
-from tools import *
-from ECQReference import ECQReference
-from ECQFolder import ECQFolder
+from Products.ECQuiz import config
+from Products.ECQuiz.permissions import PERMISSION_STUDENT, \
+    PERMISSION_INTERROGATOR
+from Products.ECQuiz.tools import filterByUID, isNumeric, registerATCTLogged
+from Products.ECQuiz.ECQReference import ECQReference
+from Products.ECQuiz.ECQFolder import ECQFolder
 
 
 class ReferenceWrapper(Acquisition.Implicit):
@@ -139,7 +140,7 @@ class ECQAbstractGroup(ECQFolder):
                     # description_msgid.  This namespace is defined
                     # via "Domain: ECQuiz\n" in the
                     # .po/.pot-files in the 'i18n' directory.
-                    i18n_domain=I18N_DOMAIN),
+                    i18n_domain=config.I18N_DOMAIN),
                 validators=('isXML',),
                 read_permission=PERMISSION_STUDENT,
             ),
@@ -168,7 +169,7 @@ class ECQAbstractGroup(ECQFolder):
                     'order for each candidate. Otherwise the same order '
                     'as in the &quot;contents&quot;-view will be used.',
                     description_msgid='randomize_question_order_tool_tip',
-                    i18n_domain=I18N_DOMAIN),
+                    i18n_domain=config.I18N_DOMAIN),
             ),
             IntegerField("numberOfRandomQuestions",
                 required=False,
@@ -185,7 +186,7 @@ class ECQAbstractGroup(ECQFolder):
                         'is checked.) A value &lt;= 0 means that all '
                         'questions will be used.',
                     description_msgid='number_of_random_questions_tool_tip',
-                    i18n_domain=I18N_DOMAIN),
+                    i18n_domain=config.I18N_DOMAIN),
             ),
         ),)
    
@@ -394,7 +395,7 @@ class ECQAbstractGroup(ECQFolder):
             d = {}
             code = compile(script, '<string>', 'exec')
             exec code in d
-            return d[CUSTOM_EVALUATION_FUNCTION_NAME].__doc__
+            return d[config.CUSTOM_EVALUATION_FUNCTION_NAME].__doc__
         else:
             return None
 
