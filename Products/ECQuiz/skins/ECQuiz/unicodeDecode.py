@@ -7,11 +7,11 @@
 ##parameters=string, defaultCharSet=None
 
 #!/usr/local/bin/python
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
-# $Id$
+# $Id: unicodeDecode.py 245805 2011-10-23 19:08:23Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright Â© 2004-2011 Otto-von-Guericke-UniversitÃ¤t Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -35,8 +35,10 @@ elif(not same_type(string, '')):
     string = str(string)
     
 charSetList = []
+
 if defaultCharSet:
     charSetList += [defaultCharSet]
+
 # Get Plone's 'default_charset' (The 'getCharset()' method is either inherited
 # from Products.Archetypes.BaseObject or is acquired from the 'getCharset' 
 # script (Python) in Archetypes/skins/archetypes/getCharset.py)
@@ -44,10 +46,13 @@ siteCharSet = context.getCharset()
         
 if siteCharSet:
     charSetList += [siteCharSet]
+
 charSetList += ['latin-1', 'utf-8', 'cp850', 'cp437', 'cp1252']
+
 for charSet in charSetList:
     try:
         return unicode(string, charSet)
     except UnicodeError:
         pass
+
 raise UnicodeError('Unable to decode %s' % string)

@@ -4,11 +4,11 @@
 ##
 
 #!/usr/local/bin/python
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
-# $Id$
+# $Id: ecq_quiz_import_qti.py 245805 2011-10-23 19:08:23Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright Â© 2004-2011 Otto-von-Guericke-UniversitÃ¤t Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -81,9 +81,11 @@ else:
             msgid   = 'nothing_added',\
             domain  = I18N_DOMAIN,\
             default = 'Nothing has been added.')
-    msg = msg.replace('\n', ' - ')
+    
+    msg = msg.replace('\n', ' ')
     msg = msg.strip()
     msg = context.str(msg)
         
 target = context.getActionInfo('object/import_export')['url']
-context.redirect('%s?portal_status_message=%s' % (target, msg))
+context.plone_utils.addPortalMessage(msg)
+context.redirect('%s' % target)

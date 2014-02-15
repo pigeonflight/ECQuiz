@@ -36,8 +36,10 @@
       
       <metal:fill fill-slot="results">
        <metal:block define-macro="show_results"
-	tal:define="ecq_tool      nocall:portal/ecq_tool;
-                    candidatePoints python:question.getCandidatePoints(result);
+           tal:define="
+             portal context/@@plone_portal_state/portal;
+             ecq_tool nocall:portal/ecq_tool;
+             candidatePoints python:question.getCandidatePoints(result);
         ">
 	<!-- Show candidate's achieved points -->
 	(<tal:if_graded condition="python:candidatePoints is not None"
@@ -99,9 +101,8 @@
             field empty if you want to review the answer later.
            </div>
            <input type="text" name="#" value="#"
-            size="5" tabindex="#" maxlength="255"
+            size="5" maxlength="255"
             tal:attributes="
-            tabindex tabindex/next;
             name     python:question.UID() + ':list';
             value    tutorPoints;
             "/>

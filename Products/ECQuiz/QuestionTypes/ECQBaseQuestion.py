@@ -1,8 +1,8 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
-# $Id$
+# $Id: ECQBaseQuestion.py 245805 2011-10-23 19:08:23Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -86,6 +86,7 @@ class ECQBaseQuestion(ECQFolder):
 
     #security.declareProtected(PERMISSION_INTERROGATOR, 'contentValues')
     #security.declareProtected(PERMISSION_INTERROGATOR, 'listFolderContents')
+    
     # Declaring "folderlistingFolderContents" as protected prevents
     # the answers from being listed if someone without
     # PERMISSION_INTERROGATOR tries to call the "base_view" template

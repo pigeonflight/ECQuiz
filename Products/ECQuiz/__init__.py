@@ -1,8 +1,8 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
-# $Id$
+# $Id: __init__.py 245805 2011-10-23 19:08:23Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright Â© 2004-2011 Otto-von-Guericke-UniversitÃ¤t Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -24,11 +24,12 @@
     All the following statements will be executed and finally 
     the 'initialize' function will be called.
 """
+import logging
 
 from Products.ECQuiz.tools import log
 # mark start of Product initialization in log file
 # for details on 'log' see Products.ECQuiz.config
-log('------------------------------------------------------------------\n')
+log('------------------------------------------------------------------')
 
 import os.path
 
@@ -44,6 +45,8 @@ from Products.ECQuiz import config
 from Products.ECQuiz.tools import *
 from Products.ECQuiz.permissions import *
 from Products.ECQuiz.ECQTool import ECQTool
+
+LOG = logging.getLogger(config.PROJECTNAME)
 
 module = ''
 
@@ -61,7 +64,7 @@ try:
     for entry in config.ANSWER_TYPES:
         module = config.ANSWER_DIR + '.' + str(entry)
         __import__(module, config.GLOBALS, locals())
-        log('Worked: importing module "%s"\n' % module)
+        log('Done: importing module "%s"' % module)
     
     # import all question types
     #   1. import the directory QUESTION_DIR
@@ -70,7 +73,7 @@ try:
     for entry in config.QUESTION_TYPES:
         module = config.QUESTION_DIR + '.' + str(entry)
         __import__(module, config.GLOBALS, locals())
-        log('Worked: importing module "%s"\n' % module)
+        log('Done: importing module "%s"' % module)
 
     # import 'ECQAbstractGroup', 'ECQuiz', 'ECQGroup'
     for m in ['ECQResult',
@@ -81,11 +84,11 @@ try:
               'ECQReference']:
         module = m
         exec('import ' + module)
-        log('Worked: importing module "' + module + '"\n')
+        log('Done: importing module "' + module + '"')
 
 except Exception, e:
     # log any errors that occurred
-    log('Failed: importing module "' + module + '": ' + unicode(e) + '\n')
+    log('Failed: importing module "' + module + '": ' + unicode(e))
 
 """ Register the skins directory (where all the page templates, the
     '.pt' files, live) (defined in Products.ECQuiz.config)
@@ -98,7 +101,7 @@ def initialize(context):
         directory. (I'm not sure what it does or if it is neccessary 
         at all. Best leave it alone.)
     """
-    log('Start: "initialize()"\n')
+    log('Start: "initialize()"')
 
     # Initialize portal tools
     tools = [ECQTool]
@@ -120,7 +123,7 @@ def initialize(context):
         fti                = ftis,
     ).initialize(context)
     
-    log('\tWorked: "ContentInit()"\n')
+    log('Done: "ContentInit()"')
 
     # Add permissions to allow control on a per-class basis
     for i in range(0, len(content_types)):
@@ -132,7 +135,7 @@ def initialize(context):
 
     #~ parsers.initialize(context)
     #~ renderers.initialize(context)
-    log('Worked: "initialize()"\n')
+    log('Done: "initialize()"')
 
     # Mark end of Product initialization in log file.
-    log('------------------------------------------------------------------\n')
+    log('------------------------------------------------------------------')

@@ -1,8 +1,8 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
-# $Id$
+# $Id: ListValidator.py 245805 2011-10-23 19:08:23Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -22,15 +22,20 @@
 
 """ A simple validator for lists. Currently not used. """
 
-from Products.validation.interfaces import ivalidator
-from tools import registerValidatorLogged
 import re
+
+from zope.interface import implements
+from Products.validation.interfaces.IValidator import IValidator
+
+from tools import registerValidatorLogged
 
 listValidatorRe = re.compile(ur"\s*(?P<nonEmpty>\[\s*'[^']+'(\s*,\s*'[^']+'\s*)*\s*\])|(?P<empty>\[\s*\])\s*")
 
 class ListValidator:
     """ A simple validator for lists. """
-    __implements__ = (ivalidator,)
+
+    implements(IValidator)
+
     def __init__(self, name):
         self.name = name
     def __call__(self, value, *args, **kwargs):

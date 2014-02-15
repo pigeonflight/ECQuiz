@@ -1,8 +1,8 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
-# $Id$
+# $Id: ECQMCAnswer.py 245805 2011-10-23 19:08:23Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -22,26 +22,27 @@
 
 from AccessControl import ClassSecurityInfo
 
-from Products.Archetypes.public import BaseSchema, Schema, BooleanField, \
-     StringField, TextField, SelectionWidget, TextAreaWidget, RichWidget, \
-     BaseContent
-from Products.Archetypes.Widget import TypesWidget, IntegerWidget, \
-     BooleanWidget, StringWidget
-
-from Products.ECQuiz.config import *
-from Products.ECQuiz.permissions import *
-from Products.ECQuiz.tools import log, registerTypeLogged
+#from Products.ECQuiz import config
+from Products.ECQuiz import permissions
+#from Products.ECQuiz.tools import log
+from Products.ECQuiz.tools import registerTypeLogged
 from Products.ECQuiz.AnswerTypes.ECQCorrectAnswer import ECQCorrectAnswer
 
 class ECQMCAnswer(ECQCorrectAnswer):
     """An answer to a multiple-choice question."""
     
+    schema = ECQCorrectAnswer.schema.copy()
+    
+    schema['id'].read_permission = permissions.PERMISSION_STUDENT
+    schema['answer'].read_permission = permissions.PERMISSION_STUDENT
+
+
     meta_type = 'ECQMCAnswer'    # zope type name
     portal_type = meta_type      # plone type name
     archetype_name = 'MC Answer' # friendly type name
 
     # Use the portal_factory for this type.  The portal_factory tool
-    # allows users to initiate the creation objects in a such a way
+    # allows users to initiate the creation objects in such a way
     # that if they do not complete an edit form, no object is created
     # in the ZODB.
     #
@@ -49,7 +50,8 @@ class ECQMCAnswer(ECQCorrectAnswer):
     use_portal_factory = True
 
     security = ClassSecurityInfo()
-    #security.declareProtected(PERMISSION_STUDENT, 'getId')
+    
+    #security.declareProtected(permissions.PERMISSION_STUDENT, 'getId')
     #security.declareProtected(PERMISSION_STUDENT, 'getAnswer')
     
 

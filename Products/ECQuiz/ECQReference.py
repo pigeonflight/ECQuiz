@@ -1,8 +1,8 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
-# $Id$
+# $Id: ECQReference.py 245805 2011-10-23 19:08:23Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -20,19 +20,22 @@
 # along with ECQuiz; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-
 from Products.CMFCore.utils import getToolByName
 from AccessControl import ClassSecurityInfo
 from Products.Archetypes.public import Schema, BaseSchema, BaseContent, \
      ReferenceField, ObjectField, ReferenceWidget
-from Products.ATReferenceBrowserWidget.ATReferenceBrowserWidget \
-     import ReferenceBrowserWidget
+
+#from Products.ATReferenceBrowserWidget.ATReferenceBrowserWidget import ReferenceBrowserWidget
+from archetypes.referencebrowserwidget.widget import ReferenceBrowserWidget
+
 from config import I18N_DOMAIN
 from tools import getParent, log, registerTypeLogged
 
 
 class ECQReference(BaseContent):
-    """A reference to a question or a question group from another quiz."""
+    """A reference to a question or a question group from another quiz.
+    """
+    
     schema = BaseSchema + Schema((
         ReferenceField('reference',
                        #allowed_types = (),
@@ -96,7 +99,7 @@ class ECQReference(BaseContent):
     def _notifyOfCopyTo(self, container, op=0):
         """Retain the reference after copy, even though the Archetypes
         people really don't want us to."""
-        #log("_notifyOfCopyTo %s\n" % str(self))
+        #log("_notifyOfCopyTo %s" % str(self))
         refField = self.Schema().get('reference')
         refFieldValue = refField.get(self)
         self.copiedReference = refFieldValue

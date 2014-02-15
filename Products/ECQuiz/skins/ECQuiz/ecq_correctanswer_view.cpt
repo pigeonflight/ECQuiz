@@ -15,8 +15,12 @@
   </metal:block>
 
   <div metal:fill-slot="main"
-   tal:define="answer   python:here;
-               question python:here.aq_parent;">
+   tal:define="template_id template/getId;
+               portal   context/@@plone_portal_state/portal;
+               answer   python:here;
+               question python:here.aq_parent;
+               ecq_tool ecq_tool | nocall:portal/ecq_tool;">
+   
    <metal:define-main-macro define-macro="main">
 
     <metal:use use-macro="here/ecq_tools/macros/up_one_level">
@@ -27,45 +31,44 @@
      <metal:use use-macro="answer/ecq_selectionanswer_view/macros/view">
       <metal:fill fill-slot="additional_edit_info">
        <metal:define define-macro="show_comment">
-	<tal:condition condition="answer/getComment"> &mdash;
-	 <span class="answerComment"
-	  tal:content="structure python:answer.getComment(forceInline=True)">
-	  a witty comment for people who selected a wrong answer
-	 </span>
-	</tal:condition>
+	    <tal:condition condition="answer/getComment"> &mdash;
+	     <span class="answerComment"
+	         tal:content="structure python:answer.getComment(forceInline=True)">
+	       a witty comment for people who selected a wrong answer
+	     </span>
+	    </tal:condition>
        </metal:define>
 
        <!-- additional_edit_info -->
-       <metal:define define-slot="additional_edit_info"/>
+       <metal:define define-slot="additional_edit_info" />
+       
        <metal:define define-macro="show_correct">
-	<tal:define define="correct answer/isCorrect | python:False">
-	 <tal:block condition="correct">
-	  [<span i18n:translate="true" tal:omit-tag="">true</span>]
-	 </tal:block>
-	 <tal:block condition="not: correct">
-	  [<span i18n:translate="false" tal:omit-tag="">false</span>]
-	 </tal:block>
-	</tal:define>
+	    <tal:define define="correct answer/isCorrect | python:False">
+	     <tal:block condition="correct">
+	      [<span i18n:translate="true" tal:omit-tag="">true</span>]
+	     </tal:block>
+	     <tal:block condition="not: correct">
+	      [<span i18n:translate="false" tal:omit-tag="">false!!</span>]
+	     </tal:block>
+	    </tal:define>
        </metal:define>
       </metal:fill>
       <!-- End additional_edit_info -->
       
       <metal:fill fill-slot="post_answer">
        <tal:condition define="showComment showComment | python:False" 
-	condition="python:(resultsView and showComment)">
-	<metal:use use-macro="answer/ecq_correctanswer_view/macros/show_comment"/>
+           condition="python:(resultsView and showComment)">
+	    <metal:use use-macro="answer/ecq_correctanswer_view/macros/show_comment"/>
        </tal:condition>
        <tal:condition condition="resultsView">
-	<metal:use use-macro="answer/ecq_correctanswer_view/macros/show_correct"/>
+        <metal:use use-macro="answer/ecq_correctanswer_view/macros/show_correct"/>
        </tal:condition>
        <metal:block define-slot="post_answer"/>
       </metal:fill>
      </metal:use>
     </metal:define-view-macro>
     
-    <div metal:use-macro="here/document_byline/macros/byline">
-     Get the byline - contains details about author and modification date.
-    </div>
+    <div tal:replace="structure provider:plone.belowcontenttitle" />
     
    </metal:define-main-macro>
   </div>

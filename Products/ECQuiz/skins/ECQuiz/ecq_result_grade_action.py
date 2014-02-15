@@ -3,11 +3,11 @@
 ##
 
 #!/usr/local/bin/python
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
-# $Id$
+# $Id: ecq_result_grade_action.py 245805 2011-10-23 19:08:23Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright Â© 2004-2011 Otto-von-Guericke-UniversitÃ¤t Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -52,5 +52,7 @@ msg = context.translate(
     domain  = 'plone',
     default = msgid)
 
-target = result.getActionInfo('object/grade')['url']
-context.redirect('%s?portal_status_message=%s' % (target, msg))
+target = result.getActionInfo('object/view')['url']
+
+context.plone_utils.addPortalMessage(msg)
+context.redirect('%s' % target)

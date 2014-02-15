@@ -1,8 +1,8 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
 # $Id:InlineTextField.py 1255 2009-09-24 08:47:42Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -74,7 +74,7 @@ try:
               title='Inline Text',
               description=('Used for storing text which can be '
                            'used in transformations'))
-    log('Worked: registerField(InlineTextField)\n')
+    log('Done: registerField(InlineTextField)')
 except Exception, e:
-    log('Failed: registerField(InlineTextField): ' + unicode(e) + '\n')
+    log('Failed: registerField(InlineTextField): ' + unicode(e))
     raise e

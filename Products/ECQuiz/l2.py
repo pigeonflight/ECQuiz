@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
 # $Id:l2.py 1255 2009-09-24 08:47:42Z amelung $
 #
 # L2 - A simple Lisp parser
 #
-# Copyright � 2006 Wolfram Fenske
+# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
 #
 # L2 is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by

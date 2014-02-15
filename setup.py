@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# $Id$
+# $Id: setup.py 1254 2009-09-24 08:47:28Z amelung $
 
 import os
 from setuptools import setup, find_packages
@@ -27,8 +27,8 @@ setup(name='Products.ECQuiz',
         "Topic :: Software Development :: Libraries :: Python Modules",
         ],
       keywords = '',
-      author = 'Wolfram Fenske and Michael Piotrowski',
-      author_email = 'wfenske@eudemonia-soltions.de and mxp@dynalabs.de',
+      author = 'Wolfram Fenske and Michael Piotrowski and Mario Amelung',
+      author_email = 'wfenske@eudemonia-soltions.de and mxp@dynalabs.de and mario.amelung@gmx.de',
       url = 'http://plone.org/products/ecquiz/',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),

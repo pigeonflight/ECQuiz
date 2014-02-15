@@ -1,8 +1,8 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
 # $Id:ECQFolder.py 1255 2009-09-24 08:47:42Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -24,12 +24,12 @@ from Products.Archetypes.public import OrderedBaseFolder
 from Products.ATContentTypes.content.folder import ATFolder
 from Products.ATContentTypes.content.folder import ATFolderSchema
 from AccessControl import ClassSecurityInfo
-from Products.CMFCore import permissions as CMFCorePermissions
+#from Products.CMFCore import permissions as CMFCorePermissions
 
-from Products.ECQuiz.config import *
-from Products.ECQuiz.permissions import *
-from Products.ECQuiz.tools import *
-
+from Products.ECQuiz import config 
+from Products.ECQuiz import permissions
+from Products.ECQuiz.tools import registerATCTLogged
+from Products.ECQuiz import log
 
 class ECQFolder(ATFolder):
     """An ATFolder that calls the ECQuiz method [syncResults] when
@@ -37,10 +37,10 @@ class ECQFolder(ATFolder):
     schema = ATFolderSchema.copy()
     __implements__ = (ATFolder.__implements__)
     
-    global_allow = False
-    meta_type = 'ECQFolder'          # zope type name
-    portal_type = meta_type          # plone type name
-    archetype_name = 'ECQuiz Folder' # friendly type name
+    #global_allow = False
+    #meta_type = 'ECQFolder'          # zope type name
+    #portal_type = meta_type          # plone type name
+    #archetype_name = 'ECQuiz Folder' # friendly type name
     
     security = ClassSecurityInfo()
 
@@ -58,24 +58,37 @@ class ECQFolder(ATFolder):
     """
     #security.declareProtected(PERMISSION_INTERROGATOR,
     #                          'folderlistingFolderContents')
-    security.declareProtected(PERMISSION_STUDENT, 'Type')
-    security.declareProtected(PERMISSION_STUDENT, 'title_or_id')
+    security.declareProtected(permissions.PERMISSION_STUDENT, 'Type')
+    security.declareProtected(permissions.PERMISSION_STUDENT, 'title_or_id')
 
     #security.declareProtected(CMFCorePermissions.ModifyPortalContent, 'moveObjectsByDelta')
     def moveObjectsByDelta(self, *args, **kwargs):
-        retVal = OrderedBaseFolder.moveObjectsByDelta(self, *args, **kwargs)
+        """
+        """
+        #log("moveObjectsByDelta: %s" % self)
+
+        retVal = ATFolder.moveObjectsByDelta(self, *args, **kwargs)
         self.syncResults('move')
         return retVal
     
     security.declarePrivate('manage_afterAdd')
     def manage_afterAdd(self, *args, **kwargs):
-        retVal = OrderedBaseFolder.manage_afterAdd(self, *args, **kwargs)
+        """
+        """
+        #log("manage_afterAdd: %s" % self)
+
+        #retVal = OrderedBaseFolder.manage_afterAdd(self, *args, **kwargs)
+        retVal = ATFolder.manage_afterAdd(self, *args, **kwargs)
         self.syncResults('add')
         return retVal
     
     security.declarePrivate('manage_beforeDelete')
     def manage_beforeDelete(self, *args, **kwargs):
-        retVal = OrderedBaseFolder.manage_beforeDelete(self, *args, **kwargs)
+        """
+        """
+        #log("manage_beforeDelete: %s" % self)
+
+        retVal = ATFolder.manage_beforeDelete(self, *args, **kwargs)
         self.syncResults('delete')
         return retVal
 

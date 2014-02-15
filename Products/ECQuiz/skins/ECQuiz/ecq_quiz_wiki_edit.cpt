@@ -15,11 +15,11 @@
    </style>
   </metal:import-css>
  
-  <div metal:fill-slot="main"
-   tal:define="Iterator python:modules['Products.CMFPlone'].IndexIterator;
-   tabindex python:Iterator();
-   iconName python: context.getIcon(1);
-   iconURL  python: context.portal_url() + '/' + iconName;">
+  <div metal:fill-slot="main" tal:define="
+      iconName python: context.getIcon(1);
+      iconURL  python: context.portal_url() + '/' + iconName;
+      here_url context/@@plone_context_state/object_url;
+  ">
 
    <h1 i18n:translate="heading_wiki_edit">Lisp-based customization.</h1>
 
@@ -67,7 +67,7 @@
      <!-- Update button -->
      <div class="formControls">
       <input class="context" type="submit" name="ecq_quiz_wiki_update:method" value="Update" 
-       tal:attributes="tabindex tabindex/next;" i18n:attributes="value"/>
+       i18n:attributes="value"/>
      </div>
     </fieldset>
    </form>
@@ -87,11 +87,11 @@
        <div class="formHelp" i18n:translate="import_wiki_test_tooltip">The name of the
         file you want to import.</div>
        <div class="formHelp"/>
-       <input type="file" name="file" size="25" tabindex="" tal:attributes="tabindex tabindex/next;"/>
+       <input type="file" name="file" size="25"/>
      </div>
      <div class="formControls">
-       <input class="context" tabindex="#" type="submit" name="ecq_quiz_wiki_import:method" value="Import"
-        tal:attributes="tabindex tabindex/next" i18n:attributes="value"/>
+       <input class="context" type="submit" name="ecq_quiz_wiki_import:method" value="Import"
+        i18n:attributes="value"/>
      </div>
     </fieldset>
    </form>
@@ -107,8 +107,8 @@
       </span> 
      </legend>
      <div class="formControls">
-       <input class="context" tabindex="#" type="submit" name="ecq_quiz_wiki_export:method" value="Export"
-        tal:attributes="tabindex tabindex/next;" i18n:attributes="value"/>
+       <input class="context" type="submit" name="ecq_quiz_wiki_export:method" value="Export"
+        i18n:attributes="value"/>
      </div>
     </fieldset>
    </form>

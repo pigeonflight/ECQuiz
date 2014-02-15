@@ -1,8 +1,8 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
 # $Id:qti.py 1255 2009-09-24 08:47:42Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universit‰t Magdeburg
+# Copyright ¬© 2004-2011 Otto-von-Guericke-Universit√§t Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -66,7 +66,7 @@ EXPORT_ITEM_PATH = u'content'
 
 # Used to mark our own QTI package export format.
 MC_TOOL_VERSION = u'1.0'
-MC_TOOL_VENDOR = u'WDOK Research Group, Otto-von-Guericke-Universit‰t Magdeburg'
+MC_TOOL_VENDOR = u'WDOK Research Group, Otto-von-Guericke-Universit√§t Magdeburg'
 
 # A number of names of QTI elements.
 CHOICE_INTERACTION = u'choiceInteraction'
@@ -407,6 +407,7 @@ def isIdUsed(context, id, errors):
 
 def readFromZip(context, zipFileObject, fileName, errors):
     """ Reads file from a Python ZipFile object and returns its contents.
+        
         Normally, this would simply be zipFileObject.read(fileName), but
         this may fail if the file name is encoded using a code page
         unexpected by the ZipFile class, e.g. cp850, a common one on
@@ -424,37 +425,28 @@ def readFromZip(context, zipFileObject, fileName, errors):
     """
     contents = None
     firstException = None
-    try:
-        # Read the resource from the zip file
-        contents = zipFileObject.read(fileName)
-    except Exception, e:
-        firstException = e
-
-    if contents is None:
-        # Try some different encodings for the file name
+    
+    # try to find a ZipInfo object that matches our filename
+    zipInfo = getZipInfoForName(zipFileObject, fileName, context)
+    if zipInfo is None:
         uFileName = None
-        try: # Convert to unicode
+        try:
             uFileName = context.unicodeDecode(fileName)
         except UnicodeError:
+            # we can't find a way to convert fileName to unicode :(
             pass
+        
         if uFileName:
-            # cp850 and cp437 are commonly used code pages
-            charSetList = ['cp850', 'cp437', 'cp1252', 'latin-1', 'utf-8']
-            # Get Plone's 'default_charset'
-            siteCharSet = context.getCharset()
-            if siteCharSet:
-                charSetList += [siteCharSet]
-            for charSet in charSetList:
-                try:
-                    contents = zipFileObject.read(uFileName.encode(charSet))
-                    # If we get here, we read something and can stop trying
-                    break
-                except:
-                    # Probably wrong code page
-                    pass
+            zipInfo = getZipInfoForName(zipfileObject, uFileName, context)
+            
+    if zipInfo:
+        try:
+            contents = zipFileObject.read(zipInfo.filename)
+        except Exception, e:
+            firstException = e
 
     if contents is None:
-        # No luck
+        # No luck, perhaps no contents, perhaps no name match.  Either way, punt
         errors.write('\n' + (context.translate(
             msgid   = 'extraction_error', 
             domain  = I18N_DOMAIN, 
@@ -1296,9 +1288,8 @@ def importPackage(multipleChoiceTest, zipFileObject, errors):
                 % context.str(type(zipFileObject)))
             return addedObjects
         # Find the manifest file
-
-        manifestFnList = [fn for fn in fileNameList
-                          if fn.lower() == MANIFEST_FILE_NAME]
+        manifestFnList = [fn for fn in fileNameList 
+                          if MANIFEST_FILE_NAME == os.path.split(fn)[-1].lower()]
         if not manifestFnList: # No manifest
             errors.write('\n' + (context.translate(
                 msgid   = 'no_manifest', 
@@ -1317,7 +1308,6 @@ def importPackage(multipleChoiceTest, zipFileObject, errors):
             return addedObjects
 
         # Extract the manifest from the zip
-        
         # If reading fails, "readFromZip" will report that in "errors"
         manifestContents = readFromZip(context,
                                        zipFileObject,
@@ -1364,13 +1354,13 @@ def importPackage(multipleChoiceTest, zipFileObject, errors):
             for elementName, expectedValue in expectedValueList:
                 element = getFirstElementByTagNameFlat(qtiMetadata, elementName)
                 if not element:
-                    #log("1: no element: %s\n" % elementName)
+                    #log("1: no element: %s" % elementName)
                     valuesVerified = False
                     break
                 else:
                     elementText = getText(element, u'').strip()
                     if elementText != expectedValue.strip():
-#                         log("2: expected:%s\n        got:%s\n"
+#                         log("2: expected:%s\n        got:%s"
 #                             % (expectedValue.strip(),
 #                                context.str(elementText)))
                         valuesVerified = False
@@ -1385,10 +1375,10 @@ def importPackage(multipleChoiceTest, zipFileObject, errors):
                         # an <item> child. This must be one of our packages.
                         isLlsMCPackage = True
                     else:
-                        #log("3: no element: %s\n" % ITEM)
+                        #log("3: no element: %s" % ITEM)
                         None
                 else:
-                    #log("4: no organization\n")
+                    #log("4: no organization")
                     None
 
         ### Import the <resource> elements accordingly ###
@@ -1656,7 +1646,7 @@ def importFromOrganization(multipleChoiceTest, zipFileObject, organization,
         # <llsmc:gradingScale>
         importGradingScale(multipleChoiceTest, organization, errors)
     else:
-        #FIXME: write some error message to the log
+        # FIXME: write some error message to the log
         pass
     return addedObjects
 
@@ -1964,7 +1954,7 @@ def importFileResource(multipleChoiceTest, zipFileObject, fileName,
                     addedObjects += [fileObject]                    
                     
         except Exception, e:
-            log('Failed: create "%s": %s\n' % (str(fileName), str(e)))
+            log('Failed: create "%s": %s' % (str(fileName), str(e)))
             errors.write('\n' + context.translate(
                 msgid   = 'file_unexpected_error',
                 domain  = I18N_DOMAIN,
@@ -2117,7 +2107,7 @@ def exportPackage(multipleChoiceTest, errors):
         <imsqti:qtiMetadata>
             <imsqti:toolName>LlsMultipleChoice</imsqti:toolName> 
             <imsqti:toolVersion>1.0</imsqti:toolVersion> 
-            <imsqti:toolVendor>WDOK Research Group, Otto-von-Guericke-Universit‰t Magdeburg</imsqti:toolVendor> 
+            <imsqti:toolVendor>WDOK Research Group, Otto-von-Guericke-Universit√§t Magdeburg</imsqti:toolVendor> 
         </imsqti:qtiMetadata>
     """
     metadata = manifest.appendChild(manifestDoc.createElement(METADATA))
@@ -2674,3 +2664,45 @@ def exportAssessmentItem(obj, exportFileName, errors):
     aiText = obj.unicodeDecode(aiDoc.toxml()).encode(EXPORT_ENCODING)
     aiDoc.unlink()
     return aiText, man_resource
+
+
+def getZipInfoForName(zipFileObject, contentName, context):
+    """ return the ZipInfo from zipFileObject.infolist that matches with contentName
+    
+        a python ZipFile returns a list of its contents as the result of the 
+        ZipFile.filelist method.  These names are the handles needed to extract
+        the corresponding objects from the zip archive.  We want to match the 
+        name of a desired object in the zip archive (extracted, perhaps, from a
+        QTI manifest file) with the name from the zipfile's contents table and
+        return that name so that lookup in the zip archive will surely work.
+        
+        @param zipFileObject
+        
+            A Python ZipFile object that contains a QTI package.
+        
+        @param contentName
+        
+            The name of the target in the ZipFile we want to get at.  
+            Read from the QTI manifest file
+        
+        @param context
+        
+            an EC object which can accquire the unicodeDecode python script
+        
+        @return
+        
+            a Python ZipInfo object representing the desired target or None
+            in python 2.6 we'll be able to use this directly to read the target
+    """
+    name_comp = os.path.split(contentName)
+    # each accessor might be a filename,
+    #                        a pathname ending in a filename or 
+    #                        a path ending in '/'
+    zipFileContents = zipFileObject.infolist()
+    for zipInfo in zipFileContents:
+        info_comp = os.path.split(context.unicodeDecode(zipInfo.filename))
+        # does the content comparison list match the end of the accessor comparison list?
+        if info_comp[-1] == name_comp[-1]:
+            return zipInfo
+    
+    return None

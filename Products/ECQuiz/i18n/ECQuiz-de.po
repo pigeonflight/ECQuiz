@@ -795,6 +795,11 @@ msgstr "Dieser Test enthält keine Fragen."
 msgid "no_repetition"
 msgstr "Sie dürfen ihn nicht noch einmal einreichen."
 
+#. <p tal:condition="isPublic" i18n:translate="not_published">
+#. This quiz has not been published.</p>
+msgid "not_published"
+msgstr "Dieser Test wurde noch nicht veröffentlicht."
+
 # Original:
 #. Default: There are no results for this test.
 #: ./skins/llsMultipleChoice/test_results.pt, 276
@@ -1293,7 +1298,7 @@ msgid "unexpected_error"
 msgstr "Ein unerwarteter Fehler ist in \"%s\" aufgetreten: %s"
 
 # Original:
-#. Default: An an unexpected has occurred.  The test could not be exported.
+#. Default: An unexpected error has occurred.  The test could not be exported.
 #: ./skins/llsMultipleChoice/exportTest.py, 59
 msgid "unexpected_export_error"
 msgstr "Ein unvorhergesehener Fehler ist aufgetreten. Der Test konnte nicht exportiert werden."

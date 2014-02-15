@@ -1,8 +1,8 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
-# $Id$
+# $Id: ECQuiz.py 245805 2011-10-23 19:08:23Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -20,120 +20,46 @@
 # along with ECQuiz; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-import os, os.path
+#import os, os.path
 import re
+
 from AccessControl import ClassSecurityInfo, getSecurityManager
-from Acquisition import *
+from Acquisition import aq_parent
+
 from Products.Archetypes.utils import shasattr
 from DateTime import DateTime
 from zipfile import ZipFile
-from Products.Archetypes.public import Schema, BooleanField, IntegerField, \
-     ObjectField, StringField, Field
-from Products.Archetypes.Widget import TypesWidget, BooleanWidget, \
-     SelectionWidget
+
+from Products.Archetypes.public import Schema, BooleanField, StringField
+from Products.Archetypes.Widget import TypesWidget, BooleanWidget, SelectionWidget
 from Products.Archetypes.utils import DisplayList
 from Products.CMFCore.utils import getToolByName
-try: # Plone 2.0.5
-    from Products.CMFPlone.PloneUtilities import localized_time
-except: # Plone 2.1
-    from Products.CMFPlone.utils import ulocalized_time as localized_time
+
+from Products.CMFPlone.i18nl10n import ulocalized_time
 
 from Products.DataGridField.DataGridField import DataGridField
 from Products.DataGridField.DataGridWidget import DataGridWidget
 from Products.DataGridField.Column import Column
 
-from config import *
-from permissions import *
-from ECQAbstractGroup \
-     import ECQAbstractGroup
-from QuestionTypes.ECQMCQuestion import ECQMCQuestion
-from ECQGroup import ECQGroup
-from ECQReference import ECQReference
-from tools import *
-from qti import importAssessmentItem, \
-     importPackage, exportPackage
-from ECQResult import ECQResult, createResult
+from Products.ECQuiz import config
+from Products.ECQuiz import permissions
+from Products.ECQuiz.ECQAbstractGroup import ECQAbstractGroup
+#from Products.ECQuiz.QuestionTypes.ECQMCQuestion import ECQMCQuestion
+from Products.ECQuiz.ECQGroup import ECQGroup
+from Products.ECQuiz.ECQReference import ECQReference
+from Products.ECQuiz import tools
+from Products.ECQuiz.qti import importAssessmentItem, importPackage, exportPackage
+from Products.ECQuiz.ECQResult import ECQResult, createResult
 
-from Statistics import Statistics
+from Products.ECQuiz.Statistics import Statistics
 
-from Products.validation.interfaces import ivalidator
-from Products.validation import validation
-from Products.validation import ValidationChain
-from Products.validation.exceptions import ValidatorError
+#from Products.validation import validation
+#from Products.validation import ValidationChain
+#from Products.validation.exceptions import ValidatorError
 
-import wikitool
-#from wikitool import importQuiz,exportQuiz,convertQuiz,updateQuiz
-
-class ClearWholePointsCache:
-    """A dummy validator that clears any cached points from result objects."""
-    __implements__ = (ivalidator,)
-    
-    def __init__(self, name):
-        self.name = name
-        
-    def __call__(self, value, *args, **kwargs):
-        instance = kwargs.get('instance', None)
-        if instance is not None:
-            instance.unsetAllCachedPoints()
-        return True
-
-# Register this validator in Zope
-registerValidatorLogged(ClearWholePointsCache, 'clearWholePointsCache')
-
-class GradingScaleValidator:
-    """A validator for grading scales."""
-    __implements__ = (ivalidator,)
-    
-    def __init__(self, name):
-        self.name = name
-        
-    def __call__(self, value, *args, **kwargs):
-        instance = kwargs.get('instance', None)
-        if instance is not None:
-            decimalSeparator = \
-                instance.translate(msgid = 'fraction_delimiter',
-                                   domain = I18N_DOMAIN,
-                                   default = '.')
-            res = None
-            non_empty = [v for v in value
-                         if v['score'].strip() or v['grade'].strip()]
-            
-            for row in non_empty:
-                grade = row['grade'].strip()
-                if not grade:
-                    label = instance.translate(
-                        msgid   = 'grade',
-                        domain  = I18N_DOMAIN,
-                        default = "Grade")
-                    res = instance.translate(
-                        msgid   = 'error_required',
-                        domain  = 'archetypes',
-                        default = '%s is required, please correct.' % label,
-                        mapping = {'name': label},)
-                    break
-                        
-                score = row['score'].strip()
-                if row is non_empty[-1]: # last score field should be empty
-                    if len(score) != 0:
-                        res = instance.translate(
-                            msgid   = 'minimum_score_not_empty',
-                            domain  = I18N_DOMAIN,
-                            default = 'The minimum score column of the '
-                            'last row must be empty.')
-                else:
-                    match = re.match('^[0-9]+(\\'
-                                     + decimalSeparator
-                                     + r')?[0-9]*\s*%?$', score)
-                    if not match:
-                        res = instance.translate(
-                            msgid   = 'invalid_minimum_score',
-                            domain  = I18N_DOMAIN,
-                            default = 'Not a percentage or an absolute '
-                            'value: %s') % score
-                        break
-            return res
-        else:
-            return True
+from Products.ECQuiz import log
+#from Products.ECQuiz.wikitool import importQuiz,exportQuiz,convertQuiz,updateQuiz
+from Products.ECQuiz import wikitool
 
 class DataGridWidgetI18N(DataGridWidget):
     def getColumnLabels(self, field, whatever=None):
@@ -150,9 +76,6 @@ class DataGridWidgetI18N(DataGridWidget):
             names.append(col.getLabel(None,self))
 
         return names
-
-# Register this validator in Zope
-registerValidatorLogged(GradingScaleValidator, 'gradingScale')
 
 class ColumnI18N(Column):
     def __init__(self, label, default=None, default_method=None, label_msgid=None):
@@ -186,12 +109,13 @@ class EvaluationScriptsWidget(TypesWidget):
 
 
 class ECQuiz(ECQAbstractGroup):
-    """An online quiz."""
-    
+    """Debugging only"""
     """This is the main class of the 'ECQuiz' Product.  An ECQuiz is
     basically a folder that contains questions and groups of
     questions, i.e. folders that contain questions."""
-    
+
+    __implements__ = (ECQAbstractGroup.__implements__)
+
     # format: [file extension, column delimiter, row delimiter, 
     # start of text delimiter, end of text delimiter, escape char]
     RESULTS_EXPORT_FORMAT_TAB = ['tab', '\t', '\n', '"', '"', '"']
@@ -201,7 +125,7 @@ class ECQuiz(ECQAbstractGroup):
     # See comments in 'ECQAbstractGroup' for an explanation
     # of the function of a schema, therein defined properties (fields) and 
     # internationalization of the widgets
-    schema = ECQAbstractGroup.schema + Schema((
+    schema = ECQAbstractGroup.schema.copy() + Schema((
             BooleanField('instantFeedback',
                          # Instant feedback means that the candidate will see
                          # their results immediately after submitting their
@@ -215,8 +139,8 @@ class ECQuiz(ECQAbstractGroup):
                              description='If you want to give the candidates '
                              'instant feedback check this box.',
                              description_msgid='instant_feedback_tool_tip',
-                             i18n_domain=I18N_DOMAIN),
-                         read_permission=PERMISSION_STUDENT,
+                             i18n_domain=config.I18N_DOMAIN),
+                         read_permission=permissions.PERMISSION_STUDENT,
             ),
             BooleanField('allowRepetition',
                          # See 'description' of the widget.
@@ -229,8 +153,8 @@ class ECQuiz(ECQAbstractGroup):
                              description='If you want to allow repeated '
                              'submission of the quiz check this box.',
                              description_msgid='allow_repetition_tool_tip',
-                             i18n_domain=I18N_DOMAIN),
-                         read_permission=PERMISSION_STUDENT,
+                             i18n_domain=config.I18N_DOMAIN),
+                         read_permission=permissions.PERMISSION_STUDENT,
             ),
             BooleanField('onePerPage',
                          required=False,
@@ -242,8 +166,8 @@ class ECQuiz(ECQAbstractGroup):
                              description='If checked, each question/'
                              'question group is displayed on a separate page.',
                              description_msgid='one_per_page_tool_tip',
-                             i18n_domain=I18N_DOMAIN),
-                         read_permission=PERMISSION_STUDENT,
+                             i18n_domain=config.I18N_DOMAIN),
+                         read_permission=permissions.PERMISSION_STUDENT,
             ),
             BooleanField('onePerPageNav',
                          required=False,
@@ -256,29 +180,9 @@ class ECQuiz(ECQAbstractGroup):
                              "in an arbitrary order when the quiz is in "
                              "one-question-per-page-mode.",
                             description_msgid='one_per_page_nav_tool_tip',
-                             i18n_domain=I18N_DOMAIN),
-                         read_permission=PERMISSION_STUDENT,
+                             i18n_domain=config.I18N_DOMAIN),
+                         read_permission=permissions.PERMISSION_STUDENT,
             ),
-#             ObjectField('evaluationScripts',
-#                         # A dictionary for custom evaluation
-#                         # scripts. It is possible to customize the
-#                         # evaluation behavior of the ECQuiz
-#                         # Product by uploading custom evaluation
-#                         # scripts for 1) the ECQuiz, 2)
-#                         # ECQGroup objects, 3) Question
-#                         # objects. Otherwise a default evaluation
-#                         # method will be used.  The keys of this
-#                         # dictionary are the'portal_type' properties of 
-#                         # those classes. The values will be the scripts.
-#                         required=False,
-#                         # Not sure what this does.
-#                         multiValued=True,
-#                         default={},
-#                         mutator='setEvaluationScripts',
-#                         widget=EvaluationScriptsWidget(
-#                             types=CUSTOM_EVALUATION_TYPES),
-#                         read_permission=PERMISSION_INTERROGATOR,
-#             ),
             StringField('scoringFunction',
                         default='guessing',
                         enforceVocabulary=1,
@@ -294,10 +198,10 @@ class ECQuiz(ECQAbstractGroup):
                             description='The way the score for a question '
                             'is calculated.',
                             description_msgid='scoring_fun_tool_tip',
-                            i18n_domain=I18N_DOMAIN),
-                        read_permission=PERMISSION_STUDENT,
+                            i18n_domain=config.I18N_DOMAIN),
+                        read_permission=permissions.PERMISSION_STUDENT,
                         validators=('clearWholePointsCache',),
-                        write_permission=PERMISSION_GRADE,
+                        write_permission=permissions.PERMISSION_GRADE,
             ),
             DataGridField('gradingScale',
                           mutator = 'setGradingScale',
@@ -326,155 +230,32 @@ class ECQuiz(ECQAbstractGroup):
                               'which are not covered by one of the other '
                               'entries.',
                               description_msgid = 'grading_scale_tool_tip',
-                              i18n_domain = I18N_DOMAIN,
+                              i18n_domain = config.I18N_DOMAIN,
                               ),
                           validators=('gradingScale',),
-                          write_permission=PERMISSION_GRADE,
+                          write_permission=permissions.PERMISSION_GRADE,
             ),
             ),)
 
-    """ Inherit custom actions from 'ECQAbstractGroup' and redefine
-        them and/or define some new ones. 
-    """
-    
     typeDescription = "An online quiz."
     typeDescMsgId = 'description_edit_mctest'
+
     
-    # Store the i18n domain in an attribute of the quiz so that we
-    # don't have to hardcode it in scripts (Python) but can acquire it
-    # instead.
-    i18n_domain = I18N_DOMAIN
+    #meta_type = 'ECQuiz'             # zope type name
+    #portal_type = meta_type          # plone type name
+    #archetype_name = 'ECQuiz'        # friendly type name
     
     security = ClassSecurityInfo()
-        
-    def __getattr__(self, key):
-        """ This workaround method maps  read requests for the standard 
-            Plone properties 'effective_date'  and 'expiration_date' to
-            calls to  the Archetype  methods  'getEffectiveDate()'  and 
-            'getExpirationDate()',  respectively. This way timed publi-
-            shing/unpublishing works with ECQuizs, too.
-              Consult  the Python  documentation  to  learn  more about
-            '__getattr__()' methods.
-        """
-        if(key == 'effective_date'):
-            return self.getEffectiveDate()
-        elif(key == 'expiration_date'):
-            return self.getExpirationDate()
-        else:
-            raise AttributeError("'%s' object has no attribute '%s'"
-                                 %(repr(self), str(key)) )
 
+    i18n_domain = config.I18N_DOMAIN
 
-    # Hack to allow graders to call edit_view
-    security.declareProtected(PERMISSION_GRADE, 'processForm')
-    def processForm(self, *args, **kwargs):
-        return ECQAbstractGroup.processForm(self, *args, **kwargs)
-
-    def validate(self, *args, **kwargs):
-        """Validates the form data from the request.
-        """
-        errors = ECQAbstractGroup.validate(self, *args, **kwargs)
-        # don't know where these come from, but they make the
-        # validation fail for graders
-        for k in ('immediatelyAddableTypes', 'locallyAllowedTypes',):
-            try:
-                errors.pop(k)
-            except:
-                pass
-        return errors
-
-    
-    security.declarePrivate('getReferencedObjects')
-    def getReferencedObjects(self):
-        """Collect all objects referenced by a ECQReference
-        object within this quiz (and its ECQGroups).
-        """
-        tmp = self.contentValues()
-        all = list(tmp)
-        for o in tmp:
-            if o.portal_type == ECQGroup.portal_type:
-                all.extend(o.contentValues())
-        return [o.getReference() for o in all
-                if o.portal_type == ECQReference.portal_type]
-    
-
-    security.declarePrivate('getTests')
-    def getTests(self, referencedObjects):
-        """Returns a list of the original ECQuizs that the
-        objects in 'referencedObjects' come from.
-        """
-        ret = []
-        for o in referencedObjects:
-            # Call aq_parent() until we get the ECQuiz
-            # that o came from.
-            while True:                            
-                o = aq_parent(o)
-                if o:
-                    if o.portal_type == ECQuiz.portal_type:
-                        if not o in ret:
-                            ret.append(o)
-                        break
-                else:
-                    break
-        return ret
-
-
-    def __bobo_traverse__(self, REQUEST, name):
-        """Through this function, images, files, etc. that were
-        referenced by ECQReference objects in the quiz get
-        found.
-
-        It works by searching for the files in this quiz ('self') and
-        in every quiz from which some question or question group was
-        referenced.
-        """
-        try:
-            if REQUEST.has_key('ACTUAL_URL'):
-                referencedObjects = self.getReferencedObjects()
-                tests = self.getTests(referencedObjects)
-                #log("TESTS: %s\n" % str(tests))
-                
-                # we only need to do something if we got any new tests
-                if tests:
-                    # first, search in 'self', then try the others
-                    tests = [self] + tests
-                    # collect the values that need replacing
-                    repl = {}
-                    self_url = self.absolute_url()
-                    for key in REQUEST.keys():
-                        value = REQUEST[key]
-                        if (type(value) in [str, unicode]) and \
-                               (value.find(self_url) != -1):
-                            repl[key] = value
-                    
-                    # try to get the requested object from one of the
-                    # tests in 'tests'
-                    for test in tests:
-                        # rewrite the URL
-                        for key, value in repl.items():
-                            REQUEST[key] = value.replace(
-                                self_url, test.absolute_url())
-                        # try to get the object using the rewritten URL
-                        try:
-                            result = \
-                                ECQAbstractGroup.__bobo_traverse__(
-                                    test, REQUEST, name)
-                        except Exception, e:
-                            #log("Exception: %s\n" % str(e))
-                            result = None
-                        # return the object if we got anything
-                        if result:
-                            return result
-        except Exception, e:
-            #log("Exception: %s\n" % str(e))
-            pass
-            
-        return ECQAbstractGroup.__bobo_traverse__(self, REQUEST, name)
-    
-    
     security.declarePrivate('manage_afterAdd')
     def manage_afterAdd(self, item, container):
+        """
+        """
+        #log("manage_afterAdd: %s, %s" % (item, container))
         ECQAbstractGroup.manage_afterAdd(self, item, container)
+        
         # Add local role 'Manager' for the creator so that users can
         # create quizzes without having to be Manager
         creator = self.Creator()
@@ -495,7 +276,7 @@ class ECQuiz(ECQAbstractGroup):
         # Create a user-defined role ROLE_RESULT_GRADER.  The owner of
         # a quiz can use this role to delegate grading to other users.
         
-        for role in [ROLE_RESULT_VIEWER, ROLE_RESULT_GRADER]:
+        for role in [permissions.ROLE_RESULT_VIEWER, permissions.ROLE_RESULT_GRADER]:
             if role not in self.valid_roles():
                 self.manage_defined_roles('Add Role',
                                           {'role': role})
@@ -505,140 +286,11 @@ class ECQuiz(ECQAbstractGroup):
 
         # Grant the GradeAssignments permission to the "ECAssignment
         # Grader" role.
-        self.manage_permission(PERMISSION_GRADE,
-                               roles=[ROLE_RESULT_GRADER,],
+        self.manage_permission(permissions.PERMISSION_GRADE,
+                               roles=[permissions.ROLE_RESULT_GRADER,],
                                acquire=True)
         
         self.manage_setLocalRoles(creator, roles)
-    
-    
-    security.declarePrivate('getResults')
-    def getResults(self, candidateId=None):
-        flt = {'portal_type' : ECQResult.portal_type}
-        if candidateId is not None:
-            flt['Creator'] = candidateId
-        return self.contentValues(filter=flt)
-    
-
-    def getLatestSubmission(self, candidateId):
-        retVal = None
-        for item in self.getResults(candidateId):
-            if ((not item.hasState('invalid')) and
-                ((not retVal) or item.isMoreFinal(retVal))):
-                retVal = item
-        if not retVal:
-            raise Exception('Found no submission for %s', repr(candidateId))
-        return retVal
-
-
-    def hasParticipated(self, candidateId):
-        """ Find out if a quiz has been generated for candidate
-        candidateId.
-        """
-        return not (not self.getResults(candidateId))
-        
-        
-    def hasSubmitted(self, candidateId):
-        """ Find out if a candidate has actually submitted/taken this
-        quiz."""
-        # log("ECQuiz.hasSubmitted():\n")
-        for item in self.getResults(candidateId):
-            if item.getWorkflowState() in ['pending', 'graded', 'superseded']:
-                return True
-        return False
-        
-    
-    # security.declareProtected(PERMISSION_INTERROGATOR, 'getSubmitterIds')
-    def getSubmitterIds(self):
-        """Return the IDs of the candidates who have actually
-        submitted/taken this quiz.
-        """
-        d = {}
-        for item in self.getResults():
-            if item.getWorkflowState() in ['pending', 'graded', 'superseded']:
-                d[item.Creator()] = True
-        return d.keys()
-
-    
-    # security.declareProtected(PERMISSION_INTERROGATOR, 'getParticipantIds')
-    def getParticipantIds(self):
-        """ Get the IDs of all the candidates for whom a quiz has been
-        generated.
-        """
-        d = {}
-        for r in self.getResults():
-            d[r.Creator()] = True
-        return d.keys()
-    
-
-    security.declareProtected(PERMISSION_STUDENT, 'mayResubmit')
-    def mayResubmit(self):
-        user = getSecurityManager().getUser()
-        candidateId = user.getId()
-        
-        if self.userIsGrader(user):
-            return True
-        elif self.isPublic():
-            if self.isAllowRepetition():
-                return True
-            else:
-                return not self.hasSubmitted(candidateId)
-        else:
-            return False
-
-
-    security.declarePublic('isTutorGraded')
-    def isTutorGraded(self, result):
-        for grp in [self] + self.getQuestionGroups():
-            if grp is self:
-                if ECQAbstractGroup.isTutorGraded(grp, result):
-                    return True
-            elif grp.isTutorGraded(result):
-                return True
-        return False
-            
-
-    security.declareProtected(PERMISSION_STUDENT, 'getCurrentResult')
-    def getCurrentResult(self):
-        user = getSecurityManager().getUser()
-        candidateId = user.getId()
-        
-        for item in self.getResults(candidateId):
-            if item.hasState('unsubmitted'):
-                return item
-        
-        return None
-
-
-    security.declarePublic('userIsGrader')
-    def userIsGrader(self, user):
-        mctool = getToolByName(self, 'ecq_tool')
-        return mctool.userHasOneOfRoles(user,
-                                        ('Manager', ROLE_RESULT_GRADER,),
-                                        self)
-    
-
-    security.declarePublic('userIsManager')
-    def userIsManager(self, user):
-        mctool = getToolByName(self, 'ecq_tool')
-        return mctool.userHasOneOfRoles(user, ('Manager',), self)
-        
-
-    security.declareProtected(PERMISSION_INTERROGATOR, 'maybeMakeNewTest')
-    def maybeMakeNewTest(self):
-        """If the candidate hasn't seen this quiz yet, generate a new
-        one.  Otherwise, do nothing."""
-        result = self.getCurrentResult()
-        if result is None:
-            suMode = self.userIsGrader(getSecurityManager().getUser())
-            if suMode or self.mayResubmit():
-                result = createResult(self)
-                for group in [self] + self.getQuestionGroups():
-                    group.makeNewTest(result, suMode)
-                # Make this un-undoable by the candidate
-                makeTransactionUnundoable()
-            
-        return result
 
     
     security.declarePrivate('syncResults')
@@ -647,9 +299,10 @@ class ECQuiz(ECQAbstractGroup):
         assert(action in ['move', 'add', 'delete'])
         
         mtool = self.portal_membership
+        
         for result in self.getResults():
             # If this is root's result and it is not submitted, delete
-            # it.  Otherwise, possiby mark it as invalid.
+            # it.  Otherwise, possibly mark it as invalid.
             ownerId = result.Creator()
             member = mtool.getMemberById(ownerId)
             # If the user could not be found, [member] will be [None]
@@ -659,148 +312,28 @@ class ECQuiz(ECQAbstractGroup):
                 ownerIsRoot = self.userIsManager(member)
             else:
                 ownerIsRoot = False
+                
             if ownerIsRoot and (result.hasState('unsubmitted')):
-                self.manage_delObjects([result.getId()])
+                if mtool.checkPermission(permissions.CMFCorePermissions.DeleteObjects, result):
+                    self.manage_delObjects([result.getId()])
+                else:
+                    log("Can't delete result '%s'" % result)
             elif action != 'move':
                 result.tryWorkflowAction('invalidate', ignoreErrors=True)
-        
-    
-#     security.declareProtected(PERMISSION_INTERROGATOR, 'setEvaluationScripts')
-#     def setEvaluationScripts(self, evaluationScripts = {}):
-#         """ Save the dictionary of custom evaluation scripts in this 
-#             instance. 
-#         """
-#         if( type(evaluationScripts) == dict ):
-#             self.evaluationScripts = evaluationScripts
-#         else:
-#             evaluationScripts = {}
-            
-        
-#     security.declareProtected(PERMISSION_INTERROGATOR,
-#                               'processEvaluationScriptUpload')
-#     def processEvaluationScriptUpload(self, portal_type, funString):
-#         """ Routine for uploading custom evaluation scripts.
-        
-#             The scripts are stored in the ObjectField
-#             'evaluationScripts' of the quiz instance. (That implies
-#             every quiz instance can have its own evaluation script.)
-            
-#             @param portal_type The portal type of the class you
-#                    want to customize, e.g. 'ECGroup' or 'ECQuiz'.
-                   
-#             @param funString A string containing a python script that
-#                    can be compiled with Python's 'compile'
-#                    function. The script has to define an evaluation
-#                    function.  The name of that function has to be what
-#                    is specified in the global constant
-#                    CUSTOM_EVALUATION_FUNCTION_NAME (see config.py).
-#                    See the last line of the 'getCandidatePoints()'
-#                    methods of 'ECQuiz', 'ECQGroup'
-#                    and 'Question' for the parameters these functions
-#                    must accept.
-#         """
-#         # log("ECQuiz.processEvaluationScriptUpload(\n%s, \n%s)\n"
-#         #     %(str(portal_type), funString))
-#         try: # Try to compile the script
-#             codeObj = compile(funString, '<string>', 'exec')
-#         except Exception, e:
-#             # Can't be compiled --> not useable
-#             errorText = str(e)
-#             return errorText
-#         noFunctionDefinition = True
-#         # Check if the script defines a function whose name is equal to the 
-#         # value of the constant 'CUSTOM_EVALUATION_FUNCTION_NAME'
-#         if CUSTOM_EVALUATION_FUNCTION_NAME in codeObj.co_names:
-#             exec(codeObj)
-#             # Check if it is really a function and not a class or var
-#             if getattr(eval(CUSTOM_EVALUATION_FUNCTION_NAME),
-#                        'func_name', None) == CUSTOM_EVALUATION_FUNCTION_NAME:
-#                 noFunctionDefinition = False
-#         if noFunctionDefinition:
-#             # Either nothing called 'CUSTOM_EVALUATION_FUNCTION_NAME' 
-#             # is defined or it's not a function
-#             return self.translate(
-#                 msgid   = 'uploadEvaluationScript_no_function_definition',
-#                 domain  = I18N_DOMAIN,
-#                 default = 'The script does not define a function called "%s"')\
-#                 % CUSTOM_EVALUATION_FUNCTION_NAME
-#         # Save the script in the quiz's 'evaluationScripts' dictionary
-#         evaluationScripts = self.getEvaluationScripts()
-#         evaluationScripts[portal_type] = funString
-#         self.setEvaluationScripts(evaluationScripts)
-#         # log("self.evaluationScripts = %s\n"
-#         #    %(str(self.getEvaluationScripts())))
-#         return None # return no error message (Success)
-        
-        
-    security.declareProtected(PERMISSION_INTERROGATOR, 'processQTIImport')
-    def processQTIImport(self, file):
-        """ Routine for uploading quizzes.
-        
-            @param file A file containing a QTI assessmentItem or
-                    a QTI package in a zip file.
-        """
-        addedObjects = []
-        errorString = ''
-        errors = MyStringIO()
-        # try zipfile first
-        zipFileInstance = None
-        try:
-            zipFileInstance = ZipFile(file.filename)
-        except:
-            try:
-                zipFileInstance = ZipFile(file)
-            except:
-                pass
-        if(zipFileInstance):
-            # is a zip file
-            addedObjects = importPackage(self, zipFileInstance, errors)
-        else:
-            # no zipfile --> maybe XML?
-            # reset the file read ptr first
-            try:
-                file.seek(0)
-            except:
-                try:
-                    file.filename.seek(0)
-                except:
-                    pass
-            string = None
-            try:
-                string = file.filename.read()
-            except:
-                try:
-                    string = file.read()
-                except:
-                    pass
-            if type(string) not in [str, unicode]:
-                # give up, no XML either
-                # The file could not be read.
-                errors.write( '\n' + self.translate(
-                    msgid   = 'file_read_error',
-                    domain  = I18N_DOMAIN,
-                    default = 'The file could not be read.') )
-            else:
-                # is an XML file
-                addedObjects = importAssessmentItem(self, string, errors)
-        # Reset the read ptr of the StringIO obj
-        errors.seek(0)
-        errorString = errors.read().strip()
-        # log(errorString + '\n')
-        return addedObjects, ([errorString, None][not errorString])
-        
-        
-    security.declareProtected(PERMISSION_INTERROGATOR, 'processQTIImport')
-    def processQTIExport(self):
-        """ Routine for downloading quizzes.
-        """
-        errors = MyStringIO()
-        package = exportPackage(self, errors)
-        # Reset the read ptr of the StringIO obj
-        errors.seek(0)
-        errorString = errors.read().strip()
-        # log(errorString + '\n')
-        return package, ([errorString, None][not errorString])
+
+    security.declarePrivate('getResults')
+    def getResults(self, candidateId=None):
+        flt = {'portal_type' : ECQResult.portal_type}
+        if candidateId is not None:
+            flt['Creator'] = candidateId
+        return self.contentValues(filter=flt)
+
+
+    security.declareProtected(permissions.PERMISSION_INTERROGATOR, 'unsetAllCachedPoints')
+    def unsetAllCachedPoints(self):
+        results = self.getResults()
+        for result in results:
+            result.unsetAllCachedPoints()
 
 
     security.declarePublic('getResultsDict')
@@ -840,6 +373,185 @@ class ECQuiz(ECQAbstractGroup):
         return results
 
 
+    security.declarePublic('haveDetailedScores')
+    def haveDetailedScores(self):
+        for item in self.getResults():
+            if item.hasState('graded'):
+                return True
+        return False
+
+
+    def hasSubmitted(self, candidateId):
+        """ Find out if a candidate has actually submitted/taken this
+        quiz."""
+        # log("ECQuiz.hasSubmitted():")
+        for item in self.getResults(candidateId):
+            if item.getWorkflowState() in ['pending', 'graded', 'superseded']:
+                return True
+        return False
+
+
+    security.declarePublic('isEmpty')
+    def isEmpty(self):
+        return (not self.getQuestionGroups()) and \
+               (not self.getAllQuestions())
+
+
+    def getQuestionGroups(self):
+        """ Returns all the ECQGroup elements (no single questions). """
+        return [o for o in self.mcContentValues()
+                if o.portal_type == ECQGroup.portal_type]
+
+
+    # This function has to be implemented by classes derived from 
+    # ECQAbstractGroup
+    security.declarePublic('isPublic')
+    def isPublic(self):
+        """ Determine whether this quiz has been published. """
+        # log('ECQuiz.isPublic():')
+        try:
+            user = getSecurityManager().getUser()
+            showUnpublishedContent = user.has_role('Authenticated') and \
+                                     ('Manager' in self.get_local_roles_for_userid(user.getId()) \
+                                      or user.has_role('Manager'))
+
+            # log('\tshowUnpublishedContent = %s'
+            #     %(str(showUnpublishedContent)))
+            if showUnpublishedContent:
+                return True
+            if self.getWorkflowState() != 'published':
+                # log("\t!'published'")
+                return False
+            
+            now            = DateTime()
+            startPublished = getattr(self, 'effective_date', None)
+            endPublished   = getattr(self, 'expiration_date', None)
+            # log('\tnow = ' + str(now) + '')
+            # log('\tstartPublished = ' + str(startPublished))
+            # log('\tendPublished = ' + str(endPublished))
+            if((startPublished != None) and (startPublished > now)):
+                # log("\tstartPublished > now")
+                return False
+            if((endPublished != None) and (now > endPublished)):
+                # log("\tnow > endPublished")
+                return False
+            # log("\treturn True")
+            return True
+        except:
+            # log("ECQuiz.isPublic() failed. An unknown "
+            #     "exception occurred.\n")
+            # log("\treturn False")
+            return False        
+
+
+    security.declareProtected(permissions.PERMISSION_STUDENT, 'mayResubmit')
+    def mayResubmit(self):
+        user = getSecurityManager().getUser()
+        candidateId = user.getId()
+        
+        if self.userIsGrader(user):
+            return True
+        elif self.isPublic():
+            if self.isAllowRepetition():
+                return True
+            else:
+                return not self.hasSubmitted(candidateId)
+        else:
+            return False
+
+
+    security.declarePublic('userIsGrader')
+    def userIsGrader(self, user):
+        """
+        """
+        mctool = getToolByName(self, 'ecq_tool')
+        return mctool.userHasOneOfRoles(user,
+                                        ('Manager', permissions.ROLE_RESULT_GRADER,),
+                                        self)
+
+    
+    security.declarePublic('userIsManager')
+    def userIsManager(self, user):
+        """
+        """
+        mctool = getToolByName(self, 'ecq_tool')
+        return mctool.userHasOneOfRoles(user, ('Manager',), self)
+
+
+    security.declareProtected(permissions.PERMISSION_INTERROGATOR, 'maybeMakeNewTest')
+    def maybeMakeNewTest(self):
+        """If the candidate hasn't seen this quiz yet, generate a new
+        one.  Otherwise, do nothing."""
+        result = self.getCurrentResult()
+        if result is None:
+            suMode = self.userIsGrader(getSecurityManager().getUser())
+            if suMode or self.mayResubmit():
+                result = createResult(self)
+                for group in [self] + self.getQuestionGroups():
+                    group.makeNewTest(result, suMode)
+                # Make this un-undoable by the candidate
+                tools.makeTransactionUnundoable()
+            
+        return result
+
+
+    security.declareProtected(permissions.PERMISSION_STUDENT, 'getCurrentResult')
+    def getCurrentResult(self):
+        user = getSecurityManager().getUser()
+        candidateId = user.getId()
+        
+        for item in self.getResults(candidateId):
+            if item.hasState('unsubmitted'):
+                return item
+        
+        return None
+
+            
+    security.declareProtected(permissions.PERMISSION_INTERROGATOR,'unsetCachedQuestionPoints')
+    def unsetCachedQuestionPoints(self, question):
+        results = self.getResults()
+        for result in results:
+            result.unsetCachedQuestionPoints(question)
+
+
+    security.declareProtected(permissions.PERMISSION_INTERROGATOR, 'convertQuiz')
+    def convertQuiz(self, quiz):
+        return wikitool.convertQuiz(quiz)
+
+
+    security.declareProtected(permissions.PERMISSION_INTERROGATOR, 'updateQuiz')
+    def updateQuiz(self, quiz, wikistyle):
+        return wikitool.updateQuiz(quiz, wikistyle)
+
+
+    security.declareProtected(permissions.PERMISSION_INTERROGATOR, 'importQuiz')
+    def importQuiz(self, quiz, filename):
+        return wikitool.importQuiz(quiz, filename)
+
+
+    security.declareProtected(permissions.PERMISSION_INTERROGATOR, 'exportQuiz')
+    def exportQuiz(self, quiz, filename):
+        return wikitool.exportQuiz(quiz, filename)
+
+
+    def getWorkflowState(self):
+        """ Determine the Plone workflow state. """
+        workflow_tool = getToolByName(self, 'portal_workflow')
+        return workflow_tool.getInfoFor(self, 'review_state', None)
+
+        
+    # security.declareProtected(PERMISSION_INTERROGATOR, 'getSubmitterIds')
+    def getSubmitterIds(self):
+        """Return the IDs of the candidates who have actually
+        submitted/taken this quiz.
+        """
+        d = {}
+        for item in self.getResults():
+            if item.getWorkflowState() in ['pending', 'graded', 'superseded']:
+                d[item.Creator()] = True
+        return d.keys()
+
+
     security.declarePublic('getResultsAsList')
     def getResultsAsList(self, resultUIDList=None):
         """ Routine for exporting candidate results.
@@ -859,11 +571,10 @@ class ECQuiz(ECQAbstractGroup):
         """
         
         def formatTime(dateTimeObj):
-            # 'localized_time' is a Plone function
-            return localized_time( dateTimeObj, long_format = True,
-                                   context = self )
+            # 'ulocalized_time' is a Plone function
+            return ulocalized_time(dateTimeObj, long_format = True, context = self)
         
-        # log("ECQuiz.getResultsAsList()\n")
+        # log("ECQuiz.getResultsAsList()")
         ecq_tool = getToolByName(self, 'ecq_tool')
 
         haveGradingScale = self.haveGradingScale()
@@ -873,28 +584,28 @@ class ECQuiz(ECQAbstractGroup):
             {'result'      : None, # for internal use only, not used for
                                    # export
              'user_id'     : self.translate(msgid   = 'user_id',
-                                            domain  = I18N_DOMAIN,
+                                            domain  = config.I18N_DOMAIN,
                                             default = 'User ID'),
              'full_name'   : self.translate(msgid   = 'candidate',
-                                            domain  = I18N_DOMAIN,
+                                            domain  = config.I18N_DOMAIN,
                                             default = 'Candidate'),
              'state'       : self.translate(msgid   = 'State',
                                             domain  = 'plone',
                                              default = 'State'),
              'grade'       : self.translate(msgid   = 'Grade',
-                                            domain  = I18N_DOMAIN,
+                                            domain  = config.I18N_DOMAIN,
                                             default = 'Grade'),
              'score'       : self.translate(msgid   = 'test_results_score',
-                                            domain  = I18N_DOMAIN,
+                                            domain  = config.I18N_DOMAIN,
                                             default = 'Score'),
              'max_score'   : self.translate(msgid   = 'test_results_max_score',
-                                            domain  = I18N_DOMAIN,
+                                            domain  = config.I18N_DOMAIN,
                                             default = 'Max. Score'),
              'time_start'  : self.translate(msgid   = 'started',
-                                            domain  = I18N_DOMAIN,
+                                            domain  = config.I18N_DOMAIN,
                                             default = 'Started'),
              'time_finish' : self.translate(msgid   = 'finished',
-                                            domain  = I18N_DOMAIN,
+                                            domain  = config.I18N_DOMAIN,
                                             default = 'Finished'),
              }]
         
@@ -921,7 +632,7 @@ class ECQuiz(ECQAbstractGroup):
         # Participants who have not submitted their quizzes
         nonSubmitters = [c for c in participants
                          if c not in submitters]
-        #log("participants: %s\nsubmitters: %s\nnonSubmitters: %s\n\n"
+        #log("participants: %s\nsubmitters: %s\nnonSubmitters: %s\n"
         #    %(str(participants), str(submitters), str(nonSubmitters)))
         
         # Sort 'participants' so that 'submitters' come first
@@ -930,7 +641,7 @@ class ECQuiz(ECQAbstractGroup):
         participants  = submitters + nonSubmitters
 
         # The result workflow
-        resultWf = self.portal_workflow.getWorkflowById(ECMCR_WORKFLOW_ID)
+        resultWf = self.portal_workflow.getWorkflowById(config.ECMCR_WORKFLOW_ID)
 
         member = getSecurityManager().getUser()
         memberId = member.getId()
@@ -957,7 +668,7 @@ class ECQuiz(ECQAbstractGroup):
                         or self.isInstantFeedback()
                         or ecq_tool.userHasOneOfRoles(
                                member,
-                               (ROLE_RESULT_VIEWER,),
+                               (permissions.ROLE_RESULT_VIEWER,),
                                result)):
                         
                         # I18N floating point numbers is not done
@@ -968,7 +679,7 @@ class ECQuiz(ECQAbstractGroup):
                             grade = self.getCandidateGrade(result)
                 else:
                     timeFinished = self.translate(msgid   = 'not_submitted',
-                                                  domain  = I18N_DOMAIN,
+                                                  domain  = config.I18N_DOMAIN,
                                                   default = 'Not submitted')
                 
                 retVal.append(
@@ -986,161 +697,112 @@ class ECQuiz(ECQAbstractGroup):
                     retVal[-1].pop('grade')
 
         return retVal
-        
-        
-    security.declareProtected(PERMISSION_GRADE, 'getItemStatisticsW')
-    def getItemStatisticsW(self, candidateIdList = None):
-        """ Routine for exporting detailed candidate results.
-            
-            @return A list of containing the results as a list of values. The
-                values appear in the following order:
-                
-                [CandidateID, Candidate_Name] followed by either -, 0 or 1 for
-                each answer to each question in each question group in the
-                quiz.
-                
-                "-" means the candidate did not have this answer presented to
-                him/her as a possibility, "0 "means he/she did see this answer
-                but did not check it and "1" means he/she did check it.
-                
-                The first three "results" are header rows.
-        """
-        ecq_tool = getToolByName(self, 'ecq_tool')
 
-        # The header row
-        retVal = []
-        h1 = ['', '']
-        h2 = ['', '']
-        h3 = [self.translate(msgid = 'candidate',
-                             domain  = I18N_DOMAIN,
-                             default = 'Candidate'),
-              self.translate(msgid = 'name',
-                             domain  = I18N_DOMAIN,
-                             default = 'Name')]
-        for group in [self] + self.getQuestionGroups():
-            h1.append([group.title_or_id(),
-                       self.translate(msgid = 'ungrouped',
-                                      domain  = I18N_DOMAIN,
-                                      default = '(Ungrouped)')
-                       ][group is self])
-            allQuestions = group.getAllQuestions()
-            numQuestions = len(allQuestions)
-            for question in allQuestions:
-                numAnswers = len(question.listFolderContents())
-                h1 += ['' for i in range(numAnswers)]
-                h2 += [question.title_or_id()] \
-                     + ['' for i in range(numAnswers-1)]
-                h3 += ['a%d' % (i+1) for i in range(numAnswers)]
-            # we added one placeholder too much in the loop above
-            h1 = h1[:-1]
-        
-        for h in [h1, h2, h3]:
-            retVal.append( h )
-            
-        # The content rows
-        submitters = self.getSubmitterIds()
-        if candidateIdList is not None:
-            # If not all results are requested, filter 'submitters' so that
-            # every 'candidateId' in 'submitters' is also in 'candidateIdList'
-            submitters = filter((lambda candidateId :
-                                 (candidateId in candidateIdList)), submitters)
-        submitters.sort()
-        NaN           = '-' # Not a number/not available
-        for submitterId in submitters:
-            row = [submitterId, ecq_tool.getFullNameById(submitterId)]
-            for group in [self] + self.getQuestionGroups():
-                for question in group.getAllQuestions():
-                    sSuggestedAnswerIds = question.getSuggestedAnswerIds(
-                        submitterId) or []
-                    #log(str(sSuggestedAnswerIds))
-                    sCandidateAnswerIds = question.getCandidateAnswer(
-                        submitterId) or []
-                    #log(str(sCandidateAnswerIds))
-                    for answer in question.listFolderContents():
-                        aId = answer.getId()
-                        row += [
-                            [NaN, [0, 1][aId in sCandidateAnswerIds]][
-                            aId in sSuggestedAnswerIds]]
-            
-            retVal.append( row )
 
-        #log(self.unicodeDecode(retVal))
-
-        return retVal
-    
-    
-    def getItemStatisticsTable(self, keepQuestionGroups=False):
-        data = self.getItemStatistics2(keepQuestionGroups)
-        participants  = self.getParticipantIds()
-        submitters    = filter((lambda candidateId:
-                                (candidateId in participants)),
-                               self.getSubmitterIds())
-        submitters.sort()
-
-        #
-        questions = self.getAllQuestions()
-
-        if keepQuestionGroups:
-            questions += self.getQuestionGroups()
-        else:
-            for group in self.getQuestionGroups():
-                questions += group.getAllQuestions()
-
-        infoByQid = {}
-        for q in questions:
-            if shasattr(q, 'getPoints'):
-                infoByQid[q.getId()] = {'max': q.getPoints(),
-                                        'title': q.getTitle()}
-            else:
-                infoByQid[q.getId()] = {'max': 'unknown',
-                                        'title': q.getTitle()}
-        #
-
-        table = []
-        #table.append(['questions'] + data.keys())
-
-        row = ['_items']
-        for qid in data.keys():
-            row.append(infoByQid[qid]['title'])
-        table.append(row)
-
-        row = ['_ids']
-        for qid in data.keys():
-            row.append(qid)
-        table.append(row)
-
-        row = ['_max']
-        for qid in data.keys():
-            row.append(infoByQid[qid]['max'])
-        table.append(row)
-
-        for candidateId in submitters:
-            row = [candidateId] + ['-' for i in range(len(data.keys()))]
-            
-#             for i in range(len(data.keys())):
-#                 for submission in data[data.keys()[i]]:
-#                     if submission[0] == candidateId:
-#                         row[i + 1] = submission[1]
-
-            i=1
-            for value in data.values():
-                for submission in value:
-                    if submission[0] == candidateId:
-                        row[i] = submission[1]
-                i+=1
-            
-            table.append(row)
-        
-        return table
-
-    
-    security.declarePublic('haveDetailedScores')
-    def haveDetailedScores(self):
-        for item in self.getResults():
-            if item.hasState('graded'):
+    security.declarePrivate('haveGradingScale')
+    def haveGradingScale(self):
+        for item in self.getGradingScale():
+            if item['score'].strip() or item['grade'].strip():
                 return True
         return False
-    
+        
+
+    #security.declarePrivate('')
+    def getCandidateGrade(self, result):
+        # (no doc-string to disable publishing)
+        #
+        # Return the candidate's grade according to the grading scale
+        # or None.
+        
+        points = self.getCandidatePoints(result)
+        if (points is not None) and self.haveGradingScale():
+            scale = []
+            for item in self.getGradingScale():
+                d = dict(item)
+                
+                if d['score'].endswith('%'):
+                    num = float((d['score'].split('%'))[0])
+                    f = self.computePossiblePoints(result)/100.0 * num
+                else:
+                    try:
+                        f = float(d['score'])
+                    except ValueError:
+                        f = None
+                d['score'] = f
+                scale.append(d)
+
+            def comp(a, b):
+                xs = a['score']
+                bs = b['score']
+                if xs is None:
+                    return 1
+                elif bs is None:
+                    return -1
+                else:
+                    return xs > bs
+            
+            scale.sort(comp)
+
+            for pair in scale:
+                minScore = pair['score']
+                if (minScore is None) or (points >= minScore):
+                    grade = pair['grade']
+                    for conv in int, float:
+                        try:
+                            return conv(grade)
+                        except:
+                            pass
+                    return grade
+        
+        return None
+
+
+    #security.declarePrivate('')
+    def getCandidateGradeinfo(self, result):
+        # (no doc-string to disable publishing)
+        #
+        # Return the candidate's grade according to the grading scale
+        # or None.
+        
+        points = self.getCandidatePoints(result)
+        if (points is not None) and self.haveGradingScale():
+            scale = []
+            for item in self.getGradingScale():
+                d = dict(item)
+
+                if d['score'].endswith('%'):
+                    num = float((d['score'].split('%'))[0])
+                    f = self.computePossiblePoints(result)/100.0 * num
+                else:
+                    try:
+                        f = float(d['score'])
+                    except ValueError:
+                        f = None
+                d['score'] = f
+                scale.append(d)
+
+            def comp(a, b):
+                xs = a['score']
+                bs = b['score']
+                if xs is None:
+                    return 1
+                elif bs is None:
+                    return -1
+                else:
+                    return xs > bs
+            
+            scale.sort(comp)
+
+            for pair in scale:
+                minScore = pair['score']
+                if (minScore is None) or (points >= minScore):
+                    val = pair['gradeinfo'].strip()
+                    if val == "":
+                        return None
+                    return val
+        
+        return None
+
 
     def getDetailedScores(self):
         # no doc string to disable publishing
@@ -1168,7 +830,7 @@ class ECQuiz(ECQAbstractGroup):
                       ('median', 'Median'),
                       ('stddev', 'Std. Dev.')]:
             labels[msgid[0]] = self.translate(msgid = msgid[0],
-                                              domain = I18N_DOMAIN,
+                                              domain = config.I18N_DOMAIN,
                                               default = msgid[1])
         
         header    = [(labels['candidate'], '', '')]
@@ -1248,171 +910,7 @@ class ECQuiz(ECQAbstractGroup):
             table.append(statsRow)
 
         return table
-    
 
-    def getItemStatistics3(self):
-        participants = self.getParticipantIds()
-        table = []
-
-        for group in [self] + self.getQuestionGroups():
-            table.append(group.title_or_id)
-            allQuestions = group.getAllQuestions()
-            numQuestions = len(allQuestions)
-            
-            for question in allQuestions:
-                numAnswers = len(question.listFolderContents())
-                header = [question.title_or_id(), 'N', '-'] + \
-                         [str(i + 1) for i in range(numAnswers)] + \
-                         ['mean', 'stddev', 'median', 'mode']
-
-                i = 3
-                for answer in question.listFolderContents():
-                    if answer.isCorrect():
-                        header[i] += '*'
-                    i += 1
-                
-                
-                submitters = [candId for candId in self.getSubmitterIds()
-                              if candId in participants]
-                afreqs = [question.title_or_id(), 0, 0] + \
-                         [0 for i in range(numAnswers)]
-                
-                for submitter in submitters:
-                    sSuggestedAnswerIds = question.getSuggestedAnswerIds(
-                        submitter) or []
-                    sCandidateAnswerIds = question.getCandidateAnswer(
-                        submitter) or []
-                    
-                    if not sCandidateAnswerIds:
-                        afreqs[2] += 1
-                    else:
-                        afreqs[1] += 1 # Number of candidates
-
-                        i = 3
-                        for answer in question.listFolderContents():
-                            aid = answer.getId()
-                            afreqs[i] += [0, 1][aid in sCandidateAnswerIds]
-                            i += 1
-
-                # Prepare statistics
-                i = 1
-                items = []
-                for freq in afreqs[3:]:
-                    items.extend([i for n in range(0, freq)])
-                    i += 1
-
-                stats = Statistics(items)
-                afreqs.append(stats.mean)
-                afreqs.append(stats.stddev)
-                afreqs.append(stats.median)
-                afreqs.append(stats.mode)
-
-                table.append(header)
-                table.append(afreqs)
-                    
-        return table
-
-    def getItemStatistics2(self, keepQuestionGroups=False):
-        participants  = self.getParticipantIds()
-        submitters    = [candId for candId in self.getSubmitterIds()
-                         if candId in participants]
-        submitters.sort()
-
-        questions = self.getAllQuestions()
-
-        if keepQuestionGroups:
-            questions += self.getQuestionGroups()
-        else:
-            for group in self.getQuestionGroups():
-                questions += group.getAllQuestions()
-
-        itemStats = {}
-        for q in questions:
-            itemStats[q.getId()] = []
-
-        for candidateId in submitters:
-            candQuestions = self.getQuestions(candidateId)
-
-            for group in self.getQuestionGroups():
-                if keepQuestionGroups:
-                    candQuestions += self.getQuestionGroups()
-                else:
-                    candQuestions += group.getQuestions(candidateId)
-            
-            for q in candQuestions:
-                if hasattr(q, 'getPoints'):
-                    max = q.getPoints()                    # Question
-                else:
-                    max = q.getPossiblePoints(candidateId) # Question group
-                
-                itemStats[q.getId()].append((candidateId,
-                                             q.getCandidatePoints(candidateId),
-                                             max))
-        
-        return itemStats
-    
-    def getItemStatistics(self, keepQuestionGroups=False):
-        participants  = self.getParticipantIds()
-        submitters    = [candId for candId in self.getSubmitterIds()
-                         if candId in participants]
-        submitters.sort()
-
-        x = {}
-        for candidateId in submitters:
-            x[candidateId] = []
-            
-            questions      = self.getQuestions(candidateId)
-            questionGroups = self.getQuestionGroups()
-            for q in questions:
-                max = q.getPoints()
-                x[candidateId].append((q.getTitle(),
-                                       q.getCandidatePoints(candidateId),
-                                       max))
-            for q in questionGroups:
-                if keepQuestionGroups:
-                    max = q.getPossiblePoints(candidateId)
-                    x[candidateId].append((q.getTitle(),
-                                           q.getCandidatePoints(candidateId),
-                                           max))
-                else:
-                    contained = q.getQuestions(candidateId)
-                    for q in contained:
-                        max = q.getPoints()
-                        x[candidateId].append((q.getTitle(),
-                                               q.getCandidatePoints(candidateId),
-                                               max))
-        return x
-    
-            
-    def getQuestionGroups(self):
-        """ Returns all the ECQGroup elements (no single questions). """
-        return [o for o in self.mcContentValues()
-                if o.portal_type == ECQGroup.portal_type]
-
-
-    security.declarePublic('isEmpty')
-    def isEmpty(self):
-        return (not self.getQuestionGroups()) and \
-               (not self.getAllQuestions())
-        
-    security.declarePrivate('computePossiblePoints')
-    def computePossiblePoints(self, result):
-        """ Return how many points the candidate could have got.
-            
-            @param candidateId the user ID of the candidate whose points you 
-                    want to know. 
-        """
-        points = ECQAbstractGroup.computePossiblePoints(self, result)
-        if not isNumeric(points):
-            return None
-        questionGroups = self.getQuestionGroups()
-        for questionGroup in questionGroups:
-            questionGroupPoints = questionGroup.getPossiblePoints(result)
-            if not isNumeric(questionGroupPoints):
-                return None
-            points += questionGroupPoints
-        return points
-            
     security.declarePrivate('computeCandidatePoints')
     def computeCandidatePoints(self, result):
         """ Return how many points the candidate got for this quiz.
@@ -1431,7 +929,7 @@ class ECQuiz(ECQAbstractGroup):
             for questionGroup in questionGroups:
                 questionGroupCandidatePoints = \
                     questionGroup.getCandidatePoints(result)
-                if not isNumeric(questionGroupCandidatePoints):
+                if not tools.isNumeric(questionGroupCandidatePoints):
                     return None
                 points = points + questionGroupCandidatePoints
             for question in questions:
@@ -1439,23 +937,24 @@ class ECQuiz(ECQAbstractGroup):
                     return None
                 questionCandidatePoints = \
                     question.getCandidatePoints(result)
-                if not isNumeric(questionCandidatePoints):
+                if not tools.isNumeric(questionCandidatePoints):
                     return None
                 points = points + questionCandidatePoints
             return points
         else: # custom
-            return evalFunString(
-                customScript, CUSTOM_EVALUATION_FUNCTION_NAME,
-                [self, candidateId, questionGroups, questions])
+            return tools.evalFunString(
+                customScript, config.CUSTOM_EVALUATION_FUNCTION_NAME,
+                [self, result, questionGroups, questions])
 
-    security.declareProtected(PERMISSION_GRADE, 'setGradingScale')
+
+    security.declareProtected(permissions.PERMISSION_GRADE, 'setGradingScale')
     def setGradingScale(self, input):
         """
         Mutator for the `gradingScale' field.  Allows the input of
         localized numbers in the Minimum Score column.
         """
         decimalSeparator = self.translate(msgid = 'fraction_delimiter',
-                                          domain = I18N_DOMAIN,
+                                          domain = config.I18N_DOMAIN,
                                           default = '.')
         mutated = []
         
@@ -1503,198 +1002,600 @@ class ECQuiz(ECQAbstractGroup):
         
         return for_edit
 
-    
-    security.declarePrivate('haveGradingScale')
-    def haveGradingScale(self):
-        for item in self.getGradingScale():
-            if item['score'].strip() or item['grade'].strip():
+
+    security.declarePublic('isTutorGraded')
+    def isTutorGraded(self, result):
+        for grp in [self] + self.getQuestionGroups():
+            if grp is self:
+                if ECQAbstractGroup.isTutorGraded(grp, result):
+                    return True
+            elif grp.isTutorGraded(result):
                 return True
         return False
-        
-        
-    #security.declarePrivate('')
-    def getCandidateGrade(self, result):
-        # (no doc-string to disable publishing)
-        #
-        # Return the candidate's grade according to the grading scale
-        # or None.
-        
-        points = self.getCandidatePoints(result)
-        if (points is not None) and self.haveGradingScale():
-            scale = []
-            for item in self.getGradingScale():
-                d = dict(item)
-
-                if d['score'].endswith('%'):
-                    num = float((d['score'].split('%'))[0])
-                    f = self.computePossiblePoints(result)/100.0 * num
-                else:
-                    try:
-                        f = float(d['score'])
-                    except ValueError:
-                        f = None
-                d['score'] = f
-                scale.append(d)
-
-            def comp(a, b):
-                as = a['score']
-                bs = b['score']
-                if as is None:
-                    return 1
-                elif bs is None:
-                    return -1
-                else:
-                    return as > bs
             
-            scale.sort(comp)
 
-            for pair in scale:
-                minScore = pair['score']
-                if (minScore is None) or (points >= minScore):
-                    grade = pair['grade']
-                    for conv in int, float:
-                        try:
-                            return conv(grade)
-                        except:
-                            pass
-                    return grade
+    def getLatestSubmission(self, candidateId):
+        retVal = None
+        for item in self.getResults(candidateId):
+            if ((not item.hasState('invalid')) and
+                ((not retVal) or item.isMoreFinal(retVal))):
+                retVal = item
+        if not retVal:
+            raise Exception('Found no submission for %s', repr(candidateId))
+        return retVal
+
+
+    security.declareProtected(permissions.PERMISSION_INTERROGATOR, 'processQTIImport')
+    def processQTIExport(self):
+        """ Routine for downloading quizzes.
+        """
+        errors = tools.MyStringIO()
+        package = exportPackage(self, errors)
+        # Reset the read ptr of the StringIO obj
+        errors.seek(0)
+        errorString = errors.read().strip()
+        # log(errorString)
+        return package, ([errorString, None][not errorString])
+
+
+    security.declareProtected(permissions.PERMISSION_INTERROGATOR, 'processQTIImport')
+    def processQTIImport(self, file):
+        """Routine for uploading quizzes.
         
-        return None
+        @param file: A file containing a QTI assessmentItem or
+                     a QTI package in a zip file.
+        """
+        addedObjects = []
+        #errorString = ''
+        errors = tools.MyStringIO()
 
-                
-    #security.declarePrivate('')
-    def getCandidateGradeinfo(self, result):
-        # (no doc-string to disable publishing)
-        #
-        # Return the candidate's grade according to the grading scale
-        # or None.
-        
-        points = self.getCandidatePoints(result)
-        if (points is not None) and self.haveGradingScale():
-            scale = []
-            for item in self.getGradingScale():
-                d = dict(item)
-
-                if d['score'].endswith('%'):
-                    num = float((d['score'].split('%'))[0])
-                    f = self.computePossiblePoints(result)/100.0 * num
-                else:
-                    try:
-                        f = float(d['score'])
-                    except ValueError:
-                        f = None
-                d['score'] = f
-                scale.append(d)
-
-            def comp(a, b):
-                as = a['score']
-                bs = b['score']
-                if as is None:
-                    return 1
-                elif bs is None:
-                    return -1
-                else:
-                    return as > bs
-            
-            scale.sort(comp)
-
-            for pair in scale:
-                minScore = pair['score']
-                if (minScore is None) or (points >= minScore):
-                    val = pair['gradeinfo'].strip()
-                    if val == "":
-                        return None
-                    return val
-        
-        return None
-
-                
-    def getWorkflowState(self):
-        """ Determine the Plone workflow state. """
-        workflow_tool = getToolByName(self, 'portal_workflow')
-        return workflow_tool.getInfoFor(self, 'review_state', None)
-        
-        
-    # This function has to be implemented by classes derived from 
-    # ECQAbstractGroup
-    security.declarePublic('isPublic')
-    def isPublic(self):
-        """ Determine whether this quiz has been published. """
-        # log('ECQuiz.isPublic():\n')
+        # try zipfile first
+        zipFileInstance = None
         try:
-            user = getSecurityManager().getUser()
-            showUnpublishedContent = user.has_role('Authenticated') and \
-                                     ('Manager' in self.get_local_roles_for_userid(user.getId()) \
-                                      or user.has_role('Manager'))
-
-            # log('\tshowUnpublishedContent = %s\n'
-            #     %(str(showUnpublishedContent)))
-            if showUnpublishedContent:
-                return True
-            if self.getWorkflowState() != 'published':
-                # log("\t!'published'\n")
-                return False
-            now            = DateTime()
-            startPublished = getattr(self, 'effective_date', None)
-            endPublished   = getattr(self, 'expiration_date', None)
-            # log('\tnow = ' + str(now) + '\n')
-            # log('\tstartPublished = ' + str(startPublished) + '\n')
-            # log('\tendPublished = ' + str(endPublished) + '\n')
-            if((startPublished != None) and (startPublished > now)):
-                # log("\tstartPublished > now\n")
-                return False
-            if((endPublished != None) and (now > endPublished)):
-                # log("\tnow > endPublished\n")
-                return False
-            # log("\treturn True\n")
-            return True
+            zipFileInstance = ZipFile(file.filename)
         except:
-            # log("ECQuiz.isPublic() failed. An unknown "
-            #     "exception occurred.\n")
-            # log("\treturn False\n")
-            return False        
+            try:
+                zipFileInstance = ZipFile(file)
+            except:
+                pass
+        if(zipFileInstance):
+            # is a zip file
+            addedObjects = importPackage(self, zipFileInstance, errors)
+        else:
+            # no zipfile --> maybe XML?
+            # reset the file read ptr first
+            try:
+                file.seek(0)
+            except:
+                try:
+                    file.filename.seek(0)
+                except:
+                    pass
+            string = None
+            try:
+                string = file.filename.read()
+            except:
+                try:
+                    string = file.read()
+                except:
+                    pass
+            if type(string) not in [str, unicode]:
+                # give up, no XML either
+                # The file could not be read.
+                errors.write( '\n' + self.translate(
+                    msgid   = 'file_read_error',
+                    domain  = config.I18N_DOMAIN,
+                    default = 'The file could not be read.') )
+            else:
+                # is an XML file
+                addedObjects = importAssessmentItem(self, string, errors)
+        # Reset the read ptr of the StringIO obj
+        errors.seek(0)
+        errorString = errors.read().strip()
+        # log(errorString)
+        return addedObjects, ([errorString, None][not errorString])
 
+
+    security.declarePrivate('computePossiblePoints')
+    def computePossiblePoints(self, result):
+        """Return how many points the candidate could have got.
+            
+        @param candidateId: The user ID of the candidate whose points you 
+                            want to know. 
+        """
+        points = ECQAbstractGroup.computePossiblePoints(self, result)
+        if not tools.isNumeric(points):
+            return None
+        questionGroups = self.getQuestionGroups()
+        for questionGroup in questionGroups:
+            questionGroupPoints = questionGroup.getPossiblePoints(result)
+            if not tools.isNumeric(questionGroupPoints):
+                return None
+            points += questionGroupPoints
+        return points
+
+
+    security.declareProtected(permissions.PERMISSION_GRADE, 'getItemStatisticsW')
+    def getItemStatisticsW(self, candidateIdList = None):
+        """Routine for exporting detailed candidate results.
+            
+        @return: A list of containing the results as a list of values. The
+                 values appear in the following order:
+                
+                 [CandidateID, Candidate_Name] followed by either -, 0 or 1 for
+                 each answer to each question in each question group in the
+                 quiz.
+                
+                 "-" means the candidate did not have this answer presented to
+                 him/her as a possibility, "0 "means he/she did see this answer
+                 but did not check it and "1" means he/she did check it.
+                
+                 The first three "results" are header rows.
+        
+        @see: ecq_quiz_statistics.cpt (debugging only)
+        """
+        ecq_tool = getToolByName(self, 'ecq_tool')
+
+        # The header row
+        retVal = []
+        h1 = ['', '']
+        h2 = ['', '']
+        h3 = [self.translate(msgid = 'candidate',
+                             domain  = config.I18N_DOMAIN,
+                             default = 'Candidate'),
+              self.translate(msgid = 'name',
+                             domain  = config.I18N_DOMAIN,
+                             default = 'Name')]
+        for group in [self] + self.getQuestionGroups():
+            h1.append([group.title_or_id(),
+                       self.translate(msgid = 'ungrouped',
+                                      domain  = config.I18N_DOMAIN,
+                                      default = '(Ungrouped)')
+                       ][group is self])
+            allQuestions = group.getAllQuestions()
+            #numQuestions = len(allQuestions)
+            for question in allQuestions:
+                numAnswers = len(question.listFolderContents())
+                h1 += ['' for i in range(numAnswers)]
+                h2 += [question.title_or_id()] \
+                     + ['' for i in range(numAnswers-1)]
+                h3 += ['a%d' % (i+1) for i in range(numAnswers)]
+            # we added one placeholder too much in the loop above
+            h1 = h1[:-1]
+        
+        for h in [h1, h2, h3]:
+            retVal.append( h )
+            
+        # The content rows
+        submitters = self.getSubmitterIds()
+        if candidateIdList is not None:
+            # If not all results are requested, filter 'submitters' so that
+            # every 'candidateId' in 'submitters' is also in 'candidateIdList'
+            submitters = filter((lambda candidateId :
+                                 (candidateId in candidateIdList)), submitters)
+        submitters.sort()
+        NaN           = '-' # Not a number/not available
+        for submitterId in submitters:
+            row = [submitterId, ecq_tool.getFullNameById(submitterId)]
+            for group in [self] + self.getQuestionGroups():
+                for question in group.getAllQuestions():
+                    sSuggestedAnswerIds = question.getSuggestedAnswerIds(
+                        submitterId) or []
+                    #log(str(sSuggestedAnswerIds))
+                    sCandidateAnswerIds = question.getCandidateAnswer(
+                        submitterId) or []
+                    #log(str(sCandidateAnswerIds))
+                    for answer in question.listFolderContents():
+                        aId = answer.getId()
+                        row += [
+                            [NaN, [0, 1][aId in sCandidateAnswerIds]][
+                            aId in sSuggestedAnswerIds]]
+            
+            retVal.append( row )
+
+        #log(self.unicodeDecode(retVal))
+
+        return retVal
     
-    security.declareProtected(PERMISSION_INTERROGATOR, 'deleteResultsById')
+    
+    def getItemStatisticsTable(self, keepQuestionGroups=False):
+        """
+        @see: ecq_quiz_statistics.cpt (debugging only)
+        """
+        data = self.getItemStatistics2(keepQuestionGroups)
+        participants  = self.getParticipantIds()
+        submitters    = filter((lambda candidateId:
+                                (candidateId in participants)),
+                               self.getSubmitterIds())
+        submitters.sort()
+
+        #
+        questions = self.getAllQuestions()
+
+        if keepQuestionGroups:
+            questions += self.getQuestionGroups()
+        else:
+            for group in self.getQuestionGroups():
+                questions += group.getAllQuestions()
+
+        infoByQid = {}
+        for q in questions:
+            if shasattr(q, 'getPoints'):
+                infoByQid[q.getId()] = {'max': q.getPoints(),
+                                        'title': q.getTitle()}
+            else:
+                infoByQid[q.getId()] = {'max': 'unknown',
+                                        'title': q.getTitle()}
+        #
+
+        table = []
+        #table.append(['questions'] + data.keys())
+
+        row = ['_items']
+        for qid in data.keys():
+            row.append(infoByQid[qid]['title'])
+        table.append(row)
+
+        row = ['_ids']
+        for qid in data.keys():
+            row.append(qid)
+        table.append(row)
+
+        row = ['_max']
+        for qid in data.keys():
+            row.append(infoByQid[qid]['max'])
+        table.append(row)
+
+        for candidateId in submitters:
+            row = [candidateId] + ['-' for i in range(len(data.keys()))]
+            
+#             for i in range(len(data.keys())):
+#                 for submission in data[data.keys()[i]]:
+#                     if submission[0] == candidateId:
+#                         row[i + 1] = submission[1]
+
+            i=1
+            for value in data.values():
+                for submission in value:
+                    if submission[0] == candidateId:
+                        row[i] = submission[1]
+                i+=1
+            
+            table.append(row)
+        
+        return table
+
+
+    def getItemStatistics3(self):
+        """
+        @see: ecq_quiz_statistics.cpt (debugging only)
+        """
+        participants = self.getParticipantIds()
+        table = []
+
+        for group in [self] + self.getQuestionGroups():
+            table.append(group.title_or_id)
+            allQuestions = group.getAllQuestions()
+            #numQuestions = len(allQuestions)
+            
+            for question in allQuestions:
+                numAnswers = len(question.listFolderContents())
+                header = [question.title_or_id(), 'N', '-'] + \
+                         [str(i + 1) for i in range(numAnswers)] + \
+                         ['mean', 'stddev', 'median', 'mode']
+
+                i = 3
+                for answer in question.listFolderContents():
+                    if answer.isCorrect():
+                        header[i] += '*'
+                    i += 1
+                
+                
+                submitters = [candId for candId in self.getSubmitterIds()
+                              if candId in participants]
+                afreqs = [question.title_or_id(), 0, 0] + \
+                         [0 for i in range(numAnswers)]
+                
+                for submitter in submitters:
+                    sSuggestedAnswerIds = \
+                        question.getSuggestedAnswerIds(submitter) or []
+                    
+                    sCandidateAnswerIds = \
+                        question.getCandidateAnswer(submitter) or []
+                    
+                    if not sCandidateAnswerIds:
+                        afreqs[2] += 1
+                    else:
+                        afreqs[1] += 1 # Number of candidates
+
+                        i = 3
+                        for answer in question.listFolderContents():
+                            aid = answer.getId()
+                            afreqs[i] += [0, 1][aid in sCandidateAnswerIds]
+                            i += 1
+
+                # Prepare statistics
+                i = 1
+                items = []
+                for freq in afreqs[3:]:
+                    items.extend([i for n in range(0, freq)])
+                    i += 1
+
+                stats = Statistics(items)
+                afreqs.append(stats.mean)
+                afreqs.append(stats.stddev)
+                afreqs.append(stats.median)
+                afreqs.append(stats.mode)
+
+                table.append(header)
+                table.append(afreqs)
+                    
+        return table
+
+    def getItemStatistics2(self, keepQuestionGroups=False):
+        """
+        @see: ecq_quiz_statistics.cpt (debugging only)
+        """
+
+        participants  = self.getParticipantIds()
+        submitters    = [candId for candId in self.getSubmitterIds() if candId in participants]
+        submitters.sort()
+
+        questions = self.getAllQuestions()
+
+        if keepQuestionGroups:
+            questions += self.getQuestionGroups()
+        else:
+            for group in self.getQuestionGroups():
+                questions += group.getAllQuestions()
+
+        itemStats = {}
+        for q in questions:
+            itemStats[q.getId()] = []
+
+        for candidateId in submitters:
+            candQuestions = self.getQuestions(candidateId)
+
+            for group in self.getQuestionGroups():
+                if keepQuestionGroups:
+                    candQuestions += self.getQuestionGroups()
+                else:
+                    candQuestions += group.getQuestions(candidateId)
+            
+            for q in candQuestions:
+                if hasattr(q, 'getPoints'):
+                    max = q.getPoints()                    # Question
+                else:
+                    max = q.getPossiblePoints(candidateId) # Question group
+                
+                itemStats[q.getId()].append((candidateId,
+                                             q.getCandidatePoints(candidateId),
+                                             max))
+        
+        return itemStats
+    
+    def getItemStatistics(self, keepQuestionGroups=False):
+        """
+        @see: ecq_quiz_statistics.cpt (debugging only)
+        """
+        participants  = self.getParticipantIds()
+        submitters    = [candId for candId in self.getSubmitterIds()
+                         if candId in participants]
+        submitters.sort()
+
+        x = {}
+        for candidateId in submitters:
+            x[candidateId] = []
+            
+            questions      = self.getQuestions(candidateId)
+            questionGroups = self.getQuestionGroups()
+            for q in questions:
+                max = q.getPoints()
+                x[candidateId].append((q.getTitle(),
+                                       q.getCandidatePoints(candidateId),
+                                       max))
+            for q in questionGroups:
+                if keepQuestionGroups:
+                    max = q.getPossiblePoints(candidateId)
+                    x[candidateId].append((q.getTitle(),
+                                           q.getCandidatePoints(candidateId),
+                                           max))
+                else:
+                    contained = q.getQuestions(candidateId)
+                    for q in contained:
+                        max = q.getPoints()
+                        x[candidateId].append((q.getTitle(),
+                                               q.getCandidatePoints(candidateId),
+                                               max))
+        return x
+
+
+    security.declareProtected(permissions.PERMISSION_INTERROGATOR, 'deleteResultsById')
     def deleteResultsById(self, resultIdList):
-        """Deletes all the results whose id is in [resultIdList]."""
+        """Deletes all the results whose id is in [resultIdList].
+        """
         self.manage_delObjects(resultIdList)
 
 
-    security.declareProtected(PERMISSION_INTERROGATOR,
-                              'unsetCachedQuestionPoints')
-    def unsetCachedQuestionPoints(self, question):
-        results = self.getResults()
-        for result in results:
-            result.unsetCachedQuestionPoints(question)
+    security.declareProtected(permissions.PERMISSION_GRADE, 'processForm')
+    def processForm(self, *args, **kwargs):
+        """Hack to allow graders to call edit_view
+        """
+        return ECQAbstractGroup.processForm(self, *args, **kwargs)
 
 
-    security.declareProtected(PERMISSION_INTERROGATOR, 'unsetAllCachedPoints')
-    def unsetAllCachedPoints(self):
-        results = self.getResults()
-        for result in results:
-            result.unsetAllCachedPoints()
-            
+    def hasParticipated(self, candidateId):
+        """Find out if a quiz has been generated for candidate
+        candidateId.
+        """
+        return not (not self.getResults(candidateId))
         
-    def pre_validate(self, REQUEST, errors):
-        """ This function is called when submitting the edit form (base_edit).
-            
-            @param REQUEST Contains the input for the form.
-            @param errors If any validation error occurs, put it here.
+    
+    # security.declareProtected(PERMISSION_INTERROGATOR, 'getParticipantIds')
+    def getParticipantIds(self):
+        """Get the IDs of all the candidates for whom a quiz has been
+        generated.
+        """
+        d = {}
+        for r in self.getResults():
+            d[r.Creator()] = True
+        return d.keys()
+
+
+    def __bobo_traverse__(self, REQUEST, name):
+        """Through this function, images, files, etc. that were
+        referenced by ECQReference objects in the quiz get
+        found.
+
+        It works by searching for the files in this quiz ('self') and
+        in every quiz from which some question or question group was
+        referenced.
+        """
+        try:
+            if REQUEST.has_key('ACTUAL_URL'):
+                referencedObjects = self.getReferencedObjects()
+                tests = self.getTests(referencedObjects)
+                #log("TESTS: %s" % str(tests))
                 
-            Requests from the 'base_edit' form to delete custom 
-            evaluation scripts (from ObjectField 'evaluationScripts') 
-            are processed here. 
+                # we only need to do something if we got any new tests
+                if tests:
+                    # first, search in 'self', then try the others
+                    tests = [self] + tests
+                    # collect the values that need replacing
+                    repl = {}
+                    self_url = self.absolute_url()
+                    for key in REQUEST.keys():
+                        value = REQUEST[key]
+                        if (type(value) in [str, unicode]) and \
+                               (value.find(self_url) != -1):
+                            repl[key] = value
+                    
+                    # try to get the requested object from one of the
+                    # tests in 'tests'
+                    for test in tests:
+                        # rewrite the URL
+                        for key, value in repl.items():
+                            REQUEST[key] = value.replace(
+                                self_url, test.absolute_url())
+                        # try to get the object using the rewritten URL
+                        try:
+                            result = \
+                                ECQAbstractGroup.__bobo_traverse__(
+                                    test, REQUEST, name)
+                        #except Exception, e:
+                            #log("Exception: %s" % str(e))
+                        except Exception:
+                            result = None
+                        # return the object if we got anything
+                        if result:
+                            return result
+        except Exception, e:
+            log("ERROR: %s" % str(e))
+        
+        #except Exception:
+        #    pass
+            
+        return ECQAbstractGroup.__bobo_traverse__(self, REQUEST, name)
+
+
+    security.declarePrivate('getTests')
+    def getTests(self, referencedObjects):
+        """Returns a list of the original ECQuizs that the
+        objects in 'referencedObjects' come from.
+        """
+        ret = []
+        for o in referencedObjects:
+            # Call aq_parent() until we get the ECQuiz
+            # that o came from.
+            while True:                            
+                o = aq_parent(o)
+                if o:
+                    if o.portal_type == ECQuiz.portal_type:
+                        if not o in ret:
+                            ret.append(o)
+                        break
+                else:
+                    break
+        return ret
+
+
+#    def __getattr__(self, key):
+#        """ 
+#        This workaround method maps read requests for the standard 
+#        Plone properties 'effective_date'  and 'expiration_date' to
+#        calls to  the Archetype  methods  'getEffectiveDate()'  and 
+#        'getExpirationDate()',  respectively. This way timed publi-
+#        shing/unpublishing works with ECQuizs, too.
+#        
+#        Consult  the Python  documentation  to  learn  more about
+#        '__getattr__()' methods.
+#        """
+#        if(key == 'effective_date'):
+#            return self.getEffectiveDate()
+#        elif(key == 'expiration_date'):
+#            return self.getExpirationDate()
+#        else:
+#            raise AttributeError("'%s' object has no attribute '%s'"
+#                                 %(repr(self), str(key)) )
+
+#    def validate(self, *args, **kwargs):
+#        """Validates the form data from the request.
+#        """
+#        errors = ECQAbstractGroup.validate(self, *args, **kwargs)
+#        
+#        # don't know where these come from, but they make the
+#        # validation fail for graders
+#        for k in ('immediatelyAddableTypes', 'locallyAllowedTypes',):
+#            try:
+#                errors.pop(k)
+#            except:
+#                pass
+#        return errors
+
+
+    security.declarePrivate('getReferencedObjects')
+    def getReferencedObjects(self):
+        """Collect all objects referenced by a ECQReference
+        object within this quiz (and its ECQGroups).
+        """
+        tmp = self.contentValues()
+        all = list(tmp)
+        for o in tmp:
+            if o.portal_type == ECQGroup.portal_type:
+                all.extend(o.contentValues())
+        return [o.getReference() for o in all
+                if o.portal_type == ECQReference.portal_type]
+
+
+
+#class ECQuiz2(ECQAbstractGroup):
+#        
+#    security = ClassSecurityInfo()
+#
+#    i18n_domain = config.I18N_DOMAIN
+    
+    def pre_validate(self, REQUEST, errors):
+        """This function is called when submitting the edit form (base_edit).
+            
+        Requests from the 'base_edit' form to delete custom 
+        evaluation scripts (from ObjectField 'evaluationScripts') 
+        are processed here. 
+
+        @param REQUEST: Contains the input for the form.
+        @param errors: If any validation error occurs, put it here.
         """
         if REQUEST.get('deleteCustomEvaluationScripts', []) != []:
-            scriptsToBeDeleted = REQUEST.get('deleteCustomEvaluationScripts',
-                                             [])
+            scriptsToBeDeleted = REQUEST.get('deleteCustomEvaluationScripts', [])
+            
             if type(scriptsToBeDeleted) != list:
                 scriptsToBeDeleted = [scriptsToBeDeleted]
+            
             evaluationScripts = self.getEvaluationScripts()
+            
             for portal_type in scriptsToBeDeleted:
                 if evaluationScripts.has_key(portal_type):
                     evaluationScripts.pop(portal_type)
+            
             self.setEvaluationScripts(evaluationScripts)
             
             
@@ -1709,23 +1610,7 @@ class ECQuiz(ECQAbstractGroup):
             # if(errorMsg):
                 # errors['sourceFile'] = errorMsg + ' File=' + string
             # self.setSourceFile(None)
-            
 
-    security.declareProtected(PERMISSION_INTERROGATOR, 'convertQuiz')
-    def convertQuiz(self, quiz):
-        return wikitool.convertQuiz(quiz)
-
-    security.declareProtected(PERMISSION_INTERROGATOR, 'updateQuiz')
-    def updateQuiz(self, quiz, wikistyle):
-        return wikitool.updateQuiz(quiz, wikistyle)
-
-    security.declareProtected(PERMISSION_INTERROGATOR, 'importQuiz')
-    def importQuiz(self, quiz, filename):
-        return wikitool.importQuiz(quiz, filename)
-
-    security.declareProtected(PERMISSION_INTERROGATOR, 'exportQuiz')
-    def exportQuiz(self, quiz, filename):
-        return wikitool.exportQuiz(quiz, filename)
             
 # Register this type in Zope
-registerATCTLogged(ECQuiz)
+tools.registerATCTLogged(ECQuiz)

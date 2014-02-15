@@ -87,7 +87,7 @@ msgstr "Ali ste prepričani, da želite oddati preizkus?"
 
 # Already defined in plone-de.po
 # msgid "Delete"
-# msgstr "L�chen"
+# msgstr "Löchen"
 #. <input class="context"
 #. tabindex="#"
 #. type="submit"
@@ -1272,7 +1272,7 @@ msgstr "Če te odgovore ocenjujemo ročno, označite ta kvadratek."
 msgid "unexpected_error"
 msgstr "Napaka pri %s : %s"
 
-#. Default: An an unexpected has occurred.  The test could not be exported.
+#. Default: An unexpected error has occurred.  The test could not be exported.
 #: ./skins/llsMultipleChoice/exportTest.py, 59
 msgid "unexpected_export_error"
 msgstr "Pojavila se je nepričakovana napaka. Preizkusa ne moremo izvoziti."

@@ -1,14 +1,20 @@
-## Script (Python) "exportResults"
+## Script (Python) "ecq_quiz_results_export"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
 ##parameters=format='tab'
 ##title=
 ##
 
+
 #!/usr/local/bin/python
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
-# $Id$
+# $Id: ecq_quiz_results_export.py 245805 2011-10-23 19:08:23Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright Â© 2004-2011 Otto-von-Guericke-UniversitÃ¤t Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -34,14 +40,16 @@ ecq_tool = context.ecq_tool
 I18N_DOMAIN = context.i18n_domain
 
 target = context.getActionInfo('object/results')['url']
-REDIRECT_URL = '%s?portal_status_message=' % target
+REDIRECT_URL = '%s' % target
 
 if not REQUEST.has_key('ids'):
     msg = context.translate(
         msgid   = 'select_item_export',
         domain  = I18N_DOMAIN,
         default = 'Please select one or more items to export first.')
-    return context.redirect(REDIRECT_URL + msg)
+
+    context.plone_utils.addPortalMessage(msg)
+    return context.redirect(REDIRECT_URL)
 
 ERROR_FORMAT_MSG = context.translate(
     msgid   = 'unknown_format_export',
@@ -49,12 +57,17 @@ ERROR_FORMAT_MSG = context.translate(
     default = 'Unknown format. Cannot export.')
 
 if not format:
-    return context.redirect(REDIRECT_URL + ERROR_FORMAT_MSG)
+    context.plone_utils.addPortalMessage(ERROR_FORMAT_MSG)
+    return context.redirect(REDIRECT_URL)
+
 format = format.lower()
 exportFormatList = [o for o in context.RESULTS_EXPORT_FORMATS
                     if o[0].lower() == format]
+
 if not exportFormatList:
-    return context.redirect(REDIRECT_URL + ERROR_FORMAT_MSG)
+    context.plone_utils.addPortalMessage(ERROR_FORMAT_MSG)
+    return context.redirect(REDIRECT_URL)
+
 
 exportFormat = exportFormatList[0]
 #~ fileExt      = exportFormat[0]
@@ -106,7 +119,6 @@ for row_dict in results:
         # delimiter.  Else, append the column delimiter.
         output += [colDelim, rowDelim][i == maxCol]
 
-
 resultsString = context.translate(
     msgid   = 'results',
     domain  = I18N_DOMAIN,
@@ -116,6 +128,9 @@ filename = context.pathQuote(context.title_or_id()) + '_' + resultsString + '.' 
 
 RESPONSE.setHeader('Content-Disposition', 'attachment; filename=' + filename)
 RESPONSE.setHeader('Content-Type', 'text/plain')
+
+context.plone_utils.addPortalMessage("Done.")
+
 # 'unicodeDecode()' is defined in the script (Python)
 # Products/ECQuiz/skins/ECQuiz/unicodeDecode.py
 return context.unicodeDecode(output).encode(encoding)

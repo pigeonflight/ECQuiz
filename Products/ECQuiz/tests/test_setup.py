@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# $Id$
+# $Id: test_setup.py 245805 2011-10-23 19:08:23Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -58,13 +58,18 @@ class TestProductInstall(ECQTestCase):
     
     def testPortalFactoryEnabled(self):
         pfTypes = self.portal.portal_factory.getFactoryTypes()
+        nonpfTypes = []
         for t in (self.typeReference,
                   self.typeQuiz,
                   self.typeGroup,) + \
                   self.typeQuestions + \
                   self.typeAnswers:
-            self.failUnless(pfTypes.has_key(t), '%s content type does not '
-                            'use the Portal Factory' % t)
+            if not pfTypes.has_key(t):
+                nonpfTypes.append(t)
+        if len(nonpfTypes) > 0:
+            bad_types = ", ".join(nonpfTypes)
+            self.fail('%s content types do not use the Portal Factory' % 
+                      bad_types)
 
     def testWorkflowsInstalled(self):
         workflowIds = self.portal.portal_workflow.objectIds()

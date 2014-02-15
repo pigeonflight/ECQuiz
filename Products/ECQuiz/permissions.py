@@ -1,8 +1,8 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
 # $Id:permissions.py 1255 2009-09-24 08:47:42Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -25,23 +25,23 @@ Permissions used by ECQuiz
 """
 
 from config import PROJECTNAME
-from Products.CMFCore.permissions import setDefaultRoles, \
-     ModifyPortalContent#, AddPortalContent, View
+from Products.CMFCore import permissions as CMFCorePermissions
 
 ROLE_RESULT_GRADER = 'ECQuizResultGrader'
 ROLE_RESULT_VIEWER = 'ECQuizResultViewer'
 
-PERMISSION_INTERROGATOR        = ModifyPortalContent
+PERMISSION_INTERROGATOR        = CMFCorePermissions.ModifyPortalContent
 PERMISSION_STUDENT             = 'ECQuiz Access Contents'
 PERMISSION_RESULT_READ         = 'ECQuiz Read Result'
-setDefaultRoles(PERMISSION_RESULT_READ,  (ROLE_RESULT_VIEWER,))
+
+CMFCorePermissions.setDefaultRoles(PERMISSION_RESULT_READ, (ROLE_RESULT_VIEWER,))
 PERMISSION_RESULT_WRITE        = 'ECQuiz Write Result'
 
 PERMISSION_GRADE = '%s: Grade Assignments' % PROJECTNAME
-setDefaultRoles(PERMISSION_GRADE,  ('Manager', ROLE_RESULT_GRADER,))
+CMFCorePermissions.setDefaultRoles(PERMISSION_GRADE,  ('Manager', ROLE_RESULT_GRADER,))
 
 PERMISSION_ADD_MCTEST = '%s: Add Quiz' % PROJECTNAME
-setDefaultRoles(PERMISSION_ADD_MCTEST, ('Manager', 'Owner',))
+CMFCorePermissions.setDefaultRoles(PERMISSION_ADD_MCTEST, ('Manager', 'Owner',))
 
 # PERMISSION_DEFAULT_ADD_CONTENT = AddPortalContent
 # setDefaultRoles(PERMISSION_DEFAULT_ADD_CONTENT, ('Manager', 'Owner',))

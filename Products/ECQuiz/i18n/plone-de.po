@@ -87,7 +87,7 @@ msgid "Please use XHTML conformant markup."
 msgstr "Bitte verwenden Sie XHTML-konformes Markup."
 
 msgid "Points Question"
-msgstr "Punkte-Frage"
+msgstr "Punktefrage"
 
 msgid "Rating Question"
 msgstr "Bewertungsfrage"
@@ -105,7 +105,7 @@ msgid "Selection Answer"
 msgstr "Auswahl-Antwort"
 
 msgid "Selection Question"
-msgstr "Auswahl-Frage"
+msgstr "Auswahlfrage"
 
 msgid "Statistics"
 msgstr "Statistik"
@@ -114,7 +114,7 @@ msgid "Superseded"
 msgstr "Ersetzt"
 
 msgid "description_edit_extextquestion"
-msgstr "Hier können sie eine Text-Frage erstellen."
+msgstr "Hier können sie eine Textfrage erstellen."
 
 msgid "description_edit_scalequestion"
 msgstr "Ein Skalenfrage erfordert die Auswahl eines Punktes auf einer Skala, etwa einer Bewertung."
@@ -130,6 +130,9 @@ msgstr "Hier können Sie eine Referenz auf eine Frage oder eine Fragegruppe aus 
 
 msgid "description_edit_mctest"
 msgstr "Ein Online-Test."
+
+msgid "MC Question"
+msgstr "Multiple-Choice-Frage"
 
 # Keep this comment at the end of the file
 

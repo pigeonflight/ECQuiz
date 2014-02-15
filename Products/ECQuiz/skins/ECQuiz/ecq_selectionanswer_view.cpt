@@ -7,20 +7,35 @@
  i18n:domain="ECQuiz"
  metal:use-macro="here/main_template/macros/master">
  <body>
-  <div metal:fill-slot="main" tal:define="answer python:here;">
+  <div metal:fill-slot="main" 
+    tal:define="template_id template/getId;
+                answer      python:here;
+  ">
+                
    <metal:block define-macro="main">
-    <metal:block define-macro="view"><metal:use
-      use-macro="answer/ecq_baseanswer_view/macros/view"><metal:fill
-       fill-slot="pre_answer"><metal:block define-slot="pre_answer"/><span
-        tal:replace="structure python:answer.getAnswer(forceInline=True)">
-        The answer text.
-       </span></metal:fill>
-      
-      <metal:fill fill-slot="additional_edit_info"><metal:block define-slot="additional_edit_info"/></metal:fill>
-      
-      <metal:fill fill-slot="post_answer"><metal:block define-slot="post_answer"/></metal:fill>
-     </metal:use></metal:block>
+    <metal:block define-macro="view">
+      <metal:use use-macro="answer/ecq_baseanswer_view/macros/view">
+        
+        <metal:fill fill-slot="pre_answer">
+         <metal:block define-slot="pre_answer" />
+         <span
+          tal:replace="structure python:answer.getAnswer(forceInline=True)">
+          The answer text.
+         </span>
+        </metal:fill>
+        
+        <metal:fill fill-slot="additional_edit_info">
+         <metal:block define-slot="additional_edit_info" />
+        </metal:fill>
+        
+        <metal:fill fill-slot="post_answer">
+          <metal:block define-slot="post_answer" />
+        </metal:fill>
+
+      </metal:use>
+    </metal:block>
    </metal:block>
+  
   </div>
  </body>
 </html>

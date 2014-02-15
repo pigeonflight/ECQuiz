@@ -1,8 +1,8 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
-# $Id$
+# $Id: config.py 245805 2011-10-23 19:08:23Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -24,7 +24,7 @@
 'ECQuiz' Product."""
 
 import os
-from OFS.PropertyManager import PropertyManager
+#from OFS.PropertyManager import PropertyManager
 #from Products.CMFCore.utils import getToolByName
 
 
@@ -43,7 +43,7 @@ GLOBALS = globals()
 DEPENDENCIES = ['DataGridField']
 
 # GS profile name
-EXTENSION_PROFILES = ('Products.ECQuiz:default',)
+#EXTENSION_PROFILES = ('Products.ECQuiz:default',)
 
 # The name of the Product
 PROJECTNAME = 'ECQuiz'
@@ -72,14 +72,14 @@ CUSTOM_EVALUATION_FUNCTION_NAME = 'getCandidatePointsCustom'
 # Types which support custom evaluation functions
 CUSTOM_EVALUATION_TYPES = ['ECQuiz', 'ECQGroup', 'ECQMCQuestion']
 
-def addSiteProperties(portal):
-    """adds site_properties in portal_properties"""
-    id = PROJECTNAME.lower()+'_properties'
-    title = 'Site wide properties'
-    p=PropertyManager('id')
-    if id not in portal.portal_properties.objectIds():
-        portal.portal_properties.addPropertySheet(id, title, p)
-    p=getattr(portal.portal_properties, id)
+#def addSiteProperties(portal):
+#    """adds site_properties in portal_properties"""
+#    id = PROJECTNAME.lower()+'_properties'
+#    title = 'Site wide properties'
+#    p=PropertyManager('id')
+#    if id not in portal.portal_properties.objectIds():
+#        portal.portal_properties.addPropertySheet(id, title, p)
+#    p=getattr(portal.portal_properties, id)
 
 ##    if not hasattr(p,'allowAnonymousViewAbout'):
 ##        safeEditProperty(p, 'allowAnonymousViewAbout', 1, 'boolean')

@@ -1,8 +1,8 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
-# $Id$
+# $Id: ECQSelectionAnswer.py 245805 2011-10-23 19:08:23Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -20,14 +20,14 @@
 # along with ECQuiz; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-from AccessControl import ClassSecurityInfo
+#from AccessControl import ClassSecurityInfo
 
-from Products.Archetypes.public import BaseSchema, Schema, BooleanField, StringField, TextField, SelectionWidget, TextAreaWidget, RichWidget, BaseContent
-from Products.Archetypes.Widget import TypesWidget, IntegerWidget, BooleanWidget, StringWidget
+from Products.Archetypes.public import Schema, TextAreaWidget
 
-from Products.ECQuiz.config import *
-from Products.ECQuiz.permissions import *
-from Products.ECQuiz.tools import log, registerTypeLogged
+from Products.ECQuiz import config
+from Products.ECQuiz import permissions
+from Products.ECQuiz.tools import registerTypeLogged
+
 from Products.ECQuiz.AnswerTypes.ECQBaseAnswer import ECQBaseAnswer
 from Products.ECQuiz.InlineTextField import InlineTextField
 
@@ -35,7 +35,7 @@ class ECQSelectionAnswer(ECQBaseAnswer):
     """ A predefined answer that a candidate can select.
     """
 
-    schema = ECQBaseAnswer.schema + Schema((
+    schema = ECQBaseAnswer.schema.copy() + Schema((
             InlineTextField('answer', # See 'description' property of the widget.
                 searchable=True,
                 required=True,
@@ -50,9 +50,9 @@ class ECQSelectionAnswer(ECQBaseAnswer):
                     label_msgid='answer_label',
                     description='The answer text. This is what the candidate will see.',
                     description_msgid='answer_tool_tip',
-                    i18n_domain=I18N_DOMAIN),
+                    i18n_domain=config.I18N_DOMAIN),
                 validators=('isXML',),
-                read_permission=PERMISSION_STUDENT,
+                read_permission=permissions.PERMISSION_STUDENT,
             ),
         ),
     )

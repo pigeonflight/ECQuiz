@@ -17,7 +17,10 @@
 
   <div metal:fill-slot="main"
    tal:define="
-   ecq_tool  nocall:portal/ecq_tool;
+   here_url    context/@@plone_context_state/object_url;
+   member      context/@@plone_portal_state/member;
+   portal      context/@@plone_portal_state/portal;
+   ecq_tool    nocall:portal/ecq_tool;
    resultsView python:True;
    submitters  python:here.getSubmitterIds();
    resFlt      python:{'user_id' : request.get('user_id', None),
@@ -29,10 +32,10 @@
    headerRow   python:resultsList[0];
    bodyRows    python:resultsList[1:];
    haveGrades  python:headerRow.has_key('grade');
+   normalizeString nocall:context/@@plone/normalizeString;
    ">
-   <div metal:use-macro="here/document_actions/macros/document_actions">
-    Document actions (print, sendto, etc.)
-   </div>
+   
+   <div tal:replace="structure provider:plone.documentactions" />
    
    <h1><span i18n:translate="results_for" tal:omit-tag="">Results for</span> <span tal:replace="here/title_or_id"/></h1>
 
@@ -67,16 +70,16 @@
        <!-- There are no 'i18n:translate' attributes on many of the table
        cells because most of the i18n is done in 'getResultsAsList()' -->
        <th class="nosort"><input class="noborder"
-	 type="checkbox"
-	 src="select_all_icon.gif"
-	 name="selectButton"
-	 title="Select all items"
-	 onClick="toggleSelect(this);"
-	 tal:attributes="src string:$portal_url/select_all_icon.gif"
-	 alt="Select all items"
-	 i18n:domain="plone"
-	 i18n:attributes="title alt"
-	 />
+         type="checkbox"
+         src="select_all_icon.gif"
+         name="selectButton"
+         title="Select all items"
+         onClick="toggleSelect(this);"
+         tal:attributes="src string:$portal_url/select_all_icon.gif"
+         alt="Select all items"
+         i18n:domain="plone"
+         i18n:attributes="title alt"
+         />
        </th>
        <th tal:content="python:''                      ">Status Icons</th>
        <th tal:content="python:headerRow['full_name']  ">Candidate</th>
@@ -99,9 +102,9 @@
       ">
       <tal:loop repeat="bodyRow python:bodyRows">
        <tal:define define="
-        participantId	python:bodyRow['user_id'];
-        hasSubmitted	python:participantId in submitters;
-        result		python:bodyRow['result'];"
+        participantId python:bodyRow['user_id'];
+        hasSubmitted  python:participantId in submitters;
+        result        python:bodyRow['result'];"
         
         condition="python:((resFlt['user_id'] is None) or (resFlt['user_id']==result.Creator())) and ((resFlt['state'] is None) or (resFlt['state']==result.getWorkflowState()))"
         >
@@ -111,7 +114,6 @@
           <input type="checkbox" class="noborder" name="ids:list" value="#"
            tal:attributes="
            value    result/getId;
-           tabindex tabindex/next; 
            alt      python:selectMsg %participantId;
            title    python:selectMsg %participantId;"
            />
@@ -217,22 +219,18 @@
     <div class="formControls">                    
      <!-- Export Button -->
      <input class="context"
-      tabindex="#"
       type="submit"
       name="ecq_quiz_results_export:method"
       value="Export"
-      tal:attributes="tabindex tabindex/next;"
       i18n:attributes="value"
       />
      <!-- Delete Button (Quiz Owner and Managers only) -->
      <tal:if_manager condition="python:here.userIsManager(member)">
       <input class="context"
-       tabindex="#"
        type="submit"
        name="ecq_quiz_results_delete:method"
        value="Delete"
        i18n:domain="plone"
-      tal:attributes="tabindex tabindex/next;"
        i18n:attributes="value"
        />
      </tal:if_manager>
@@ -250,22 +248,22 @@
       ">
       <tal:condition condition="hasSubmitted">
        <h3><span i18n:translate="results_of" tal:omit-tag="">Results of</span> <a
-	 tal:attributes="name string:result_${candidateId}"
-	 tal:content="python:[submitterName, candidateId][not submitterName]">
-	 Candidate Name
-	</a></h3>
+         tal:attributes="name string:result_${candidateId}"
+         tal:content="python:[submitterName, candidateId][not submitterName]">
+         Candidate Name
+        </a></h3>
        
        <a tal:attributes="href string:ecq_quiz_results#overview_${candidateId}"
-	i18n:translate="back_to_overview"
-	class="link-parent">Back to the overview</a>
+        i18n:translate="back_to_overview"
+        class="link-parent">Back to the overview</a>
        
        <tal:define define="
-	headingLevel python:4;
-	result       python:here.getLatestSubmission(candidateId);
-	mctest       python:here;
-	">
-	<!-- Display the results view of the test for user candidateId -->
-	<metal:use use-macro="here/ecq_result_view/macros/results_view"/>
+        headingLevel python:4;
+        result       python:here.getLatestSubmission(candidateId);
+        mctest       python:here;
+        ">
+        <!-- Display the results view of the test for user candidateId -->
+        <metal:use use-macro="here/ecq_result_view/macros/results_view"/>
        </tal:define>
       </tal:condition>
      </tal:define>

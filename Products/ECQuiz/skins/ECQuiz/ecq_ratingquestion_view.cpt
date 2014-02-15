@@ -34,17 +34,17 @@
       </metal:fill>
       <metal:fill fill-slot="list_answers">
        <!-- List the answers -->
-       <table>
-	<tr>
-	 <td tal:repeat="answer answers">
-	  <metal:use use-macro="question/ecq_basequestion_view/macros/show_answer"/>
-	 </td>
-	</tr>
-	<tr>
-	 <td style="text-align:center;" tal:repeat="answer answers">
-	  <metal:use use-macro="question/ecq_selectionquestion_view/macros/show_input_element"/>
-	 </td>
-	</tr>
+       <table class="answers">
+        <tr>
+         <td tal:repeat="answer answers">
+          <metal:use use-macro="question/ecq_basequestion_view/macros/show_answer"/>
+         </td>
+        </tr>
+        <tr>
+         <td style="text-align:center;" tal:repeat="answer answers">
+          <metal:use use-macro="question/ecq_selectionquestion_view/macros/show_input_element"/>
+         </td>
+        </tr>
        </table>
       </metal:fill>
      </metal:use>

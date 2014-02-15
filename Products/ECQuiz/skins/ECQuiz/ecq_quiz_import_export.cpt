@@ -16,8 +16,8 @@
   </metal:import-css>
   
   <div metal:fill-slot="main"
-   tal:define="Iterator python:modules['Products.CMFPlone'].IndexIterator;
-   tabindex python:Iterator();
+   tal:define="
+   here_url context/@@plone_context_state/object_url;
    iconName python: here.getIcon(1);
    iconURL  python: here.portal_url() + '/' + iconName;">
 
@@ -49,10 +49,10 @@
       <span i18n:translate="import_test_legend"
        tal:omit-tag="">
        <span i18n:name="itemtype">
-	<span i18n:domain="plone" 
-	 i18n:translate=""
-	 tal:content="here/archetype_name"
-	 tal:omit-tag="">Item type</span>
+        <span i18n:domain="plone" 
+         i18n:translate=""
+         tal:content="here/archetype_name"
+         tal:omit-tag="">Item type</span>
        </span>
        Import
       </span>
@@ -67,19 +67,15 @@
       <input type="file"
        name="file"
        size="25"
-       tabindex=""
-       tal:attributes="tabindex tabindex/next;"
        />
      </div>
      
      <!-- Import Button -->
      <div class="formControls">
       <input class="context"
-       tabindex="#"
        type="submit"
        name="ecq_quiz_import_qti:method"
        value="Import"
-       tal:attributes="tabindex tabindex/next;"
        i18n:attributes="value"
        />
      </div>
@@ -98,10 +94,10 @@
       <span i18n:translate="export_test_legend"
        tal:omit-tag="">
        <span i18n:name="itemtype">
-	<span i18n:domain="plone" 
-	 i18n:translate=""
-	 tal:content="here/archetype_name"
-	 tal:omit-tag="">Item type</span>
+        <span i18n:domain="plone" 
+         i18n:translate=""
+         tal:content="here/archetype_name"
+         tal:omit-tag="">Item type</span>
        </span>
        Export
       </span>
@@ -118,11 +114,9 @@
      <!-- Export Button -->
      <div class="formControls">
       <input class="context"
-       tabindex="#"
        type="submit"
        name="ecq_quiz_export_qti:method"
        value="Export"
-       tal:attributes="tabindex tabindex/next;"
        i18n:attributes="value"
        />
      </div>
@@ -130,7 +124,7 @@
    </form>
 
    <!-- Scoring scripts -->
-<tal:security_risk replace="nothing">
+  <tal:security_risk replace="nothing">
    <form class="group"
     name="uploadEvaluationScriptForm"
     enctype="multipart/form-data"
@@ -146,10 +140,10 @@
       <span i18n:translate="upload_evaluation_scripts_legend"
        tal:omit-tag="">
        <span i18n:name="itemtype">
-	<span i18n:domain="plone" 
-	 i18n:translate=""
-	 tal:content="here/archetype_name"
-	 tal:omit-tag="">Item type</span>
+        <span i18n:domain="plone" 
+         i18n:translate=""
+         tal:content="here/archetype_name"
+         tal:omit-tag="">Item type</span>
        </span>
        Upload Scoring Scripts
       </span>
@@ -170,14 +164,13 @@
        i18n:translate="upload_evaluation_scripts_class_name_tool_tip">Name 
        of the class to be customized.</div>
       <div class="formHelp"/>
-      <select name="archetype_name" size="1"
-       tal:attributes="tabindex tabindex/next;">
+      <select name="archetype_name" size="1">
        <option tal:repeat="name python:[here.portal_type, 'ECQGroup', 'ECQMCQuestion']"
-	tal:content="name"
-	tal:attributes="value name"
-	i18n:domain="plone"
-	i18n:translate="">
-	Archetype Name
+        tal:content="name"
+        tal:attributes="value name"
+        i18n:domain="plone"
+        i18n:translate="">
+        Archetype Name
        </option>
       </select>
      </div>
@@ -191,8 +184,6 @@
       <input type="file"
        name="file"
        size="25"
-       tabindex=""
-       tal:attributes="tabindex tabindex/next;"
        />
      </div>
      
@@ -201,9 +192,7 @@
       <input type="submit"
        name="ecq_quiz_import_evaluation_script:method"
        value="Upload"
-       tabindex=""
        class="context"
-       tal:attributes="tabindex tabindex/next;"
        i18n:attributes="value"
        />
      </div>
@@ -225,10 +214,10 @@
       <span i18n:translate="edit_evaluation_scripts_label"
        tal:omit-tag="">
        <span i18n:name="itemtype">
-	<span i18n:domain="plone" 
-	 i18n:translate=""
-	 tal:content="here/archetype_name"
-	 tal:omit-tag="">Item type</span>
+        <span i18n:domain="plone" 
+         i18n:translate=""
+         tal:content="here/archetype_name"
+         tal:omit-tag="">Item type</span>
        </span>
        Scoring Scripts
       </span>
@@ -240,17 +229,17 @@
 
       <metal:block tal:condition="here/getEvaluationScripts">
        <metal:block tal:repeat="archetype_name python:request.get('deleteCustomEvaluationScripts', 
-	here.getEvaluationScripts().keys())">
-	<!-- Delete check box -->
-	<input class="noborder" type="checkbox"
-	 name="deleteCustomEvaluationScripts" 
-	 value="archetype_name" tal:attributes="
-	 value archetype_name;"
-	 />
-	<span tal:replace="archetype_name">Archetype name</span>
-	<div style="margin-left: 1.5em;" class="formHelp"
-	 tal:content="python: here.getEvaluationScriptComment(archetype_name)"/>
-	<br/>
+        here.getEvaluationScripts().keys())">
+        <!-- Delete check box -->
+        <input class="noborder" type="checkbox"
+         name="deleteCustomEvaluationScripts" 
+         value="archetype_name" tal:attributes="
+         value archetype_name;"
+         />
+        <span tal:replace="archetype_name">Archetype name</span>
+        <div style="margin-left: 1.5em;" class="formHelp"
+         tal:content="python: here.getEvaluationScriptComment(archetype_name)"/>
+        <br/>
        </metal:block>
       </metal:block>
      </div>
@@ -260,16 +249,14 @@
       <input type="submit"
        name="ecq_quiz_delete_evaluation_script:method"
        value="Delete"
-       tabindex=""
        class="context"
-       tal:attributes="tabindex tabindex/next;"
        i18n:domain="plone"
        i18n:attributes="value"
        />
      </div>
     </fieldset>
    </form>
-</tal:security_risk>
+  </tal:security_risk>
 
    <!-- Item statistics -->
 <!--    <div class="formControls"> -->
@@ -281,10 +268,10 @@
 <!--       <span i18n:translate="export_item_statistics_legend" -->
 <!--        tal:omit-tag=""> -->
 <!--        <span i18n:name="itemtype"> -->
-<!-- 	<span i18n:domain="plone"  -->
-<!-- 	 i18n:translate="" -->
-<!-- 	 tal:content="here/archetype_name" -->
-<!-- 	 tal:omit-tag="">Item type</span> -->
+<!--         <span i18n:domain="plone"  -->
+<!--          i18n:translate="" -->
+<!--          tal:content="here/archetype_name" -->
+<!--          tal:omit-tag="">Item type</span> -->
 <!--        </span> -->
 <!--        Item Statistics -->
 <!--       </span> -->
@@ -297,11 +284,9 @@
 <!--       method="post" -->
 <!--       tal:attributes="action here_url"> -->
 <!--       <input class="context" -->
-<!--        tabindex="#" -->
 <!--        type="submit" -->
 <!--        name="ecq_quiz_statistics_export:method" -->
 <!--        value="Export Item Statistics" -->
-<!--        tal:attributes="tabindex tabindex/next;" -->
 <!--        i18n:attributes="value" -->
 <!--        /> -->
 <!--      </form> -->

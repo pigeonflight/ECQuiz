@@ -1,8 +1,8 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
-# $Id$
+# $Id: ECQTool.py 245805 2011-10-23 19:08:23Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -20,8 +20,11 @@
 # along with ECQuiz; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+import traceback
+
 from AccessControl import ClassSecurityInfo
-from Globals import InitializeClass
+#from Globals import InitializeClass
+from App.class_init import InitializeClass
 from OFS.SimpleItem import SimpleItem
 from Products.CMFCore.utils import UniqueObject, getToolByName
 import re
@@ -29,18 +32,10 @@ import cgi
 import urllib
 from datetime import datetime
 
-HAS_FIVE_TS = True
-try:
-    from Products.Five.i18n import FiveTranslationService
-    from Products import PlacelessTranslationService
-except ImportError:
-    HAS_FIVE_TS = False
-    from Products.PageTemplates.GlobalTranslationService import \
-         getGlobalTranslationService
-
-from config import *
-from permissions import *
-from tools import makeTransactionUnundoable
+from Products.ECQuiz import config
+from Products.ECQuiz import log
+#from Products.ECQuiz import permissions
+from Products.ECQuiz.tools import makeTransactionUnundoable
 
 class ECQTool(UniqueObject, SimpleItem):
     """Various utility methods."""
@@ -50,26 +45,7 @@ class ECQTool(UniqueObject, SimpleItem):
     
     security = ClassSecurityInfo()
 
-    def getContentLang(self, object, domain=I18N_DOMAIN):
-##        if HAS_FIVE_TS:
-##            # Returns a PTSWrapper
-##            service = PlacelessTranslationService.getTranslationService()
-##        else:
-##            # Returns a PTSWrapper
-##            service = getGlobalTranslationService()
-##
-##        # Get the actual PlacelessTranslationService
-##        service = service.load(object)
-##
-##        availableTranslations = service.getLanguages(domain)
-##        
-##        if object.Language() in availableTranslations:
-##            return object.Language()
-##
-##        requestLang = self.getAcceptLanguages(object, availableTranslations)
-##        if requestLang:
-##            return requestLang
-        
+    def getContentLang(self, object, domain=config.I18N_DOMAIN):
         props = getToolByName(object,'portal_properties').site_properties
         return props.default_language
 
@@ -93,7 +69,7 @@ class ECQTool(UniqueObject, SimpleItem):
         result = format % value
         fields = result.split(".")
         decimalSeparator = self.translate(msgid = 'fraction_delimiter',
-                                          domain = I18N_DOMAIN,
+                                          domain = config.I18N_DOMAIN,
                                           default = '.')
         if len(fields) == 2:
             result = fields[0] + decimalSeparator + fields[1]
@@ -110,7 +86,7 @@ class ECQTool(UniqueObject, SimpleItem):
         """
         try:
             fmt = self.translate(msgid   ='time_delta_fmt',
-                                 domain  = I18N_DOMAIN,
+                                 domain  = config.I18N_DOMAIN,
                                  default = '%H:%M:%S')
             return (datetime(2000, 1, 1) + diff).strftime(str(fmt))
         except:
@@ -119,35 +95,45 @@ class ECQTool(UniqueObject, SimpleItem):
     security.declarePublic('getFullNameById')
     def getFullNameById(self, id):
         """
-        Returns the full name of a user by the given ID.
+        Returns the full name of a user by the given ID.  If full name is
+        devided into given and last name, we return it in the format
+        Doo, John; otherwise we will return 'fullname' as provided by Plone. 
         """
-        
         mtool = self.portal_membership
         member = mtool.getMemberById(id)
         error = False
 
         if not member:
             return id
-        
+
         try:
-            sn        = member.getProperty('sn')
-            givenName = member.getProperty('givenName')
+            sn        = member.getProperty('sn', None)
+            givenName = member.getProperty('givenName', None)
+
         except:
             error = True
+            
+        #LOG.info('xdebug: sn, givenName: %s, %s' % (type(sn), type(givenName)))
+        #LOG.info('xdebug: sn, givenName: %s, %s' % (sn, givenName))
 
         if error or (not sn) or (not givenName):
             fullname = member.getProperty('fullname', '')
-            
+
             if fullname == '':
                 return id
-            
-            if fullname.find(' ') == -1:
+            else: 
                 return fullname
+
+            #if fullname.find(' ') == -1:
+            #    return fullname
+            #
+            #sn = fullname[fullname.rfind(' ') + 1:]
+            #givenName = fullname[0:fullname.find(' ')]
             
-            sn = fullname[fullname.rfind(' ') + 1:]
-            givenName = fullname[0:fullname.find(' ')]
-            
-        return sn + ', ' + givenName
+        else:
+            #return sn + ', ' + givenName
+            return '%s, %s' % (sn, givenName)
+
 
     security.declarePublic('cmpByName')
     def cmpByName(self, candidateIdA, candidateIdB):
@@ -181,7 +167,7 @@ class ECQTool(UniqueObject, SimpleItem):
                     (role in contextRoles)):
                     return True
         # default return value
-        return False
+        return False            
 
-                       
+
 InitializeClass(ECQTool)

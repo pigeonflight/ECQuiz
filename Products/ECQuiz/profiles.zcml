@@ -3,6 +3,8 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="ECQuiz">
 
+  <include package="Products.GenericSetup" file="meta.zcml" />
+
   <genericsetup:registerProfile
       name="default"
       title="ECQuiz"
@@ -10,8 +12,5 @@
       description="Extension profile for ECQuiz."
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
-  
-  <!-- ##code-section profiles.zcml #fill in your manual code here -->
-  <!-- ##/code-section profiles.zcml -->
 
 </configure>

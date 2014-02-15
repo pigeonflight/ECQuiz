@@ -20,12 +20,14 @@
   <element value="ecq_mcquestion_view"/>
  </property>
  <property name="default_view_fallback">False</property>
+ 
  <alias from="(Default)" to="(dynamic view)"/>
  <alias from="edit" to="atct_edit"/>
  <alias from="index.html" to="(dynamic view)"/>
  <alias from="properties" to="base_metadata"/>
  <alias from="sharing" to="folder_localrole_form"/>
  <alias from="view" to="ecq_mcquestion_view"/>
+ 
  <action title="View" action_id="view" category="object" condition_expr=""
     url_expr="string:${object_url}/ecq_mcquestion_view" visible="True">
   <permission value="View"/>

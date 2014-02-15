@@ -1,8 +1,8 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
-# $Id$
+# $Id: ECQSelectionQuestion.py 245805 2011-10-23 19:08:23Z amelung $
 #
-# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
+# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -160,11 +160,13 @@ class ECQSelectionQuestion(ECQBaseQuestion):
         """Return a list with the actual answer objects that were
         presented to the candidate with ID candidateId.
         
-        @param candidateId The user ID of the candidate.
+        @param result The candidate's result object.
         """
+        
         allAnswers         = self.contentValues()
         suggestedAnswerIds = result.getSuggestedAnswer(self)
         retVal             = filterById(suggestedAnswerIds, allAnswers)
+
         return retVal
 
 

@@ -33,84 +33,86 @@
     -->
     <metal:block define-macro="view">
      <metal:use use-macro="question/ecq_selectionquestion_view/macros/view">
+
       <metal:fill fill-slot="results">
        <metal:use use-macro="question/ecq_pointsquestion_view/macros/show_results"/>
       </metal:fill>
+
       <metal:fill fill-slot="additional_edit_info">
        <metal:use use-macro="question/ecq_pointsquestion_view/macros/show_additional_edit_info"/>
       </metal:fill>
       
       <metal:fill-main-slot fill-slot="main_slot">
        <!-- List the answers -->
-       <table tal:define="layout question/choiceLayout">
-	<tal:if-vertical condition="python: layout=='vertical'">
-	 <tal:loop repeat="answer answers">
-	  <tr>
-	   <td valign="baseline"><span tal:replace="repeat/answer/letter"/>)</td>
-	   <td valign="baseline">
-	    <metal:use use-macro="question/ecq_selectionquestion_view/macros/show_input_element"/>
-	   </td>
-	   <td valign="baseline">
-	    <tal:comment condition="python:0">
-	     Output answer text and possibly a comment
-	    </tal:comment>
-	    <metal:use use-macro="question/ecq_selectionquestion_view/macros/show_answer"/>
-	   </td>
-	  </tr>
-	  <tr tal:condition="python: repeat['answer'].end">
-	   <td valign="baseline"><span tal:replace="python: chr(ord(repeat['answer'].letter()) + 1)"/>)</td>
-	   <td valign="baseline">
-	    <metal:defmacro-show-default-input define-macro="show_default_input">
-	     <input class="noborder" type="radio" name="name" value="I_DONT_KNOW"
-	      tal:attributes="
-	      name     python:candidateId + '_' + question.UID() + ':list';
-	      checked  python:['', 'checked'][not haveCandidateAnswer];
-	      disabled inputDisabled;
-	      "/>
-	    </metal:defmacro-show-default-input>
-	   </td>
-	   <td valign="baseline">
-	    <metal:defmacro-show-default-text define-macro="show_default_text">
-	     <span style="color:red;"
-	      tal:attributes="style python:['', 'color:red;;'][not resultsView];"
-	      tal:define="default string: No selection."
-	      tal:content="python: here.translate(domain=here.i18n_domain,
-	      msgid='no_selection',
-	      target_language=ecq_tool.getContentLang(here),
-	      default=default)"/>
-	    </metal:defmacro-show-default-text>
-	   </td>
-	  </tr>
-	 </tal:loop>
-	</tal:if-vertical>
-	<tal:if-horizontal condition="python: layout=='horizontal'">
-	 <tr>
-	  <tal:loop repeat="answer answers">
-	   <td style="padding:0.5em;">
-	    <tal:comment condition="python:0">
-	     Output answer text and possibly a comment
-	    </tal:comment>
-	    <metal:use use-macro="question/ecq_selectionquestion_view/macros/show_answer"/>
-	   </td>
-	  </tal:loop>
-	  <td style="padding:0.5em;">
-	  <metal:use use-macro="question/ecq_scalequestion_view/macros/show_default_text"/>
-	  </td>
-	 </tr>
-	 <tr>
-	  <tal:loop repeat="answer answers">
-	   <tal:comment condition="python:0">
-	    Output the input element
-	   </tal:comment>
-	   <td style="text-align:center;">
-	    <metal:use use-macro="question/ecq_selectionquestion_view/macros/show_input_element"/>
-	   </td>
-	  </tal:loop>
-	  <td style="text-align:center;">
-	   <metal:use use-macro="question/ecq_scalequestion_view/macros/show_default_input"/>
-	  </td>
-	 </tr>
-	</tal:if-horizontal>
+       <table class="answers" tal:define="layout question/choiceLayout">
+        <tal:if-vertical condition="python: layout=='vertical'">
+         <tal:loop repeat="answer answers">
+          <tr>
+           <td valign="baseline"><span tal:replace="repeat/answer/letter"/>)</td>
+           <td valign="baseline">
+            <metal:use use-macro="question/ecq_selectionquestion_view/macros/show_input_element"/>
+           </td>
+           <td valign="baseline">
+            <tal:comment condition="python:0">
+             Output answer text and possibly a comment
+            </tal:comment>
+            <metal:use use-macro="question/ecq_selectionquestion_view/macros/show_answer"/>
+           </td>
+          </tr>
+          <tr tal:condition="python: repeat['answer'].end">
+           <td valign="baseline"><span tal:replace="python: chr(ord(repeat['answer'].letter()) + 1)"/>)</td>
+           <td valign="baseline">
+            <metal:defmacro-show-default-input define-macro="show_default_input">
+             <input class="noborder" type="radio" name="name" value="I_DONT_KNOW"
+              tal:attributes="
+              name     python:candidateId + '_' + question.UID() + ':list';
+              checked  python:['', 'checked'][not haveCandidateAnswer];
+              disabled inputDisabled;
+              "/>
+            </metal:defmacro-show-default-input>
+           </td>
+           <td valign="baseline">
+            <metal:defmacro-show-default-text define-macro="show_default_text">
+             <span style="color:red;"
+              tal:attributes="style python:['', 'color:red;;'][not resultsView];"
+              tal:define="default string: No selection."
+              tal:content="python: here.translate(domain=here.i18n_domain,
+              msgid='no_selection',
+              target_language=ecq_tool.getContentLang(here),
+              default=default)"/>
+            </metal:defmacro-show-default-text>
+           </td>
+          </tr>
+         </tal:loop>
+        </tal:if-vertical>
+        <tal:if-horizontal condition="python: layout=='horizontal'">
+         <tr>
+          <tal:loop repeat="answer answers">
+           <td style="padding:0.5em;">
+            <tal:comment condition="python:0">
+             Output answer text and possibly a comment
+            </tal:comment>
+            <metal:use use-macro="question/ecq_selectionquestion_view/macros/show_answer"/>
+           </td>
+          </tal:loop>
+          <td style="padding:0.5em;">
+          <metal:use use-macro="question/ecq_scalequestion_view/macros/show_default_text"/>
+          </td>
+         </tr>
+         <tr>
+          <tal:loop repeat="answer answers">
+           <tal:comment condition="python:0">
+            Output the input element
+           </tal:comment>
+           <td style="text-align:center;">
+            <metal:use use-macro="question/ecq_selectionquestion_view/macros/show_input_element"/>
+           </td>
+          </tal:loop>
+          <td style="text-align:center;">
+           <metal:use use-macro="question/ecq_scalequestion_view/macros/show_default_input"/>
+          </td>
+         </tr>
+        </tal:if-horizontal>
        </table>
       </metal:fill-main-slot>
       

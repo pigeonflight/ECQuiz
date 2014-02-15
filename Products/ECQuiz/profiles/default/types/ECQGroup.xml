@@ -12,10 +12,11 @@
  <property name="global_allow">False</property>
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types">
-  <element value="ECQMCQuestion"/>
-  <element value="ECQExtendedTextQuestion"/>
-  <element value="ECQScaleQuestion"/>
-  <element value="ECQReference"/>
+  <element value="ECQExtendedTextQuestion" />
+  <element value="ECQMCQuestion" />
+  <element value="ECQRatingQuestion" />
+  <element value="ECQScaleQuestion" />
+  <element value="ECQReference" />
  </property>
  <property name="allow_discussion">False</property>
  <property name="default_view">ecq_group_view</property>
@@ -23,14 +24,20 @@
   <element value="ecq_group_view"/>
  </property>
  <property name="default_view_fallback">False</property>
+ 
  <alias from="(Default)" to="(dynamic view)"/>
  <alias from="edit" to="atct_edit"/>
  <alias from="index.html" to="(dynamic view)"/>
  <alias from="properties" to="base_metadata"/>
  <alias from="sharing" to="folder_localrole_form"/>
  <alias from="view" to="ecq_group_view"/>
- <action title="View" action_id="view" category="object" condition_expr=""
-    url_expr="string:${object_url}/ecq_group_view" visible="True">
+ 
+ <action title="View" 
+    action_id="view" 
+    category="object" 
+    condition_expr=""
+    url_expr="string:${object_url}/ecq_group_view" 
+    visible="True">
   <permission value="View"/>
  </action>
  <action title="Edit" action_id="edit" category="object" condition_expr=""

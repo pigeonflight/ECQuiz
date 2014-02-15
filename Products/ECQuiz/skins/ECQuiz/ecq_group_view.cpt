@@ -14,14 +14,16 @@
    </style>
   </metal:import-css>
   
-  <metal:fill fill-slot="main" tal:define="questionContainer python:here;">
+  <metal:fill fill-slot="main" tal:define="
+      template_id template/getId;
+      portal context/@@plone_portal_state/portal;
+      questionContainer python:here;
+  ">
    
    <!-- Show what the 'main' macro from base_view.pt has to say. -->
    <!--metal:use use-macro="here/base_view/macros/main"/-->
    
-   <div metal:use-macro="here/document_actions/macros/document_actions">
-    Document actions (print, sendto, etc.)
-   </div>
+   <div tal:replace="structure provider:plone.documentactions" />
    
    <h1 tal:content="here/title_or_id"/>
 
@@ -41,9 +43,7 @@
     </fieldset>
    </form>
    
-   <div metal:use-macro="here/document_byline/macros/byline">
-    Get the byline - contains details about author and modification date.
-   </div>
+   <div tal:replace="structure provider:plone.belowcontenttitle" />
    
    <!-- Hide the following statements. The only way to access them is via 
         <metal:use use-macro="questionContainer/ecq_group_view/macros/view"/> 
@@ -81,6 +81,7 @@
      </tal:comment>
 
      <tal:block define="
+      member        context/@@plone_portal_state/member;
       candidateId   candidateId|python:'';
       headingLevel  headingLevel|python:1;
       suppressTitle suppressTitle|python:False;
