@@ -1,19 +1,13 @@
-## Script (Python) "ecq_quiz_results_delete"
-##bind container=container
-##bind context=context
-##bind namespace=
-##bind script=script
-##bind subpath=traverse_subpath
-##parameters=
+## Script (Python) "deleteResults"
 ##title=
 ##
 
 #!/usr/local/bin/python
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
-# $Id: ecq_quiz_results_delete.py 245805 2011-10-23 19:08:23Z amelung $
+# $Id: ecq_quiz_results_delete.py 851 2007-07-04 01:09:26Z wfenske $
 #
-# Copyright Â© 2004-2011 Otto-von-Guericke-UniversitÃ¤t Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #

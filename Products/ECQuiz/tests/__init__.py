@@ -1,9 +1,9 @@
 #!/usr/local/bin/python
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
-# $Id: __init__.py 245805 2011-10-23 19:08:23Z amelung $
+# $Id: __init__.py 575 2006-10-27 17:45:01Z wfenske $
 #
-# Copyright Â© 2004-2011 Otto-von-Guericke-UniversitÃ¤t Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #

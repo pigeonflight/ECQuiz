@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
-# $Id: ECQCorrectAnswer.py 251338 2012-10-31 16:31:52Z amelung $
+# $Id: ECQCorrectAnswer.py 474 2006-08-14 11:39:19Z wfenske $
 #
-# Copyright ï¿½ 2004-2011 Otto-von-Guericke-Universitï¿½t Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -22,11 +22,15 @@
 
 from AccessControl import ClassSecurityInfo
 
-from Products.Archetypes.public import Schema, BooleanField, TextAreaWidget, BooleanWidget
+from Products.Archetypes.public import BaseSchema, Schema, BooleanField, \
+     StringField, TextField, SelectionWidget, TextAreaWidget, RichWidget, \
+     BaseContent
+from Products.Archetypes.Widget import TypesWidget, IntegerWidget, \
+     BooleanWidget, StringWidget
 
-from Products.ECQuiz import config
-from Products.ECQuiz import permissions
-from Products.ECQuiz.tools import registerTypeLogged
+from Products.ECQuiz.config import *
+from Products.ECQuiz.permissions import *
+from Products.ECQuiz.tools import log, registerTypeLogged
 from Products.ECQuiz.AnswerTypes.ECQSelectionAnswer import ECQSelectionAnswer
 from Products.ECQuiz.InlineTextField import InlineTextField
 
@@ -35,12 +39,12 @@ class ECQCorrectAnswer(ECQSelectionAnswer):
         a question that contains this answer).
     """
 
-    schema = ECQSelectionAnswer.schema.copy() + Schema((
+    schema = ECQSelectionAnswer.schema + Schema((
             InlineTextField('comment',
                 accessor='getCommentPrivate',
                 searchable=True,
                 required=False,
-                read_permission=permissions.PERMISSION_INTERROGATOR,
+                read_permission=PERMISSION_INTERROGATOR,
                 allowable_content_types=('text/plain',
                     'text/structured',
                     'text/restructured',
@@ -54,22 +58,21 @@ class ECQCorrectAnswer(ECQSelectionAnswer):
                     'the candidate will see this text in case his/her '
                     'answer was wrong.',
                     description_msgid='answer_comment_tool_tip',
-                    i18n_domain=config.I18N_DOMAIN),
+                    i18n_domain=I18N_DOMAIN),
                 validators=('isXML',),
             ),
             BooleanField('correct',
                 accessor='isCorrectPrivate',
                 default=0,
                 searchable=False,
-                read_permission=permissions.PERMISSION_INTERROGATOR,
+                read_permission=PERMISSION_INTERROGATOR,
                 widget=BooleanWidget(
                     label='Correct',
                     label_msgid='correct_label',
                     description='The checkbox should be marked if this '
                     'is a correct answer.',
                     description_msgid='correct_tool_tip',
-                    i18n_domain=config.I18N_DOMAIN),
-                languageIndependent=True,
+                    i18n_domain=I18N_DOMAIN),
             ),
         ),
     )
@@ -87,13 +90,13 @@ class ECQCorrectAnswer(ECQSelectionAnswer):
     archetype_name = 'Correct Answer' # friendly type name
     
     security = ClassSecurityInfo()
-    security.declareProtected(permissions.PERMISSION_STUDENT, 'isCorrect')
+    security.declareProtected(PERMISSION_STUDENT, 'isCorrect')
     def isCorrect(self, *args, **kwargs):
         # no docstring prevents publishing
         #FIXME: check permssions: only return something if we're in resultView
         return self.isCorrectPrivate(*args, **kwargs)
         
-    security.declareProtected(permissions.PERMISSION_STUDENT, 'getComment')
+    security.declareProtected(PERMISSION_STUDENT, 'getComment')
     def getComment(self, *args, **kwargs):
         # no docstring prevents publishing
         #FIXME: check permssions: only return something if we're in resultView

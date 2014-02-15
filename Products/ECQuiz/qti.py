@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
 # $Id:qti.py 1255 2009-09-24 08:47:42Z amelung $
 #
-# Copyright ¬© 2004-2011 Otto-von-Guericke-Universit√§t Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universit‰t Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -66,7 +66,7 @@ EXPORT_ITEM_PATH = u'content'
 
 # Used to mark our own QTI package export format.
 MC_TOOL_VERSION = u'1.0'
-MC_TOOL_VENDOR = u'WDOK Research Group, Otto-von-Guericke-Universit√§t Magdeburg'
+MC_TOOL_VENDOR = u'WDOK Research Group, Otto-von-Guericke-Universit‰t Magdeburg'
 
 # A number of names of QTI elements.
 CHOICE_INTERACTION = u'choiceInteraction'
@@ -1354,13 +1354,13 @@ def importPackage(multipleChoiceTest, zipFileObject, errors):
             for elementName, expectedValue in expectedValueList:
                 element = getFirstElementByTagNameFlat(qtiMetadata, elementName)
                 if not element:
-                    #log("1: no element: %s" % elementName)
+                    #log("1: no element: %s\n" % elementName)
                     valuesVerified = False
                     break
                 else:
                     elementText = getText(element, u'').strip()
                     if elementText != expectedValue.strip():
-#                         log("2: expected:%s\n        got:%s"
+#                         log("2: expected:%s\n        got:%s\n"
 #                             % (expectedValue.strip(),
 #                                context.str(elementText)))
                         valuesVerified = False
@@ -1375,10 +1375,10 @@ def importPackage(multipleChoiceTest, zipFileObject, errors):
                         # an <item> child. This must be one of our packages.
                         isLlsMCPackage = True
                     else:
-                        #log("3: no element: %s" % ITEM)
+                        #log("3: no element: %s\n" % ITEM)
                         None
                 else:
-                    #log("4: no organization")
+                    #log("4: no organization\n")
                     None
 
         ### Import the <resource> elements accordingly ###
@@ -1646,7 +1646,7 @@ def importFromOrganization(multipleChoiceTest, zipFileObject, organization,
         # <llsmc:gradingScale>
         importGradingScale(multipleChoiceTest, organization, errors)
     else:
-        # FIXME: write some error message to the log
+        #FIXME: write some error message to the log
         pass
     return addedObjects
 
@@ -1954,7 +1954,7 @@ def importFileResource(multipleChoiceTest, zipFileObject, fileName,
                     addedObjects += [fileObject]                    
                     
         except Exception, e:
-            log('Failed: create "%s": %s' % (str(fileName), str(e)))
+            log('Failed: create "%s": %s\n' % (str(fileName), str(e)))
             errors.write('\n' + context.translate(
                 msgid   = 'file_unexpected_error',
                 domain  = I18N_DOMAIN,
@@ -2107,7 +2107,7 @@ def exportPackage(multipleChoiceTest, errors):
         <imsqti:qtiMetadata>
             <imsqti:toolName>LlsMultipleChoice</imsqti:toolName> 
             <imsqti:toolVersion>1.0</imsqti:toolVersion> 
-            <imsqti:toolVendor>WDOK Research Group, Otto-von-Guericke-Universit√§t Magdeburg</imsqti:toolVendor> 
+            <imsqti:toolVendor>WDOK Research Group, Otto-von-Guericke-Universit‰t Magdeburg</imsqti:toolVendor> 
         </imsqti:qtiMetadata>
     """
     metadata = manifest.appendChild(manifestDoc.createElement(METADATA))

@@ -1116,7 +1116,7 @@ msgid "label_action_view"
 msgstr ""
 
 #: ./skins/llsMultipleChoice/exportTest.py, 59
-#. Default: An unexpected error has occurred.  The test could not be exported.
+# Original: An an unexpected has occurred. The quiz could not be exported.
 msgid "unexpected_export_error"
 msgstr ""
 

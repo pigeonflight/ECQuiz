@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
-# $Id: ECQSelectionQuestion.py 251338 2012-10-31 16:31:52Z amelung $
+# $Id: ECQSelectionQuestion.py 1172 2009-01-22 13:31:25Z wfenske $
 #
-# Copyright ï¿½ 2004-2011 Otto-von-Guericke-Universitï¿½t Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -66,7 +66,6 @@ class ECQSelectionQuestion(ECQBaseQuestion):
                     description_msgid='allow_multiple_selection_tool_tip',
                     i18n_domain=I18N_DOMAIN),
                 read_permission=PERMISSION_STUDENT,
-                languageIndependent=True,
             ),
             BooleanField("randomOrder", # See 'description' property
                                         # of the widget.
@@ -85,7 +84,6 @@ class ECQSelectionQuestion(ECQBaseQuestion):
                     description_msgid='randomize_answer_order_tool_tip',
                     i18n_domain=I18N_DOMAIN),
                 #read_permission=PERMISSION_STUDENT,
-                languageIndependent=True,
             ),
             IntegerField("numberOfRandomAnswers", # See 'description'
                                                   # property of the
@@ -103,7 +101,6 @@ class ECQSelectionQuestion(ECQBaseQuestion):
                     description_msgid='number_of_random_answers_tool_tip',
                     i18n_domain=I18N_DOMAIN),
                 #read_permission=PERMISSION_STUDENT,
-                languageIndependent=True,
             ),
         ),
     )
@@ -163,13 +160,11 @@ class ECQSelectionQuestion(ECQBaseQuestion):
         """Return a list with the actual answer objects that were
         presented to the candidate with ID candidateId.
         
-        @param result The candidate's result object.
+        @param candidateId The user ID of the candidate.
         """
-        
         allAnswers         = self.contentValues()
         suggestedAnswerIds = result.getSuggestedAnswer(self)
         retVal             = filterById(suggestedAnswerIds, allAnswers)
-
         return retVal
 
 

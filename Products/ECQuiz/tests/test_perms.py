@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# $Id: test_perms.py 245805 2011-10-23 19:08:23Z amelung $
+# $Id: test_perms.py 575 2006-10-27 17:45:01Z wfenske $
 #
-# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #

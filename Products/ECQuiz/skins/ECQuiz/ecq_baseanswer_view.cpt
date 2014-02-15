@@ -14,31 +14,22 @@
    </style>
   </metal:import-css>
   
-  <div metal:fill-slot="main" 
-    tal:define="template_id template/getId;
-                answer      python:here;
-  ">
-                  
+  <div metal:fill-slot="main" tal:define="answer python:here;">
    <metal:block define-macro="main">
     <metal:block define-macro="view">
      <tal:block define="resultsView resultsView|python:False;">
       <metal:block define-slot="pre_answer"/>
 				      
       <tal:block define="
-          template_id template/getId;
-          portal context/@@plone_portal_state/portal;
-          member context/@@plone_portal_state/member;
-          editView python:(not resultsView) and here.userIsGrader(member);
-      ">
+       editView python:(not resultsView) and here.userIsGrader(member);
+       ">
        <tal:condition condition="editView">
-
-        <metal:block define-slot="additional_edit_info" />
-        
+	<metal:block define-slot="additional_edit_info"/>
         <tal:if_manager condition="python:here.userIsManager(member)">
          <span class="editControls" style="white-space:nowrap;"
           tal:define="item_id answer/getId;
-            arrowUp portal/arrowUp.gif;
-            arrowDown portal/arrowDown.gif;">
+          arrowUp portal/arrowUp.gif;
+          arrowDown portal/arrowDown.gif;">
           <a href="/edit" tal:attributes="href string:${answer/absolute_url}/edit;"
            i18n:domain="plone" i18n:translate="Edit">Edit</a>
           
@@ -59,10 +50,8 @@
        </tal:condition>
       </tal:block>
 				      
-      <metal:block define-slot="post_answer" />
-     
-     </tal:block>
-    </metal:block>
+      <metal:block define-slot="post_answer"/>
+     </tal:block></metal:block>
    </metal:block>
   </div>
  </body>

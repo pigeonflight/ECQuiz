@@ -1,14 +1,14 @@
 ## Script (Python) "exportItemStatistics"
-##parameters=format='csv'
+##parameters=format='tab'
 ##title=
 ##
 
 #!/usr/local/bin/python
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
-# $Id: ecq_quiz_statistics_export.py 251338 2012-10-31 16:31:52Z amelung $
+# $Id: ecq_quiz_statistics_export.py 851 2007-07-04 01:09:26Z wfenske $
 #
-# Copyright Â© 2004-2011 Otto-von-Guericke-UniversitÃ¤t Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -43,12 +43,9 @@ ERROR_FORMAT_MSG = context.translate(
 
 if not format:
     return context.redirect(REDIRECT_URL + ERROR_FORMAT_MSG)
-
 format = format.lower()
-
 exportFormatList = [o for o in context.RESULTS_EXPORT_FORMATS
-                      if o[0].lower() == format]
-
+                    if o[0].lower() == format]
 if not exportFormatList:
     return context.redirect(REDIRECT_URL + ERROR_FORMAT_MSG)
 
@@ -58,8 +55,7 @@ rowDelim     = exportFormat[2]
 strStart     = exportFormat[3]
 strEnd       = exportFormat[4]
 escapeChar   = exportFormat[5]
-#encoding     = 'latin-1'
-encoding     = 'utf-8'
+encoding     = 'latin-1'
 
 def escape(string):
     escaped = ''
@@ -102,29 +98,20 @@ for row in header + results[1:]:
     maxCol = len(row) - 1
     for i in range(0, maxCol+1):
         col = row[i]
-        
-        # get candidates name
-        if (i == 0):
-            col = ecq_tool.getFullNameById(col)
-        
-        if (same_type(col, '')):
-            # str to unicode
-            col = context.unicodeDecode(col)
-        
-        if (same_type(col, u'')):
+        if(same_type(col, '') or same_type(col, u'')):
             # output as text if the content of the cell is a string
             output += strStart + escape(col) + strEnd
-        elif (same_type(col, 1.1)):
+        # no string --> no output as text
+        elif(same_type(col, 1.1)):
             # i18n of fractional numbers
             output += escape(ecq_tool.localizeNumber("%.2f", col))
         else:
             output += escape(str(col))
-
         # append column delimiter or row delimiter 
         # if this is the last column of the row
         output += [colDelim, rowDelim][i >= (maxCol)]
 
-"""
+
 resultsString = context.translate(
     msgid   = 'statistics',
     domain  = I18N_DOMAIN,
@@ -132,18 +119,9 @@ resultsString = context.translate(
 
 filename = context.pathQuote(context.title_or_id()) \
            + '_' + resultsString + '.' + format
-"""
-
-#print output
-#return printed
-
-filename = 'statistics.%s' % format
 
 RESPONSE.setHeader('Content-Disposition', 'attachment; filename=' + filename)
 RESPONSE.setHeader('Content-Type', 'text/plain')
-
-context.plone_utils.addPortalMessage("Done.")
-
 # 'unicodeDecode()' is defined in the script (Python)
 # Products/ECQuiz/skins/ECQuiz/unicodeDecode.py
 return context.unicodeDecode(output).encode(encoding)

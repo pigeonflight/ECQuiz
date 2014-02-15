@@ -89,7 +89,7 @@ input.navigation-active {
   border-bottom: 1px dotted &dtml-globalBorderColor;;
   margin-bottom: 1em;
 }
-    
+
 /* Tweaks to make question group titles look better in multipage mode */
 
 fieldset {
@@ -100,10 +100,6 @@ fieldset > h2:first-child {
   padding-bottom: 0.33em !important;
   border: none !important;
   font-size: larger;
-}
-
-table.answers td {
-  padding: 0.5em 0.75em 0em 0em;
 }
 
 /* Keep this comment (turns on syntax highlighting in XEmacs)

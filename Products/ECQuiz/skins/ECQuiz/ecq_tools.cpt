@@ -33,11 +33,11 @@
     </tal:comment>
     <metal:block define-macro="use_default_view">
      <tal:block define="
-        url           python:object.getTypeInfo().getActionInfo(['object/view'])['url'];
-        view_template python:(url and url.split('/')[-1]) or object.default_view;
-        view_macro    python:path('object/%s/macros/view|nothing' % view_template);
+      url      python:object.getTypeInfo().getActionInfo(['object/view'])['url'];
+      template python:(url and url.split('/')[-1]) or object.default_view;
+      macro    python:path('object/%s/macros/view|nothing' % template);
       ">
-        <metal:use use-macro="view_macro" />
+      <metal:use use-macro="macro"/>
      </tal:block>
     </metal:block>
 
@@ -53,18 +53,18 @@
            action (default: 'view')
     </tal:comment>
     <metal:defmacro define-macro="up_one_level">
-     <div>
-       <a class="link-parent visualNoPrint"
-         tal:define="parent python: here.aq_parent;
-                     action action|python: 'view';
-                     url    python: parent.getActionInfo('object/%s' % action)['url'];"
-         tal:condition="url"
-         tal:attributes="href url"
-         i18n:domain="plone"
-         i18n:translate="go_to_parent_url">
-        Up one level
-       </a>
-     </div>
+     <a class="link-parent visualNoPrint"
+      tal:define="
+      parent python: here.aq_parent;
+      action action|python: 'view';
+      url    python: parent.getActionInfo('object/%s' % action)['url'];
+      "
+      tal:condition="url"
+      tal:attributes="href url"
+      i18n:domain="plone"
+      i18n:translate="go_to_parent_url">
+      Up one level
+     </a>
     </metal:defmacro>
 
    </tal:condition>

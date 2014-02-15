@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
-# $Id: ECQReference.py 251338 2012-10-31 16:31:52Z amelung $
+# $Id: ECQReference.py 1255 2009-09-24 08:47:42Z amelung $
 #
-# Copyright ï¿½ 2004-2011 Otto-von-Guericke-Universitï¿½t Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -20,27 +20,19 @@
 # along with ECQuiz; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+
 from Products.CMFCore.utils import getToolByName
 from AccessControl import ClassSecurityInfo
-from Products.ATContentTypes.content.base import BaseContent
- 
-from Products.Archetypes.public import Schema
-from Products.Archetypes.public import BaseSchema
-from Products.Archetypes.public import ReferenceField
-from Products.Archetypes.public import ObjectField
-from Products.Archetypes.public import ReferenceWidget
+from Products.Archetypes.public import Schema, BaseSchema, BaseContent, \
+     ReferenceField, ObjectField, ReferenceWidget
+from Products.ATReferenceBrowserWidget.ATReferenceBrowserWidget \
+     import ReferenceBrowserWidget
+from config import I18N_DOMAIN
+from tools import getParent, log, registerTypeLogged
 
-#from Products.ATReferenceBrowserWidget.ATReferenceBrowserWidget import ReferenceBrowserWidget
-from archetypes.referencebrowserwidget.widget import ReferenceBrowserWidget
-
-from Products.ECQuiz.config import I18N_DOMAIN
-from Products.ECQuiz.tools import getParent, log
-from Products.ECQuiz.tools import registerTypeLogged
 
 class ECQReference(BaseContent):
-    """A reference to a question or a question group from another quiz.
-    """
-    
+    """A reference to a question or a question group from another quiz."""
     schema = BaseSchema + Schema((
         ReferenceField('reference',
                        #allowed_types = (),
@@ -104,7 +96,7 @@ class ECQReference(BaseContent):
     def _notifyOfCopyTo(self, container, op=0):
         """Retain the reference after copy, even though the Archetypes
         people really don't want us to."""
-        #log("_notifyOfCopyTo %s" % str(self))
+        #log("_notifyOfCopyTo %s\n" % str(self))
         refField = self.Schema().get('reference')
         refFieldValue = refField.get(self)
         self.copiedReference = refFieldValue

@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
-# $Id: ECQScaleAnswer.py 245808 2011-10-23 20:01:45Z amelung $
+# $Id: ECQScaleAnswer.py 1255 2009-09-24 08:47:42Z amelung $
 #
-# Copyright ï¿½ 2004-2011 Otto-von-Guericke-Universitï¿½t Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -20,22 +20,56 @@
 # along with ECQuiz; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+import re
+
 from AccessControl import ClassSecurityInfo
 
-from Products.CMFCore.utils import getToolByName
+from Products.Archetypes.public import BaseSchema, Schema, BooleanField, \
+     StringField, TextField, SelectionWidget, TextAreaWidget, RichWidget, \
+     BaseContent, FloatField
+from Products.Archetypes.Widget import TypesWidget, IntegerWidget, \
+     BooleanWidget, StringWidget, DecimalWidget
 
-from Products.Archetypes.atapi import Schema
-from Products.Archetypes.atapi import FloatField
-from Products.Archetypes.atapi import StringWidget
-
-from Products.ECQuiz import config
-from Products.ECQuiz import permissions
-#from Products.ECQuiz.tools import log
-from Products.ECQuiz.tools import registerTypeLogged
-#from Products.ECQuiz.tools import registerValidatorLogged
+from Products.ECQuiz.config import *
+from Products.ECQuiz.permissions import *
+from Products.ECQuiz.tools import log, registerTypeLogged, \
+     registerValidatorLogged
 from Products.ECQuiz.AnswerTypes.ECQMCAnswer import ECQMCAnswer
-#from Products.ECQuiz.AnswerTypes.ECQSelectionAnswer import ECQSelectionAnswer
-#from Products.ECQuiz.InlineTextField import InlineTextField
+from Products.ECQuiz.AnswerTypes.ECQSelectionAnswer import ECQSelectionAnswer
+from Products.ECQuiz.InlineTextField import InlineTextField
+
+from Products.validation.interfaces import ivalidator
+
+class PercentageValidator:
+    """A validator for percentages, ."""
+    __implements__ = (ivalidator,)
+    
+    def __init__(self, name):
+        self.name = name
+        
+    def __call__(self, value, *args, **kwargs):
+        instance = kwargs.get('instance', None)
+        if instance is not None:
+            decimalSeparator = \
+                instance.translate(msgid = 'fraction_delimiter',
+                                   domain = I18N_DOMAIN,
+                                   default = '.')
+            res = None
+            match = re.match('^[0-9]+(\\'
+                             + decimalSeparator
+                             + r')?[0-9]*\s*%$', value)
+            if match:
+                return None
+            else:
+                return instance.translate(
+                           msgid   = 'invalid_percentage',
+                           domain  = I18N_DOMAIN,
+                           default = 'Not a percentage: %s') % value
+        else:
+            return True
+
+# Register this validator in Zope
+registerValidatorLogged(PercentageValidator, 'percentage')
 
 class ECQScaleAnswer(ECQMCAnswer):
     """An answer to a multiple-choice question that provides only some of the points."""
@@ -49,7 +83,7 @@ class ECQScaleAnswer(ECQMCAnswer):
                 default=0.0,
                 searchable=False,
                 validators=('percentage',),
-                read_permission=permissions.PERMISSION_INTERROGATOR,
+                read_permission=PERMISSION_INTERROGATOR,
                 widget=StringWidget(
                     label='Score',
                     label_msgid='partial_correct_label',
@@ -57,7 +91,7 @@ class ECQScaleAnswer(ECQMCAnswer):
                     'this answer?  A higher value than the total for '
                     'this question will be reduced.',
                     description_msgid='partial_correct_tool_tip',
-                    i18n_domain=config.I18N_DOMAIN,
+                    i18n_domain=I18N_DOMAIN,
                     size = 8,),
                 ),),)
     
@@ -94,10 +128,10 @@ class ECQScaleAnswer(ECQMCAnswer):
         Mutator for the `score' field.  Allows the input of localized
         numbers.
         """
-        #log("INPUT: %s (%s)" % (repr(input), repr(type(input))))
+        #log("INPUT: %s (%s)\n" % (repr(input), repr(type(input))))
         if type(input) in (str, unicode):
             decimalSeparator = self.translate(msgid = 'fraction_delimiter',
-                                              domain = config.I18N_DOMAIN,
+                                              domain = I18N_DOMAIN,
                                               default = '.')
             # remove the `%' sign
             input = input[:-1]
@@ -130,10 +164,10 @@ class ECQScaleAnswer(ECQMCAnswer):
         for_edit += '%'
         return for_edit
     
-    security.declareProtected(permissions.PERMISSION_STUDENT, 'getScore')
+    security.declareProtected(PERMISSION_STUDENT, 'getScore')
     def getScore(self, *args, **kwargs):
         # no docstring prevents publishing
-        # FIXME: check permissions: only return something if we're in resultView
+        #FIXME: check permissions: only return something if we're in resultView
         return self.getScorePrivate(*args, **kwargs)
     
 

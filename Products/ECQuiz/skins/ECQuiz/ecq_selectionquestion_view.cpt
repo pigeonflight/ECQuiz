@@ -46,11 +46,10 @@
         ">
         <metal:defslot-main define-slot="main_slot">
          <!-- List the answers -->
-         
-         <table class="answers">
+         <table>
           <tr tal:repeat="answer answers">
            <td valign="baseline">
-            <span tal:replace="repeat/answer/letter" />)
+            <span tal:replace="repeat/answer/letter"/>)
            </td>
            <td valign="baseline">
             <metal:defslot-input define-slot="input_element">

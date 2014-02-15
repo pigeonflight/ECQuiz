@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
 # $Id:tools.py 1255 2009-09-24 08:47:42Z amelung $
 #
-# Copyright Â© 2004-2011 Otto-von-Guericke-UniversitÃ¤t Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -21,19 +21,20 @@
 # Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 import os
-import logging
-
-import transaction
+#import re
 
 from Acquisition import aq_parent
+
+try:
+    from ZODB.Transaction import get_transaction
+except:
+    from transaction import get as get_transaction
 
 from Products.Archetypes.public import registerType
 from Products.ATContentTypes.content.base import registerATCT
 from Products.validation import validation
 
-from Products.ECQuiz import config
-
-LOG = logging.getLogger(config.PROJECTNAME)
+from Products.ECQuiz.config import PROJECTNAME
 
 def log(msg):
     """ Logs the message 'msg' to a logfile named something like
@@ -41,12 +42,10 @@ def log(msg):
         directory as this script. This can be very helpful when
         you debug because there is no debugger in Plone/Zope.
     """
-    # DEBUG
-    LOG.debug(msg)
-    
-    #f = open(os.path.dirname(__file__) + '/' + config.PROJECTNAME + "Error.log", "a")
-    #f.write("%s\n" % msg)
-    #f.close()
+    return
+    f = open(os.path.dirname(__file__) + '/' + PROJECTNAME + "Error.log", "a")
+    f.write(msg)
+    f.close()
 
 
 class MyStringIO:
@@ -66,38 +65,38 @@ class MyStringIO:
 
 def registerTypeLogged(klass):
     klassName = str(klass)
-    for c in ["<class 'Products.%s." % config.PROJECTNAME, "'>"]:
+    for c in ["<class 'Products.%s." % PROJECTNAME, "'>"]:
         klassName = klassName.replace(c, '')
     try:
-        registerType(klass, config.PROJECTNAME)
-        log('Done: registerType(%s)' %klassName)
+        registerType(klass)
+        log('Worked: registerType(%s)\n' %klassName)
     except Exception, e:
-        log('Failed: registerType(%s): %s' %(klassName, str(e)))
+        log('Failed: registerType(%s): %s\n' %(klassName, str(e)))
         raise e
 
 
 def registerATCTLogged(klass):
     klassName = str(klass)
-    for c in ["<class 'Products.%s." % config.PROJECTNAME, "'>"]:
+    for c in ["<class 'Products.%s." % PROJECTNAME, "'>"]:
         klassName = klassName.replace(c, '')
     try:
-        registerATCT(klass, config.PROJECTNAME)
-        log('Done: registerATCT(%s)' %klassName)
+        registerATCT(klass, PROJECTNAME)
+        log('Worked: registerType(%s)\n' %klassName)
     except Exception, e:
-        log('Failed: registerATCT(%s): %s' %(klassName, str(e)))
+        log('Failed: registerType(%s): %s\n' %(klassName, str(e)))
         raise e
 
 
 def registerValidatorLogged(klass, *args, **kwargs):
     klassName = str(klass)
-    for c in ["Products.%s." % config.PROJECTNAME]:
+    for c in ["Products.%s." % PROJECTNAME]:
         klassName = klassName.replace(c, '')
     try:
         validation.register(klass(*args, **kwargs))
-        log('Done: validation.register(%s(*%s, **%s))'
+        log('Worked: validation.register(%s(*%s, **%s))\n'
             % (klassName, repr(args), repr(kwargs)))
     except Exception, e:
-        log('Failed: validation.register(%s(*%s, **%s)): %s'
+        log('Failed: validation.register(%s(*%s, **%s)): %s\n'
             %(klassName, repr(args), repr(kwargs), str(e)))
         raise e
 
@@ -157,8 +156,8 @@ def isNumeric(number):
     
 
 def makeTransactionUnundoable():
-    trans = transaction.get()
-    trans.setUser(' ')
+    transaction = get_transaction()
+    transaction.setUser(' ')
 
 
 def createObject(context, typeName, id=None):
@@ -202,7 +201,6 @@ def setTitle(obj, newTitle):
 
 from Products.Archetypes.Field import StringField
 from Products.Archetypes.Widget import IdWidget
-
 def hideIdField(schema):
     hiddenIdField = StringField('id',
         default=None,

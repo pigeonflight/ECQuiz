@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
-# $Id: ECQBaseAnswer.py 251338 2012-10-31 16:31:52Z amelung $
+# $Id: ECQBaseAnswer.py 472 2006-08-10 13:16:18Z wfenske $
 #
-# Copyright ï¿½ 2004-2011 Otto-von-Guericke-Universitï¿½t Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -22,15 +22,15 @@
 
 from AccessControl import ClassSecurityInfo
 
-#from Products.Archetypes.atapi import BaseContent, BaseSchema, Schema
-from Products.ATContentTypes.content.base import BaseContent
-from Products.Archetypes.atapi import BaseSchema, Schema
-from Products.Archetypes.public import StringField 
-from Products.Archetypes.Widget import StringWidget
+from Products.Archetypes.public import BaseSchema, Schema, BooleanField, \
+     StringField, TextField, SelectionWidget, TextAreaWidget, RichWidget, \
+     BaseContent
+from Products.Archetypes.Widget import TypesWidget, IntegerWidget, \
+     BooleanWidget, StringWidget
 
-from Products.ECQuiz import config 
-#from Products.ECQuiz import permissions
-from Products.ECQuiz.tools import registerTypeLogged
+from Products.ECQuiz.config import *
+from Products.ECQuiz.permissions import *
+from Products.ECQuiz.tools import log, hideIdField, registerTypeLogged
 
 
 class ECQBaseAnswer(BaseContent):
@@ -40,7 +40,9 @@ class ECQBaseAnswer(BaseContent):
     # This prevents the Questions from showing up as a portal content type
     global_allow = False
 
-    schema = BaseSchema.copy() + Schema((
+    localBaseSchema = BaseSchema.copy()
+    
+    schema = localBaseSchema + Schema((
         StringField(
         name='title',
         required=1,
@@ -64,7 +66,7 @@ class ECQBaseAnswer(BaseContent):
         widget=StringWidget(
             label_msgid='label_title',
             visible={'view' : 'visible'},
-            i18n_domain=config.I18N_DOMAIN,
+            i18n_domain=I18N_DOMAIN,
             ),
         ),
         ))

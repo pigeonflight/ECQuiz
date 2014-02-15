@@ -13,9 +13,6 @@
 
   <metal:fill fill-slot="main"
    tal:define="
-   here_url         context/@@plone_context_state/object_url;
-   member           context/@@plone_portal_state/member;
-   portal           context/@@plone_portal_state/portal;
    ecq_tool         nocall:portal/ecq_tool;
    result           python:here;
    resultsView      python:True;
@@ -28,7 +25,9 @@
    mayShowFeedback  python:mctest.isInstantFeedback() or ecq_tool.userHasOneOfRoles(member, ('ECQuizResultViewer',), result) or mctest.userIsGrader(member);
    ">
    
-   <div tal:replace="structure provider:plone.documentactions" />
+   <div metal:use-macro="here/document_actions/macros/document_actions">
+    Document actions (print, sendto, etc.)
+   </div>
    
    <h1 tal:content="mctest/title_or_id"/>
 
@@ -144,7 +143,9 @@
     </tal:if_dont_show_feeback>
    </tal:if_not_invalid>
    
-   <div tal:replace="structure provider:plone.belowcontenttitle" />
+   <div metal:use-macro="here/document_byline/macros/byline">
+    Get the byline - contains details about author and modification date.
+   </div>
 
   </metal:fill>
  </body>

@@ -4,11 +4,9 @@
 ##
 
 #!/usr/local/bin/python
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
-# $Id: ecq_quiz_wiki_update.py 251338 2012-10-31 16:31:52Z amelung $
-#
-# Copyright Â© 2004-2011 Otto-von-Guericke-UniversitÃ¤t Magdeburg
+# Copyright © 2006 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -33,18 +31,15 @@ I18N_DOMAIN = context.i18n_domain
 
 target = context.getActionInfo('object/wiki_edit')['url']
 
-ret = context.updateQuiz(context, wikiTextarea)
-
+ret = context.updateQuiz(context,wikiTextarea)
 if ret == True:
-    msg =  context.title_or_id()
-    msg += context.translate( msgid='update_wiki_success',domain = I18N_DOMAIN,\
+  msg =  context.title_or_id()
+  msg += context.translate( msgid='update_wiki_success',domain = I18N_DOMAIN,\
                             default = ' was successfully updated!')
 else:
-    msg = 'Error: ' + ret
-#    msg =  context.title_or_id()
-#    msg += context.translate(msgid='update_wiki_error',domain = I18N_DOMAIN,\
-#                             default = ' could not be updated, you may have syntax errors!')
+  msg = 'Error: ' + ret
+#  msg =  context.title_or_id()
+#  msg += context.translate( msgid='update_wiki_error',domain = I18N_DOMAIN,\
+#                            default = ' could not be updated, you may have syntax errors!')
 
-context.plone_utils.addPortalMessage(msg)
-
-context.redirect('%s' % (target))
+context.redirect('%s?portal_status_message=%s' % (target,msg))

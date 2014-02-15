@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# $Id: wikitool.py 245805 2011-10-23 19:08:23Z amelung $
-#
-# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
+# Copyright 2006 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #

@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
 # $Id:ECQAbstractGroup.py 1255 2009-09-24 08:47:42Z amelung $
 #
-# Copyright ï¿½ 2004-2011 Otto-von-Guericke-Universitï¿½t Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -26,16 +26,20 @@ import random
 
 from AccessControl import ClassSecurityInfo
 import Acquisition
+#from Acquisition import *
 
 from Products.Archetypes.utils import shasattr
-from Products.Archetypes.public import Schema
-from Products.Archetypes.public import TextAreaWidget, BooleanField, IntegerField, TextField
-from Products.Archetypes.Widget import BooleanWidget, IntegerWidget
+from Products.Archetypes.public import Schema#, BaseFolderSchema
+from Products.Archetypes.public import TextAreaWidget, BooleanField, \
+    IntegerField, TextField
+from Products.Archetypes.Widget import  BooleanWidget, IntegerWidget
+    #, TypesWidget, RichWidget
 
 #from Products.CMFCore.utils import getToolByName
 
 from Products.ECQuiz import config
-from Products.ECQuiz.permissions import PERMISSION_STUDENT, PERMISSION_INTERROGATOR
+from Products.ECQuiz.permissions import PERMISSION_STUDENT, \
+    PERMISSION_INTERROGATOR
 from Products.ECQuiz.tools import filterByUID, isNumeric, registerATCTLogged
 from Products.ECQuiz.ECQReference import ECQReference
 from Products.ECQuiz.ECQFolder import ECQFolder
@@ -43,7 +47,7 @@ from Products.ECQuiz.ECQFolder import ECQFolder
 
 class ReferenceWrapper(Acquisition.Implicit):
     def __getattr__(self, key):
-        #log("__getattr__(%s, %s)" %(str(self), str(key)))
+        #log("__getattr__(%s, %s)\n" %(str(self), str(key)))
         # Otherwise we get into an endless recursion--for whatever
         # reason ...
         if key in ["__methods__", "__members__"]:
@@ -71,7 +75,6 @@ class ECQAbstractGroup(ECQFolder):
     They contain question objects and thus have common functionality
     which they inherit from this class.
     """
-    __implements__ = (ECQFolder.__implements__)
 
     """The Archetype schema of this type.  It basically describes how
     this class looks like for Zope, i.e.  which properties 'documents'
@@ -167,7 +170,6 @@ class ECQAbstractGroup(ECQFolder):
                     'as in the &quot;contents&quot;-view will be used.',
                     description_msgid='randomize_question_order_tool_tip',
                     i18n_domain=config.I18N_DOMAIN),
-                languageIndependent=True,
             ),
             IntegerField("numberOfRandomQuestions",
                 required=False,
@@ -185,7 +187,6 @@ class ECQAbstractGroup(ECQFolder):
                         'questions will be used.',
                     description_msgid='number_of_random_questions_tool_tip',
                     i18n_domain=config.I18N_DOMAIN),
-                languageIndependent=True,
             ),
         ),)
    
@@ -197,15 +198,15 @@ class ECQAbstractGroup(ECQFolder):
     create an 'ECQAbstractGroup' instance directly on the
     start page but only as content in other (folder-like) documents.
 
-    'ECQAbstractGroup' documents can only contain other
-    documents of the types specified in ECQGroup.xml).
+ 'ECQAbstractGroup' documents can only contain other
+    documents of the types specified in the list QUESTION_TYPES (see
+    config).
     """
   
-    allowed_content_types = ('ECQExtendedTextQuestion',
-                             'ECQMCQuestion',
-                             'ECQRatingQuestion',
-                             'ECQScaleQuestion',
-                             'ECQReference')
+    allowed_content_types = ('ECQMCQuestion',
+            'ECQExtendedTextQuestion',
+            'ECQScaleQuestion',
+            ECQReference.portal_type)
 
     # Get a ClassSecurityInfo-instance in order to declare some class
     # methods protected or private
@@ -265,7 +266,7 @@ class ECQAbstractGroup(ECQFolder):
         because there will be switch to enable copying the contents of
         ReferenceFields.
         """
-        #log("%s._notifyOfCopyTo()" % str(self))
+        #log("%s._notifyOfCopyTo()\n" % str(self))
         for obj in self.contentValues():
             obj._notifyOfCopyTo(self, op=op)
         return ECQFolder._notifyOfCopyTo(self, container, op=op)
@@ -303,7 +304,7 @@ class ECQAbstractGroup(ECQFolder):
         questionIds = result.getQuestionUIDs()
         # reconstruct the order of the questions
         retVal = filterByUID(questionIds, self.getAllQuestions())
-        #log('\t   questions = ' + repr(retVal))
+        #log('\t   questions = ' + repr(retVal) + '\n')
         return retVal
 
     

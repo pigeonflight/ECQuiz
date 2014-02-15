@@ -7,11 +7,11 @@
 ##parameters=obj
 
 #!/usr/local/bin/python
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
-# $Id: str.py 245805 2011-10-23 19:08:23Z amelung $
+# $Id: str.py 472 2006-08-10 13:16:18Z wfenske $
 #
-# Copyright Â© 2004-2011 Otto-von-Guericke-UniversitÃ¤t Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #

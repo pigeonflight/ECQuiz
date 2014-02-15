@@ -13,10 +13,6 @@
 
   <metal:fill fill-slot="main"
    tal:define="
-   member           context/@@plone_portal_state/member;
-   portal           context/@@plone_portal_state/portal;
-   here_url         context/@@plone_context_state/object_url;
-   template_id      template/getId;
    ecq_tool         nocall:portal/ecq_tool;
    result           python:here;
    resultsView      python:True;
@@ -28,7 +24,9 @@
    errors           options/state/getErrors | nothing;
    ">
    
-   <div tal:replace="structure provider:plone.documentactions" />
+   <div metal:use-macro="here/document_actions/macros/document_actions">
+    Document actions (print, sendto, etc.)
+   </div>
    
    <h1 tal:content="mctest/title_or_id"/>
 
@@ -52,7 +50,7 @@
      action="#"
      method="post"
      tal:attributes="action string:$here_url/$template_id;
-    ">
+     ">
      <fieldset>
       <!-- The magic field for controlled page templates -->
       <input type="hidden" name="form.submitted" value="1"/>
@@ -73,12 +71,14 @@
       <!-- submit buttons -->
       <div class="formControls">
        <input 
+        tabindex="#"
         class="context"
         type="submit"
         name="form.button.Save"
         value="Save"
         i18n:domain="plone"
         i18n:attributes="value"
+        tal:attributes="tabindex tabindex/next;"
         />
       </div>
 
@@ -86,7 +86,9 @@
     </form>
    </tal:define_h_level>
    
-   <div tal:replace="structure provider:plone.belowcontenttitle" />
+   <div metal:use-macro="here/document_byline/macros/byline">
+    Get the byline - contains details about author and modification date.
+   </div>
 
   </metal:fill>
  </body>

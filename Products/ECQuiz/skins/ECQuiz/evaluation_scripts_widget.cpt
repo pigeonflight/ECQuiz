@@ -17,7 +17,7 @@
    <div class="field">
     <label for="deleteCustomEvaluationScripts" i18n:translate="edit_evaluation_scripts_label">Scoring Scripts</label>
     <div class="formHelp" i18n:translate="edit_evaluation_scripts_tool_tip">The classes which use custom scoring scripts.</div>
-    <div class="formHelp" />
+    <div class="formHelp"/>
     <metal:block tal:condition="here/getEvaluationScripts">
      <metal:block tal:repeat="archetype_name python:request.get('deleteCustomEvaluationScripts', 
       here.getEvaluationScripts().keys())">
@@ -35,13 +35,11 @@
    </div>
   </metal:define>
   
-  <!--
-  <metal:define define-macro="search">
-   <div>
-    <div metal:use-macro="here/widgets/string/macros/edit"/>
-   </div>
-  </metal:define>
-  -->
+  <!--metal:define define-macro="search">
+  <div>
+  <div metal:use-macro="here/widgets/string/macros/edit"/>
+ </div>
+ </metal:define-->
  </body>
 </html>
 <!-- Keep this comment at the end of the file

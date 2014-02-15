@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
-# $Id: ECQMCQuestion.py 245805 2011-10-23 19:08:23Z amelung $
+# $Id: ECQMCQuestion.py 1172 2009-01-22 13:31:25Z wfenske $
 #
-# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -92,7 +92,7 @@ class ECQMCQuestion(ECQSelectionQuestion, ECQPointsQuestion):
         # The IDs of the answers the candidate did select
         givenAnswerIds     = result.getCandidateAnswer(self)
         
-        #log("MC Question.getCorrectAnswerIds(): %s" % repr(retVal))
+        #log("MC Question.getCorrectAnswerIds(): %s\n" % repr(retVal))
         
         customScript = parent.getEvaluationScript(self.portal_type)
         if customScript: # use custom script

@@ -1,32 +1,19 @@
 <?xml version="1.0"?>
-<object name="ECQMCAnswer"
-   meta_type="Factory-based Type Information with dynamic views"
+<object name="ECQMCAnswer" meta_type="Factory-based Type Information"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
-
  <property name="title">MC Answer</property>
  <property
-    name="description">An answer to a multiple-choice question.
- </property>
+    name="description">An answer to a multiple-choice question.</property>
  <property name="content_icon">ecq_answer.png</property>
  <property name="content_meta_type">ECQMCAnswer</property>
  <property name="product">ECQuiz</property>
  <property name="factory">addECQMCAnswer</property>
+ <property name="immediate_view">base_edit</property>
  <property name="global_allow">False</property>
  <property name="filter_content_types">False</property>
  <property name="allowed_content_types"/>
  <property name="allow_discussion">False</property>
-
- <property name="view_methods">
-  <element value="ecq_correctanswer_view"/>
- </property>
- <property name="default_view_fallback">False</property>
- <property name="default_view">ecq_correctanswer_view</property>
- <property name="immediate_view">ecq_correctanswer_view</property>
-
- <alias from="(Default)" to="ecq_correctanswer_view"/>
- <alias from="view" to="ecq_correctanswer_view"/>
  <alias from="edit" to="base_edit"/>
- 
  <action title="View" action_id="view" category="object" condition_expr=""
     url_expr="string:${object_url}/ecq_correctanswer_view" visible="True">
   <permission value="View"/>
@@ -46,5 +33,4 @@
   <permission value="Modify portal content"/>
   <permission value="Review portal content"/>
  </action>
-
 </object>

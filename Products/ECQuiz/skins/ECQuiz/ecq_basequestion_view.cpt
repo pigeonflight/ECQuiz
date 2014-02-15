@@ -16,12 +16,12 @@
    </style>
   </metal:import-css>
   
-  <metal:fill fill-slot="main"
-    tal:define="template_id template/getId;"
-  >
+  <metal:fill fill-slot="main">
    <metal:block define-macro="edit_view">
     
-    <div tal:replace="structure provider:plone.documentactions" />
+    <div metal:use-macro="here/document_actions/macros/document_actions">
+     Document actions (print, sendto, etc.)
+    </div>
    
     <h1 tal:content="here/title_or_id"/>
 
@@ -32,17 +32,19 @@
     <form name="dummy" action="#" method="#">
      <fieldset>
       <tal:call-view-macro define="
-       inputDisabled python:'yes';
-       question      python:here;
-       result        python:here.maybeMakeResult();
-       object        python:question;
-      ">
+       inputDisabled	python:'yes';
+       question		python:here;
+       result		python:here.maybeMakeResult();
+       object		python:question;
+       ">
        <metal:use use-macro="here/ecq_tools/macros/use_default_view"/>
       </tal:call-view-macro>
      </fieldset>
     </form>
     
-    <div tal:replace="structure provider:plone.belowcontenttitle" />
+    <div metal:use-macro="here/document_byline/macros/byline">
+     Get the byline - contains details about author and modification date.
+    </div>
 
    </metal:block>
    
@@ -64,20 +66,18 @@
      </tal:comment>
      
      <tal:define define="
-      member          context/@@plone_portal_state/member;
-      portal          context/@@plone_portal_state/portal;
-      candidateId     candidateId|python:'';
-      resultsView     resultsView|python:False;
+      candidateId      candidateId|python:'';
+      resultsView      resultsView|python:False;
       
-      editView        python:(not resultsView) and here.userIsGrader(member);
-      gradeView       gradeView|python:False;
+      editView         python:(not resultsView) and here.userIsGrader(member);
+      gradeView        gradeView|python:False;
       
-      candidateAnswer python:((candidateId and [result.getCandidateAnswer(question)]) or [None])[0];
+      candidateAnswer  python:((candidateId and [result.getCandidateAnswer(question)]) or [None])[0];
       haveCandidateAnswer python:(candidateId and result.haveCandidateAnswer(question));
-      inputDisabled   inputDisabled|python:['', 'yes'][resultsView];
+      inputDisabled    inputDisabled|python:['', 'yes'][resultsView];
       
-      startWatchDummy python:candidateId and (not resultsView) and result.startWatch(question);
-      ecq_tool        nocall:portal/ecq_tool;
+      startWatchDummy  python:candidateId and (not resultsView) and result.startWatch(question);
+      ecq_tool         nocall:portal/ecq_tool;
       ">
       <!-- Output question text -->
       <metal:defslot-pre-question define-slot="pre_question"/>

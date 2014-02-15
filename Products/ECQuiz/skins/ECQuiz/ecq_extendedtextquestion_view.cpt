@@ -36,7 +36,6 @@
        <metal:fill-main-slot fill-slot="main_slot">
         <table
          tal:define="
-         portal   context/@@plone_portal_state/portal;
          ecq_tool nocall:portal/ecq_tool;
          chars_per_line python: 80;
          words_per_line python: chars_per_line/6.0;

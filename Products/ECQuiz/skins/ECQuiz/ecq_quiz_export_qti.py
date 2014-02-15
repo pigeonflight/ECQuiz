@@ -4,11 +4,11 @@
 ##
 
 #!/usr/local/bin/python
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
-# $Id: ecq_quiz_export_qti.py 245805 2011-10-23 19:08:23Z amelung $
+# $Id: ecq_quiz_export_qti.py 851 2007-07-04 01:09:26Z wfenske $
 #
-# Copyright Â© 2004-2011 Otto-von-Guericke-UniversitÃ¤t Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -58,11 +58,10 @@ if (msg and (not ignoreErrors)) or (package is None):
         msg = context.translate(
             msgid   = 'unexpected_export_error',
             domain  = I18N_DOMAIN,
-            default = 'An unexpected error has occurred. '
+            default = 'An an unexpected has occurred. '
             'The quiz could not be exported.')
     target = context.getActionInfo('object/import_export')['url']
-    context.plone_utils.addPortalMessage(msg)
-    context.redirect('%s' % target)
+    context.redirect('%s?portal_status_message=%s' % (target, msg))
     # Seems like for some reason I have to put this nonsense here.
     RESPONSE.setHeader('Content-Disposition', 'attachment; filename=error.txt')
     RESPONSE.setHeader('Content-Type', 'text/plain')

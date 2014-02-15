@@ -103,8 +103,6 @@ Jim Baack contributed a rough version of the Plone 3 port.
 The Plone 3 port was finished by `Eudemonia Solutions AG`_, with funding
 from the `ITC of the ILO`_.
 
-ECQuiz was ported to Plone 4 by `Eudemonia Solutions AG`_.
-
 .. _Michael Piotrowski: mxp@dynalabs.de
 .. _Wolfram Fenske: wfenske@eudemonia-solutions.de
 .. _Chad J. Schroeder: http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/409413

@@ -2,11 +2,11 @@
 ##title=validates the form for grading results
 
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
-# $Id: $
+# $Id: ecq_result_grade_validate.vpy 472 2006-08-10 13:16:18Z wfenske $
 #
-# Copyright Â© 2004-2011 Otto-von-Guericke-UniversitÃ¤t Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #

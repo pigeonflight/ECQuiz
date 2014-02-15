@@ -1276,7 +1276,7 @@ msgstr "Pas de sélection"
 msgid "unexpected_error"
 msgstr "Erreur indéfini en « %s » : %s"
 
-#. Default: An unexpected error has occurred.  The test could not be exported.
+#. Default: An an unexpected has occurred.  The test could not be exported.
 #: ./skins/llsMultipleChoice/exportTest.py, 59
 msgid "unexpected_export_error"
 msgstr "Erreur imprévu, l'export du test a échoué."

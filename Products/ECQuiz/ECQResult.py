@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
-# $Id: ECQResult.py 245805 2011-10-23 19:08:23Z amelung $
+# $Id: ECQResult.py 1255 2009-09-24 08:47:42Z amelung $
 #
-# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -319,12 +319,12 @@ class ECQResult(ATCTContent, HistoryAwareMixin):
             questionGroup = None
 
         self.setCachedCandidatePoints(test, None)
-        #log("%s: CachedCandidatePoints: %s" % (str(self), str(test)))
+        #log("%s: CachedCandidatePoints: %s\n" % (str(self), str(test)))
         if questionGroup:
             self.setCachedCandidatePoints(questionGroup, None)
-            #log("%s: CachedCandidatePoints: %s" % (str(self),
+            #log("%s: CachedCandidatePoints: %s\n" % (str(self),
             #                                         str(questionGroup)))
-        #log("")
+        #log("\n")
         
     security.declareProtected(PERMISSION_GRADE, 'unsetTutorPoints')
     def unsetTutorPoints(self, question):
@@ -389,7 +389,7 @@ class ECQResult(ATCTContent, HistoryAwareMixin):
         # question group
         self.setPossiblePointsCache({})
         self.setCandidatePointsCache({})
-        #log("%s: deleted all cached points" % (str(self)))
+        #log("%s: deleted all cached points\n" % (str(self)))
 
     # Clear all cached points related to the question [question],
     # i. e. clear cache for possible and achieved (candidate) points
@@ -408,20 +408,20 @@ class ECQResult(ATCTContent, HistoryAwareMixin):
                 questionGroup = None
 
             self.setCachedQuestionPoints(question, None)
-            #log("%s: CachedQuestionPoints: %s" % (str(self), str(question)))
+            #log("%s: CachedQuestionPoints: %s\n" % (str(self), str(question)))
 
             self.setCachedPossiblePoints(test, None)
-            #log("%s: CachedPossiblePoints: %s" % (str(self), str(test)))
+            #log("%s: CachedPossiblePoints: %s\n" % (str(self), str(test)))
             self.setCachedCandidatePoints(test, None)
-            #log("%s: CachedCandidatePoints: %s" % (str(self), str(test)))
+            #log("%s: CachedCandidatePoints: %s\n" % (str(self), str(test)))
             if questionGroup:
                 self.setCachedPossiblePoints(questionGroup, None)
-                #log("%s: CachedPossiblePoints: %s" % (str(self),
+                #log("%s: CachedPossiblePoints: %s\n" % (str(self),
                 #                                        str(questionGroup)))
                 self.setCachedCandidatePoints(questionGroup, None)
-                #log("%s: CachedCandidatePoints: %s" % (str(self),
+                #log("%s: CachedCandidatePoints: %s\n" % (str(self),
                 #                                         str(questionGroup)))
-            #log("")
+            #log("\n")
 
     ## Points caching: end
 
@@ -437,7 +437,7 @@ class ECQResult(ATCTContent, HistoryAwareMixin):
         qr = self.getQR("startWatch", question)
         if not qr.isWatchRunning():
             qr.addTimeStart(datetime.now())
-            #log("startWatch: %s" % str(question))
+            #log("startWatch: %s\n" % str(question))
             self.storeQR(question, qr)
             makeTransactionUnundoable()
     
@@ -446,7 +446,7 @@ class ECQResult(ATCTContent, HistoryAwareMixin):
     def stopWatch(self, question):
         qr = self.getQR("stopWatch", question)
         if qr.isWatchRunning():
-            #log("stopWatch: %s" % str(question))
+            #log("stopWatch: %s\n" % str(question))
             qr.addTimeFinish(datetime.now())
             self.storeQR(question, qr)
 

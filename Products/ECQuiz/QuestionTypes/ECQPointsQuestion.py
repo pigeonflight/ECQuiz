@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
-# $Id: ECQPointsQuestion.py 251338 2012-10-31 16:31:52Z amelung $
+# $Id: ECQPointsQuestion.py 1172 2009-01-22 13:31:25Z wfenske $
 #
-# Copyright ï¿½ 2004-2011 Otto-von-Guericke-Universitï¿½t Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -20,11 +20,11 @@
 # along with ECQuiz; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
-#import random
+import random
 
 from AccessControl import ClassSecurityInfo
 
-#from Products.Archetypes.utils import shasattr
+from Products.Archetypes.utils import shasattr
 from Products.Archetypes.public import BaseFolder, BaseFolderSchema, \
      BaseContent, BaseSchema, Schema, BooleanField, BooleanWidget, \
      IntegerField, IntegerWidget, StringField, TextField, SelectionWidget, \
@@ -33,9 +33,30 @@ from Products.Archetypes.public import BaseFolder, BaseFolderSchema, \
 from Products.ECQuiz.config import *
 from Products.ECQuiz.permissions import *
 from Products.ECQuiz.tools import *
-
 from Products.ECQuiz.QuestionTypes.ECQBaseQuestion import ECQBaseQuestion
 from Products.ECQuiz.AnswerTypes.ECQCorrectAnswer import ECQCorrectAnswer
+
+from Products.validation.interfaces import ivalidator
+
+
+class ClearPointsCache:
+    """A dummy validator that clears cached points for a question (and
+    its question group and the quiz) from result objects."""
+    __implements__ = (ivalidator,)
+    
+    def __init__(self, name):
+        self.name = name
+        
+    def __call__(self, value, *args, **kwargs):
+        instance = kwargs.get('instance', None)
+        if instance is not None:
+            # [unsetCachedQuestionPoints] is found through acquisition magic
+            instance.unsetCachedQuestionPoints(instance)
+        return True
+
+# Register this validator in Zope
+registerValidatorLogged(ClearPointsCache, 'clearPointsCache')
+
 
 class ECQPointsQuestion(ECQBaseQuestion):
     """ A question that can in some way be graded. The candidate's points 
@@ -43,7 +64,7 @@ class ECQPointsQuestion(ECQBaseQuestion):
         'getCandidatePoints()' method.
     """
 
-    schema = ECQBaseQuestion.schema.copy() + Schema((
+    schema = ECQBaseQuestion.schema + Schema((
             IntegerField('points', # See 'description' property of the widget.
                 accessor='getPointsPrivate',
                 required=True,
@@ -56,7 +77,6 @@ class ECQPointsQuestion(ECQBaseQuestion):
                     description_msgid='points_tool_tip',
                     i18n_domain=I18N_DOMAIN),
                 #read_permission=PERMISSION_STUDENT,
-                #languageIndependent=True,
             ),
             BooleanField('tutorGraded',
                 accessor='isTutorGraded',
@@ -70,7 +90,6 @@ class ECQPointsQuestion(ECQBaseQuestion):
                     i18n_domain=I18N_DOMAIN),
                 read_permission=PERMISSION_STUDENT,
                 validators=('clearPointsCache',),
-                languageIndependent=True,
             ),
         ),
     )

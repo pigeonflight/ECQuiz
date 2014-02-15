@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+# -*- coding: iso-8859-1 -*-
 #
-# $Id: ECQGroup.py 245805 2011-10-23 19:08:23Z amelung $
+# $Id: ECQGroup.py 1255 2009-09-24 08:47:42Z amelung $
 #
-# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
+# Copyright © 2004 Otto-von-Guericke-Universität Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -86,7 +86,7 @@ class ECQGroup(ECQAbstractGroup):
         else: # custom
             return evalFunString(customScript, \
                                  CUSTOM_EVALUATION_FUNCTION_NAME, \
-                                 [self, result, questions])
+                                 [self, candidateId, questions])
         
         
 # Register this type in Zope
