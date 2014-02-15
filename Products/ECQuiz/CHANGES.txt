@@ -1,3 +1,60 @@
+This branch includes all changes made by Cris Ewing in April 2010
+as uploaded to the Plone SVN repository. Added here to include full
+develoment history. It represents the end-state after the folllowing commits:
+
+------------------------------------------------------------------------
+r116376 | cewing | 2010-04-28 17:49:42 -0500 (Wed, 28 Apr 2010) | 2 lines
+
+further improvements to my code for os-independence 
+
+------------------------------------------------------------------------
+r116375 | cewing | 2010-04-28 17:37:13 -0500 (Wed, 28 Apr 2010) | 2 lines
+
+using a more os-independant way of splitting file/path names
+
+------------------------------------------------------------------------
+r116372 | cewing | 2010-04-28 17:07:56 -0500 (Wed, 28 Apr 2010) | 4 lines
+
+adding a sample zipfile with some wonky international filenames so that we can test the 'readFromZip' function against non-english character sets.
+
+------------------------------------------------------------------------
+r116371 | cewing | 2010-04-28 17:06:32 -0500 (Wed, 28 Apr 2010) | 9 lines
+
+* added a new function 'getZipInfoForName' to resolve the potential differences between the identifying resource name extracted from a QTI manifest and the 'name' by which the corresponding file may be read from the ZipFile object being imported.
+
+* refactored the 'readFromZip' function to rely on the new getZipInfoForName method to get the lookup value for reading the desired file from the ZipFile object.
+
+both of these functions now rely on the 'unicodeDecode' python script in Products.ECQuiz.skins.ECQuiz to render lookup values and filenames into unicode strings for the sake of comparison.  This should mean that the results returned are onsistent leading to better matching at all stages of the process.
+
+tests on qti import now work using both a zipfile with a manifest that matches the names in the zipfile information and one where the zipfile information has extra pathname information.
+
+------------------------------------------------------------------------
+r116294 | cewing | 2010-04-27 15:22:27 -0500 (Tue, 27 Apr 2010) | 3 lines
+
+established a single passing test for QTI import of a one-question multiple-choice test.
+added a single failing test to demonstrate that QTI import fails for packages that have been zipped with pathnames as part of the zip archive.  The only difference between the two sample zip files is that one was zipped from the location where the manifest file was located, and the other was zipped from the parent folder.  This causes import to fail despite the fact that the package is perfectly valid.
+
+------------------------------------------------------------------------
+r116292 | cewing | 2010-04-27 13:02:56 -0500 (Tue, 27 Apr 2010) | 2 lines
+
+collect all types missing from portal_factory into a list and report them all out as a single failure rather than failing on the first and skipping the rest.  This helped immensely when figuring out why types were not in the factory tool.
+
+------------------------------------------------------------------------
+r116291 | cewing | 2010-04-27 13:01:06 -0500 (Tue, 27 Apr 2010) | 2 lines
+
+factor some setup code up to base.py so that I can re-use it in other tests.  Existing tests still pass
+
+------------------------------------------------------------------------
+r116290 | cewing | 2010-04-27 12:58:15 -0500 (Tue, 27 Apr 2010) | 2 lines
+
+added other types to factorytool.xml so that existing tests pass.  No guarantee that this won't cause other problems, but I need a clean slate and there aren't any other tests available to help at the moment.
+
+------------------------------------------------------------------------
+r116183 | cewing | 2010-04-26 12:39:42 -0500 (Mon, 26 Apr 2010) | 2 lines
+
+branching to make some changes to the system for importing QTI packaged-quizzes.  The current code does not support zip files with pathnames in them.
+
+
 # Changes in release 1.2.1 (2010-04-16)
 
 - ECQuiz is now eggified and uploaded to PyPI.  An old-style 
