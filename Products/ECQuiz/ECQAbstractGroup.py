@@ -2,7 +2,7 @@
 #
 # $Id:ECQAbstractGroup.py 1255 2009-09-24 08:47:42Z amelung $
 #
-# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
+# Copyright ï¿½ 2004-2011 Otto-von-Guericke-Universitï¿½t Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -167,6 +167,7 @@ class ECQAbstractGroup(ECQFolder):
                     'as in the &quot;contents&quot;-view will be used.',
                     description_msgid='randomize_question_order_tool_tip',
                     i18n_domain=config.I18N_DOMAIN),
+                languageIndependent=True,
             ),
             IntegerField("numberOfRandomQuestions",
                 required=False,
@@ -184,6 +185,7 @@ class ECQAbstractGroup(ECQFolder):
                         'questions will be used.',
                     description_msgid='number_of_random_questions_tool_tip',
                     i18n_domain=config.I18N_DOMAIN),
+                languageIndependent=True,
             ),
         ),)
    

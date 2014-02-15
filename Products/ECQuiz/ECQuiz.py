@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# $Id: ECQuiz.py 245805 2011-10-23 19:08:23Z amelung $
+# $Id: ECQuiz.py 251338 2012-10-31 16:31:52Z amelung $
 #
-# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
+# Copyright ï¿½ 2004-2011 Otto-von-Guericke-Universitï¿½t Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -141,6 +141,7 @@ class ECQuiz(ECQAbstractGroup):
                              description_msgid='instant_feedback_tool_tip',
                              i18n_domain=config.I18N_DOMAIN),
                          read_permission=permissions.PERMISSION_STUDENT,
+                         languageIndependent=True,
             ),
             BooleanField('allowRepetition',
                          # See 'description' of the widget.
@@ -155,6 +156,7 @@ class ECQuiz(ECQAbstractGroup):
                              description_msgid='allow_repetition_tool_tip',
                              i18n_domain=config.I18N_DOMAIN),
                          read_permission=permissions.PERMISSION_STUDENT,
+                         languageIndependent=True,
             ),
             BooleanField('onePerPage',
                          required=False,
@@ -168,6 +170,7 @@ class ECQuiz(ECQAbstractGroup):
                              description_msgid='one_per_page_tool_tip',
                              i18n_domain=config.I18N_DOMAIN),
                          read_permission=permissions.PERMISSION_STUDENT,
+                         languageIndependent=True,
             ),
             BooleanField('onePerPageNav',
                          required=False,
@@ -182,6 +185,7 @@ class ECQuiz(ECQAbstractGroup):
                             description_msgid='one_per_page_nav_tool_tip',
                              i18n_domain=config.I18N_DOMAIN),
                          read_permission=permissions.PERMISSION_STUDENT,
+                         languageIndependent=True,
             ),
             StringField('scoringFunction',
                         default='guessing',
@@ -202,6 +206,7 @@ class ECQuiz(ECQAbstractGroup):
                         read_permission=permissions.PERMISSION_STUDENT,
                         validators=('clearWholePointsCache',),
                         write_permission=permissions.PERMISSION_GRADE,
+                        languageIndependent=True,
             ),
             DataGridField('gradingScale',
                           mutator = 'setGradingScale',
@@ -234,6 +239,7 @@ class ECQuiz(ECQAbstractGroup):
                               ),
                           validators=('gradingScale',),
                           write_permission=permissions.PERMISSION_GRADE,
+                          #languageIndependent=True,
             ),
             ),)
 
@@ -847,7 +853,7 @@ class ECQuiz(ECQAbstractGroup):
         for group in [self] + self.getQuestionGroups():
             header.append((group.title_or_id(),
                            group.archetype_name,
-                           group.reference_url()))
+                           group.absolute_url()))
             if result0:
                 maxScore = group.getPossiblePoints(result0)
             else:
@@ -858,8 +864,8 @@ class ECQuiz(ECQAbstractGroup):
             
             for question in allQuestions:
                 header.append((question.title_or_id(),
-                               question.archetype_name,
-                               question.reference_url()))
+                               question.portal_type,
+                               question.absolute_url()))
                 maxScores.append(question.getPoints())
         
         table.append(header)

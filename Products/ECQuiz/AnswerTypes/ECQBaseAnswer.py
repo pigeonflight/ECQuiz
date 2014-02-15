@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# $Id: ECQBaseAnswer.py 245805 2011-10-23 19:08:23Z amelung $
+# $Id: ECQBaseAnswer.py 251338 2012-10-31 16:31:52Z amelung $
 #
-# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
+# Copyright ï¿½ 2004-2011 Otto-von-Guericke-Universitï¿½t Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -22,7 +22,9 @@
 
 from AccessControl import ClassSecurityInfo
 
-from Products.Archetypes.atapi import BaseContent, BaseSchema, Schema
+#from Products.Archetypes.atapi import BaseContent, BaseSchema, Schema
+from Products.ATContentTypes.content.base import BaseContent
+from Products.Archetypes.atapi import BaseSchema, Schema
 from Products.Archetypes.public import StringField 
 from Products.Archetypes.Widget import StringWidget
 

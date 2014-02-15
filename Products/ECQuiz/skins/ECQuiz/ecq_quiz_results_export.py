@@ -4,7 +4,7 @@
 ##bind namespace=
 ##bind script=script
 ##bind subpath=traverse_subpath
-##parameters=format='tab'
+##parameters=format='csv'
 ##title=
 ##
 
@@ -12,7 +12,7 @@
 #!/usr/local/bin/python
 # -*- coding: utf-8 -*-
 #
-# $Id: ecq_quiz_results_export.py 245805 2011-10-23 19:08:23Z amelung $
+# $Id: ecq_quiz_results_export.py 251338 2012-10-31 16:31:52Z amelung $
 #
 # Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
 #
@@ -76,7 +76,8 @@ rowDelim     = exportFormat[2]
 strStart     = exportFormat[3]
 strEnd       = exportFormat[4]
 escapeChar   = exportFormat[5]
-encoding     = 'latin-1'
+#encoding     = 'latin-1'
+encoding     = 'utf-8'
 
 def escape(string):
     escaped = ''
@@ -98,33 +99,45 @@ NONE_STRING = context.translate(msgid   = 'N/A',
                                 default = 'N/A')
 
 output = ''
+
 for row_dict in results:
     row = [row_dict[key] for key in exportCols]
     maxCol = len(row) - 1
     for i in range(0, maxCol+1):
         col = row[i]
+        
         if col is None:
             col = NONE_STRING
         
-        if same_type(col, '') or same_type(col, u''):
+        if (same_type(col, '')):
+            # str to unicode
+            col = context.unicodeDecode(col)
+            
+        if (same_type(col, u'')):
             # output as text if the content of the cell is a string
-            output += strStart + escape(context.str(col)) + strEnd
+            #output += strStart + escape(context.str(col)) + strEnd
+            output += strStart + escape(col) + strEnd
         # no string --> no output as text
-        elif same_type(col, 1.1):
+        elif (same_type(col, 1.1)):
             # i18n of fractional numbers
             output += escape(ecq_tool.localizeNumber("%.2f", col))
         else:
             output += escape(str(col))
+            
         # If this is the last column of the row, append the row
         # delimiter.  Else, append the column delimiter.
         output += [colDelim, rowDelim][i == maxCol]
 
+"""
 resultsString = context.translate(
     msgid   = 'results',
     domain  = I18N_DOMAIN,
     default = 'results')
     
 filename = context.pathQuote(context.title_or_id()) + '_' + resultsString + '.' + format
+"""
+
+filename = 'results.%s' % format
 
 RESPONSE.setHeader('Content-Disposition', 'attachment; filename=' + filename)
 RESPONSE.setHeader('Content-Type', 'text/plain')

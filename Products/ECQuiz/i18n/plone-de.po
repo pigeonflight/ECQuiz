@@ -1,5 +1,5 @@
 # Gettext Message File for ECQuiz.
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 msgid ""
 msgstr ""
 "Project-Id-Version: ECQuiz\n"

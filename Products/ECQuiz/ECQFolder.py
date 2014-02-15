@@ -2,7 +2,7 @@
 #
 # $Id:ECQFolder.py 1255 2009-09-24 08:47:42Z amelung $
 #
-# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
+# Copyright ï¿½ 2004-2011 Otto-von-Guericke-Universitï¿½t Magdeburg
 #
 # This file is part of ECQuiz.
 #

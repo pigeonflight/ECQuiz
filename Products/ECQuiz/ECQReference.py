@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# $Id: ECQReference.py 245805 2011-10-23 19:08:23Z amelung $
+# $Id: ECQReference.py 251338 2012-10-31 16:31:52Z amelung $
 #
-# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
+# Copyright ï¿½ 2004-2011 Otto-von-Guericke-Universitï¿½t Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -22,15 +22,20 @@
 
 from Products.CMFCore.utils import getToolByName
 from AccessControl import ClassSecurityInfo
-from Products.Archetypes.public import Schema, BaseSchema, BaseContent, \
-     ReferenceField, ObjectField, ReferenceWidget
+from Products.ATContentTypes.content.base import BaseContent
+ 
+from Products.Archetypes.public import Schema
+from Products.Archetypes.public import BaseSchema
+from Products.Archetypes.public import ReferenceField
+from Products.Archetypes.public import ObjectField
+from Products.Archetypes.public import ReferenceWidget
 
 #from Products.ATReferenceBrowserWidget.ATReferenceBrowserWidget import ReferenceBrowserWidget
 from archetypes.referencebrowserwidget.widget import ReferenceBrowserWidget
 
-from config import I18N_DOMAIN
-from tools import getParent, log, registerTypeLogged
-
+from Products.ECQuiz.config import I18N_DOMAIN
+from Products.ECQuiz.tools import getParent, log
+from Products.ECQuiz.tools import registerTypeLogged
 
 class ECQReference(BaseContent):
     """A reference to a question or a question group from another quiz.

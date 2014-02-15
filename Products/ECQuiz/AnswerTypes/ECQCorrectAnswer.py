@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# $Id: ECQCorrectAnswer.py 245805 2011-10-23 19:08:23Z amelung $
+# $Id: ECQCorrectAnswer.py 251338 2012-10-31 16:31:52Z amelung $
 #
-# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
+# Copyright ï¿½ 2004-2011 Otto-von-Guericke-Universitï¿½t Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -69,6 +69,7 @@ class ECQCorrectAnswer(ECQSelectionAnswer):
                     'is a correct answer.',
                     description_msgid='correct_tool_tip',
                     i18n_domain=config.I18N_DOMAIN),
+                languageIndependent=True,
             ),
         ),
     )

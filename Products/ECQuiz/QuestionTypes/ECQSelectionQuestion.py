@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# $Id: ECQSelectionQuestion.py 245805 2011-10-23 19:08:23Z amelung $
+# $Id: ECQSelectionQuestion.py 251338 2012-10-31 16:31:52Z amelung $
 #
-# Copyright © 2004-2011 Otto-von-Guericke-Universität Magdeburg
+# Copyright ï¿½ 2004-2011 Otto-von-Guericke-Universitï¿½t Magdeburg
 #
 # This file is part of ECQuiz.
 #
@@ -66,6 +66,7 @@ class ECQSelectionQuestion(ECQBaseQuestion):
                     description_msgid='allow_multiple_selection_tool_tip',
                     i18n_domain=I18N_DOMAIN),
                 read_permission=PERMISSION_STUDENT,
+                languageIndependent=True,
             ),
             BooleanField("randomOrder", # See 'description' property
                                         # of the widget.
@@ -84,6 +85,7 @@ class ECQSelectionQuestion(ECQBaseQuestion):
                     description_msgid='randomize_answer_order_tool_tip',
                     i18n_domain=I18N_DOMAIN),
                 #read_permission=PERMISSION_STUDENT,
+                languageIndependent=True,
             ),
             IntegerField("numberOfRandomAnswers", # See 'description'
                                                   # property of the
@@ -101,6 +103,7 @@ class ECQSelectionQuestion(ECQBaseQuestion):
                     description_msgid='number_of_random_answers_tool_tip',
                     i18n_domain=I18N_DOMAIN),
                 #read_permission=PERMISSION_STUDENT,
+                languageIndependent=True,
             ),
         ),
     )

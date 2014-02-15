@@ -82,9 +82,9 @@ def registerATCTLogged(klass):
         klassName = klassName.replace(c, '')
     try:
         registerATCT(klass, config.PROJECTNAME)
-        log('Done: registerType(%s)' %klassName)
+        log('Done: registerATCT(%s)' %klassName)
     except Exception, e:
-        log('Failed: registerType(%s): %s' %(klassName, str(e)))
+        log('Failed: registerATCT(%s): %s' %(klassName, str(e)))
         raise e
 
 

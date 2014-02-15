@@ -36,7 +36,8 @@
     meta_type="Factory-based Type Information with dynamic views" />
 
   <object name="ECQMCAnswer" 
-    meta_type="Factory-based Type Information" />
+    meta_type="Factory-based Type Information with dynamic views" />
+  <!--  meta_type="Factory-based Type Information" /> --> 
   
   <!-- 
   <object name="ECQPointsQuestion"

@@ -103,7 +103,6 @@
             tal:define="default string: I don't know. (The question will be evaluated as if you had given no answer.)"
             tal:content="python: here.translate(domain=here.i18n_domain,
             msgid='i_dont_know',
-            target_language=ecq_tool.getContentLang(here),
             default=default)"/>
            <tal:condition condition="resultsView">
             [<span i18n:translate="false" tal:omit-tag="">false</span>]
