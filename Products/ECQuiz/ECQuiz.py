@@ -61,6 +61,8 @@ from Products.ECQuiz import log
 #from Products.ECQuiz.wikitool import importQuiz,exportQuiz,convertQuiz,updateQuiz
 from Products.ECQuiz import wikitool
 
+from ep.views.quiz_converter import QuizCSVConverter
+
 class DataGridWidgetI18N(DataGridWidget):
     def getColumnLabels(self, field, whatever=None):
         """ Get user friendly names of all columns """
@@ -1058,6 +1060,22 @@ class ECQuiz(ECQAbstractGroup):
         addedObjects = []
         #errorString = ''
         errors = tools.MyStringIO()
+
+	# custom code --> maybe CSV
+	# reset the file read ptr first
+	xml = None
+	try:
+		xmlcsv = QuizCSVConverter(file.read())
+		xml = xmlcsv.getQuestions()
+	except:
+		try:
+			xml = QuizCSVConverter(file.filename.read())
+			xml = xmlcsv.getQuestions()
+		except:
+			pass
+	if xml != None:	
+		file.flush()
+		file.write(xml)				
 
         # try zipfile first
         zipFileInstance = None
