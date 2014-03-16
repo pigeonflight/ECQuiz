@@ -1059,13 +1059,36 @@ class ECQuiz(ECQAbstractGroup):
         #errorString = ''
         errors = tools.MyStringIO()
 
+<<<<<<< Updated upstream
         # try zipfile first
+=======
+	# custom code --> maybe CSV
+	# reset the file read ptr first
+	qpackage = None
+	try:
+		xmlcsv = QuizCSVConverter(file.read())
+		qpackage = xmlcsv.generateZippedQuestions()
+	except:
+		try:
+			xmlcsv = QuizCSVConverter(file.filename.read())
+			qpackage = xmlcsv.generateZippedQuestions()
+		except:
+			pass	
+	       
+	# try zipfile first
+>>>>>>> Stashed changes
         zipFileInstance = None
         try:
-            zipFileInstance = ZipFile(file.filename)
+		if qpackage != None:
+			zipFileInstance = qpackage
+		else:
+			zipFileInstance = ZipFile(file.filename)
         except:
             try:
-                zipFileInstance = ZipFile(file)
+		if qpackage != None:
+			zipFileInstance = qpackage
+		else:
+	                zipFileInstance = ZipFile(file)
             except:
                 pass
         if(zipFileInstance):
