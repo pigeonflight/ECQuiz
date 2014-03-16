@@ -61,7 +61,8 @@ from Products.ECQuiz import log
 #from Products.ECQuiz.wikitool import importQuiz,exportQuiz,convertQuiz,updateQuiz
 from Products.ECQuiz import wikitool
 
-from ep.views.quiz_converter import QuizCSVConverter
+from Products.ECQuiz.ECQConverterTool import CSVConverter
+#from ep.views.quiz_converter import CSVConverter
 
 class DataGridWidgetI18N(DataGridWidget):
     def getColumnLabels(self, field, whatever=None):
@@ -1065,11 +1066,11 @@ class ECQuiz(ECQAbstractGroup):
 	# reset the file read ptr first
 	qpackage = None
 	try:
-		xmlcsv = QuizCSVConverter(file.read())
+		xmlcsv = CSVConverter(file.read())
 		qpackage = xmlcsv.generateZippedQuestions()
 	except:
 		try:
-			xmlcsv = QuizCSVConverter(file.filename.read())
+			xmlcsv = CSVConverter(file.filename.read())
 			qpackage = xmlcsv.generateZippedQuestions()
 		except:
 			pass	
