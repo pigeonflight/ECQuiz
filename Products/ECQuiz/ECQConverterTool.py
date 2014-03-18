@@ -33,12 +33,16 @@ class CSVConverter:
                 #mapping2 = ["stem","option 1","option 2","option 3","option 4","key"]
                 print header
                 if header[0] != "stem" and header != "question":
+                        # XXX Fixme, make this 
+                        # send an error back to interface
                         return
-                choices = 1
+                option_count = 1
                 ans_index = 1
                 for choice in header:
-                        if choice == "choice "+str(choices) or choice == "option "+str(choices):
-                                choices += 1
+                        if choice.startswith('option') or choice.startswith('choice '):
+                            option_count += 1
+
+                ## XXX Fixme rewrite this to use has_key
                 try:
                         ans_index = header.index("key")
                 except:
@@ -75,7 +79,7 @@ class CSVConverter:
                 row_id = 1
                 for row in reader:
                         try:
-                                self.importXmls.append(get_question(row, row_id, choices, ans_index))
+                                self.importXmls.append(get_question(row, row_id, option_count, ans_index))
                         except:
                                 print "Something went wrong during parsing in question stack "+str(row_id)
                                 #raise
