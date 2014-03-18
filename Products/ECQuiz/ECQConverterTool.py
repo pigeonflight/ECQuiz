@@ -15,9 +15,10 @@ import uuid
 import hmac
 
 class CSVConverter: 
-        def __init__(self, data):
+        def __init__(self, data, title):
                 self.importXmls = []
                 self.data = data
+                self.title = title
                 self.qid = (uuid.uuid1()).hex
                 self.items = ""
                 self.resources = ""
@@ -57,7 +58,7 @@ class CSVConverter:
                         uid = hmac.new(question).hexdigest()
                         self.items += '<item identifier="TEST-1-ITEM-'+itemIndex+'" identifierref="UID-'+uid+'"><llsmc:weight>1</llsmc:weight><imsss:sequencing><imsss:randomizationControls randomizationTiming="onEachNewAttempt" reorderChildren="true"/></imsss:sequencing><llsmc:tutorGraded>false</llsmc:tutorGraded></item>'
                         self.resources += '<resource href="content/container0_question'+resourceIndex+'.xml" identifier="UID-'+uid+'" type="imsqti_item_xmlv2p0"><metadata><imsmd:lom><imsmd:general><imsmd:title><imsmd:langstring xml:lang="en">'+itemIndex+'</imsmd:langstring></imsmd:title></imsmd:general></imsmd:lom><imsqti:qtiMetadata><imsqti:interactionType>choiceInteraction</imsqti:interactionType></imsqti:qtiMetadata></metadata><file href="content/container0_question'+resourceIndex+'.xml"/></resource>'
-                        for choice in range(1, (num_choices + 1)):
+                        for choice in range(1, (num_choices)):
                                 if row[choice] != None:
                                         answers += '<simpleChoice identifier="Choice'+str((choice - 1))+'"><p>'+row[choice]+'</p></simpleChoice>'
                         
@@ -91,8 +92,8 @@ class CSVConverter:
         def generateBase(self):
                 self.base = '<?xml version="1.0" ?><assessmentItem adaptive="false" identifier="'+self.qid+'" timeDependent="false" title="default" xmlns="http://www.imsglobal.org/xsd/imsqti_v2p0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p0 http://www.imsglobal.org/xsd/imsqti_v2p0.xsd"><itemBody/></assessmentItem>'
 
-        def generateManifest(self):
-                metadata = '<metadata><schema>IMS QTI</schema><schemaversion>2.0</schemaversion><imsqti:qtiMetadata><imsqti:toolName>LlsMultipleChoice</imsqti:toolName><imsqti:toolVersion>1.0</imsqti:toolVersion><imsqti:toolVendor>Alteroo Consulting Group</imsqti:toolVendor></imsqti:qtiMetadata><imsmd:lom><imsmd:general><imsmd:title><imsmd:langstring xml:lang="en">default</imsmd:langstring></imsmd:title></imsmd:general></imsmd:lom></metadata>'
+        def generateManifest(self,title="a title"):
+                metadata = """<metadata><schema>IMS QTI</schema><schemaversion>2.0</schemaversion><imsqti:qtiMetadata><imsqti:toolName>LlsMultipleChoice</imsqti:toolName><imsqti:toolVersion>1.0</imsqti:toolVersion><imsqti:toolVendor>Alteroo Consulting Group</imsqti:toolVendor></imsqti:qtiMetadata><imsmd:lom><imsmd:general><imsmd:title><imsmd:langstring xml:lang="en">%s</imsmd:langstring></imsmd:title></imsmd:general></imsmd:lom></metadata>""" % title
                 organisation = '<organizations><organization identifier="ORGANIZATION-1"><title>Default Organization</title><item identifier="TEST-1" identifierref="UID-'+self.qid+'">'+self.items+'<imsss:sequencing><imsss:randomizationControls reorderChildren="false"/></imsss:sequencing></item><imsss:sequencing><imsss:limitConditions attemptLimit="1"/><llsmc:instantFeedback>false</llsmc:instantFeedback><llsmc:oneQuestionPerPage>true</llsmc:oneQuestionPerPage><llsmc:allowNavigation>true</llsmc:allowNavigation></imsss:sequencing><llsmc:scoringFunction>guessing</llsmc:scoringFunction></organization></organizations>'
                 default_resource ='<resource href="content/container0.xml" identifier="UID-'+self.qid+'" type="imsqti_item_xmlv2p0"><metadata><imsmd:lom><imsmd:general><imsmd:title><imsmd:langstring xml:lang="en">default</imsmd:langstring></imsmd:title> </imsmd:general></imsmd:lom></metadata><file href="content/container0.xml"/></resource>'
                 resources = '<resources>'+default_resource+self.resources+'</resources>'
@@ -102,7 +103,7 @@ class CSVConverter:
                 try:                
                         self.processCSV()
                         self.generateBase()
-                        self.generateManifest()
+                        self.generateManifest(self.title)
                         print "generating questions.zip"
                         zf = zipfile.ZipFile("questions.zip", "w")
                         zf.writestr("imsmanifest.xml", self.manifest)

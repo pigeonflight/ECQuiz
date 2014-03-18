@@ -1068,7 +1068,12 @@ class ECQuiz(ECQAbstractGroup):
 
 	qpackage = None
 	try:
-		xmlcsv = CSVConverter(file.read())
+                title = self.unicodeDecode(self.Title())
+		xmlcsv = CSVConverter(
+                      file.read(),
+                      title
+                      )
+            
 		qpackage = xmlcsv.generateZippedQuestions()
 	except:
 		try:
