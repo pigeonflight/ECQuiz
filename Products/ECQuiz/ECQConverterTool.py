@@ -45,10 +45,10 @@ class CSVConverter:
                 ## XXX Fixme rewrite this to use has_key
                 try:
                         ans_index = header.index("key")
-                except:
+                except ValueError:
                         try:
                                 ans_index = header.index("correct answer")
-                        except:
+                        except ValueError:
                                 return
 
                 def get_question(row, number, num_choices, ans_index):
