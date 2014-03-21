@@ -13,7 +13,17 @@ from xml.etree.ElementTree import fromstring, ElementTree
 import zipfile
 import uuid
 import hmac
-from unidecode import unidecode
+
+def _unicode(value):
+    if type(value) == str:
+        # Ignore errors even if the string is not proper UTF-8 or has
+        # broken marker bytes.
+        # Python built-in function unicode() can do this.
+        value = unicode(value, "utf-8", errors="ignore")
+    else:
+        # Assume the value object has proper __unicode__() method
+        value = unicode(value)
+    return value
 
 class CSVConverter: 
         def __init__(self, data, title):
@@ -57,7 +67,7 @@ class CSVConverter:
                         #param name: Column name: 1st row cell content value, header
                         title = number
                         _question = row[0]
-                        question = unidecode(row[0])
+                        question = _unicode(row[0])
                         answers = ''
                         itemIndex = str(number)
                         resourceIndex = str((number-1))
@@ -66,13 +76,13 @@ class CSVConverter:
                         self.resources += '<resource href="content/container0_question'+resourceIndex+'.xml" identifier="UID-'+uid+'" type="imsqti_item_xmlv2p0"><metadata><imsmd:lom><imsmd:general><imsmd:title><imsmd:langstring xml:lang="en">'+itemIndex+'</imsmd:langstring></imsmd:title></imsmd:general></imsmd:lom><imsqti:qtiMetadata><imsqti:interactionType>choiceInteraction</imsqti:interactionType></imsqti:qtiMetadata></metadata><file href="content/container0_question'+resourceIndex+'.xml"/></resource>'
                         for choice in range(1, (num_choices)):
                                 if row[choice] != None:
-                                        answer = unidecode(row[choice]) 
+                                        answer = _unicode(row[choice]) 
                                         answers += '<simpleChoice identifier="Choice'+str((choice - 1))+'"><p>'+answer+'</p></simpleChoice>'
                         
                         xml = '<?xml version="1.0" ?><assessmentItem false="adaptive" identifier="UID-'+uid+'" timeDependent="false" title="'+itemIndex+'" xmlns="http://www.imsglobal.org/xsd/imsqti_v2p0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p0 http://www.imsglobal.org/xsd/imsqti_v2p0.xsd">'     
                         xml += '<outcomeDeclaration cardinality="single" identifier="OUTCOME"/>'
                         try:
-                                correctAns = unidecode(row[ans_index])    
+                                correctAns = _unicode(row[ans_index])    
                                 xml += '<responseDeclaration cardinality="single" identifier="RESPONSE"><correctResponse><value>Choice'+correctAns+'</value></correctResponse></responseDeclaration>'
                         except:
                                 print "failed to append correct answer"
