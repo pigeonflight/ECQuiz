@@ -37,6 +37,7 @@ setup(name='Products.ECQuiz',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'Unidecode',
           # -*- Extra requirements: -*-
           'Products.DataGridField >= 1.6',
       ],

@@ -13,6 +13,7 @@ from xml.etree.ElementTree import fromstring, ElementTree
 import zipfile
 import uuid
 import hmac
+from unidecode import unidecode
 
 class CSVConverter: 
         def __init__(self, data, title):
@@ -55,21 +56,24 @@ class CSVConverter:
                         #read one cell on a @param row: CSV row as list
                         #param name: Column name: 1st row cell content value, header
                         title = number
-                        question = row[0]
+                        _question = row[0]
+                        question = unidecode(row[0])
                         answers = ''
                         itemIndex = str(number)
                         resourceIndex = str((number-1))
-                        uid = hmac.new(question).hexdigest()
+                        uid = hmac.new(_question).hexdigest()
                         self.items += '<item identifier="TEST-1-ITEM-'+itemIndex+'" identifierref="UID-'+uid+'"><llsmc:weight>1</llsmc:weight><imsss:sequencing><imsss:randomizationControls randomizationTiming="onEachNewAttempt" reorderChildren="true"/></imsss:sequencing><llsmc:tutorGraded>false</llsmc:tutorGraded></item>'
                         self.resources += '<resource href="content/container0_question'+resourceIndex+'.xml" identifier="UID-'+uid+'" type="imsqti_item_xmlv2p0"><metadata><imsmd:lom><imsmd:general><imsmd:title><imsmd:langstring xml:lang="en">'+itemIndex+'</imsmd:langstring></imsmd:title></imsmd:general></imsmd:lom><imsqti:qtiMetadata><imsqti:interactionType>choiceInteraction</imsqti:interactionType></imsqti:qtiMetadata></metadata><file href="content/container0_question'+resourceIndex+'.xml"/></resource>'
                         for choice in range(1, (num_choices)):
                                 if row[choice] != None:
-                                        answers += '<simpleChoice identifier="Choice'+str((choice - 1))+'"><p>'+row[choice]+'</p></simpleChoice>'
+                                        answer = unidecode(row[choice]) 
+                                        answers += '<simpleChoice identifier="Choice'+str((choice - 1))+'"><p>'+answer+'</p></simpleChoice>'
                         
                         xml = '<?xml version="1.0" ?><assessmentItem false="adaptive" identifier="UID-'+uid+'" timeDependent="false" title="'+itemIndex+'" xmlns="http://www.imsglobal.org/xsd/imsqti_v2p0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p0 http://www.imsglobal.org/xsd/imsqti_v2p0.xsd">'     
                         xml += '<outcomeDeclaration cardinality="single" identifier="OUTCOME"/>'
                         try:
-                                xml += '<responseDeclaration cardinality="single" identifier="RESPONSE"><correctResponse><value>Choice'+row[ans_index]+'</value></correctResponse></responseDeclaration>'
+                                correctAns = unidecode(row[ans_index])    
+                                xml += '<responseDeclaration cardinality="single" identifier="RESPONSE"><correctResponse><value>Choice'+correctAns+'</value></correctResponse></responseDeclaration>'
                         except:
                                 print "failed to append correct answer"
                                 #raise
