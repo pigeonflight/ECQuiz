@@ -168,7 +168,7 @@ class ECQuiz(ECQAbstractGroup):
             ),
             BooleanField('onePerPage',
                          required=False,
-                         default=False,
+                         default=True,
                          accessor='isOnePerPage',
                          widget=BooleanWidget(
                              label='One Question per Page',
@@ -182,7 +182,7 @@ class ECQuiz(ECQAbstractGroup):
             ),
             BooleanField('onePerPageNav',
                          required=False,
-                         default=False,
+                         default=True,
                          accessor='isOnePerPageNav',
                          widget=BooleanWidget(
                              label='Allow Navigation',
