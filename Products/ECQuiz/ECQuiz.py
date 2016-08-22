@@ -463,6 +463,14 @@ class ECQuiz(ECQAbstractGroup):
         user = getSecurityManager().getUser()
         candidateId = user.getId()
         
+        # check if the current user has "student" permissions
+        # They can never submit OR resubmit IF they are
+        # not a student
+        mctool = getToolByName(self, 'ecq_tool')
+        if not mctool.userHasOneOfRoles(
+            user,[permissions.PERMISSION_STUDENT],
+            self):
+            return False
         if self.userIsGrader(user):
             return True
         elif self.isPublic():
@@ -480,7 +488,7 @@ class ECQuiz(ECQAbstractGroup):
         """
         mctool = getToolByName(self, 'ecq_tool')
         return mctool.userHasOneOfRoles(user,
-                                        ('Manager', permissions.ROLE_RESULT_GRADER,),
+                                        (permissions.ROLE_RESULT_GRADER,),
                                         self)
 
     
